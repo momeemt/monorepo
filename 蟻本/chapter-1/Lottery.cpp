@@ -1,27 +1,33 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+#define MAX_N 1000
 int n,m;
-vector<int> k(1000);
+vector<int> k(MAX_N);
+vector<int> kk(MAX_N * MAX_N);
 
 bool binary_search(int x) {
-  int l = 0, r = n;
+  int l = 0, r = n * n;
   while (r - l >= 1) {
     int i = (l + r) / 2;
-    if (k[i] == x) return true;
-    else if (k[i] < x) l = i + 1;
+    if (kk[i] == x) return true;
+    else if (kk[i] < x) l = i + 1;
     else r = i;
   }
   return false;
 }
 
 void solve() {
+  for (int c = 0; c < n; c++) {
+    for (int d = 0; d < n; d++) {
+      kk[c * n + d] = k[c] + k[d];
+    }
+  }
   bool is_exist = false;
-  sort(k.begin(), k.end());
+  sort(kk.begin(), kk.end());
   for (int a = 0; a < n; a++) {
     for (int b = 0; b < n; b++) {
       for (int c = 0; c < n; c++) {
-        if (binary_search (m - k[a] - k[b] - k[c])) {
+        if (binary_search (m - k[a] - k[b])) {
           is_exist = true;
         }
       }
