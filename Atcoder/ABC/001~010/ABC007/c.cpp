@@ -168,23 +168,37 @@ template<class T> inline bool chmax(T& a, T b) {
   return false;
 }
 
-int modPow(int a, int n) {
-  if(n == 1) return a%MOD;
-  if(n%2 == 1) return (a*modPow(a,n-1)) % MOD;
-  int t = modPow(a, n/2);
-  return (t*t) % MOD;
-}
-
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
   cout << fixed << setprecision(15);
 
-  // デフォルト変数定義
-  int n=0,m=0,a=0,b=0,c=0,d=0,x=0,y=0,z=0;
-  string s="",t="";
-  //
-
   // ここから
+  int r,c,sx,sy,gx,gy;
+  cin >> r >> c >> sx >> sy >> gx >> gy;
+  --sx;--sy;--gx;--gy;
+  Vs maze(r);
+  VIN(maze)
+  VVi dist(r, Vi(c, -1));
+  dist[sx][sy] = 0;
+  queue<pair<int,int>> que;
+  que.push(make_pair(sx,sy));
+  while (!que.empty()) {
+    pair<int,int> current_pos = que.front();
+    int x = current_pos.first;
+    int y = current_pos.second;
+    que.pop();
+    for (int direction = 0; direction < 4; ++direction) {
+      int next_x = x + dx[direction];
+      int next_y = y + dy[direction];
+      if (next_x < 0 || next_x >= r || next_y < 0 || next_y >= c) continue;
+      if (maze[next_x][next_y] == '#') continue;
 
+      if (dist[next_x][next_y] == -1) {
+          que.push(make_pair(next_x, next_y));
+          dist[next_x][next_y] = dist[x][y] + 1;
+      }
+    }
+  }
+  OUT(dist[gx][gy]);
 }
