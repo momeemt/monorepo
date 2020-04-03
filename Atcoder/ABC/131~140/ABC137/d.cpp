@@ -168,6 +168,13 @@ template<class T> inline bool chmax(T& a, T b) {
   return false;
 }
 
+int modPow(int a, int n) {
+  if(n == 1) return a%MOD;
+  if(n%2 == 1) return (a*modPow(a,n-1)) % MOD;
+  int t = modPow(a, n/2);
+  return (t*t) % MOD;
+}
+
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -180,19 +187,18 @@ signed main() {
 
   // ここから
   IN2(n,m);
-  priority_queue<P> q;
+  VVi V(m);
   REP(i,n){
     IN2(a,b);
-    P tmp = make_pair(b,a);
-    q.push(tmp);
+    if(a > m) continue;
+    V[--a].pb(b);
   }
+  PQ q;
   int ans = 0;
-  while(m > 0 && !q.empty()) {
-    P tmp = q.top();
-    if(tmp.second <= m) {
-      ans += tmp.first;
-      --m;
-    }
+  REP(i,m) {
+    for(auto a: V[i]) q.push(a);
+    if(!q.size()) continue;
+    ans += q.top();
     q.pop();
   }
   OUT(ans);

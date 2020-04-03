@@ -186,19 +186,41 @@ signed main() {
   //
 
   // ここから
-  IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  IN2(x,y);
+  IN3(a,b,c);
+  Vi p(a);
+  Vi q(b);
+  Vi r(c);
+  VIN(p)
+  VIN(q)
+  VIN(r)
+  //Aを食う
+  int ans = 0;
+  RSORT(p);
+  RSORT(q);
+  RSORT(r);
+  Vi select;
+  REP(i,x){
+    select.pb(p[i]);
   }
+  REP(i,y){
+    select.pb(q[i]);
+  }
+  REP(i,c){
+    select.pb(r[i]);
+  }
+  RSORT(select);
+  REP(i,(x+y)){
+    ans += select[i];
+  }
+  OUT(ans);
 }
+
+ABC160お疲れ様でした！
+5完で水パフォを出しました。
+
+A: s[2]==s[3] && s[4]==s[5]
+B: 500を優先的に使い、5を使います
+C: 全ての家の距離から最長間距離を引きます
+D: 始点を決めてBFSします
+E: 赤と緑それぞれ最良のリンゴを選んだあと無色のリンゴを混ぜ、その中でx+y個の総和の最大値を求めます

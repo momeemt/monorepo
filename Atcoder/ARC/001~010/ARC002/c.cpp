@@ -186,19 +186,53 @@ signed main() {
   //
 
   // ここから
-  IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  IN2(n,s);
+  // 前から2個ずつ
+  map<string,int> fr;
+  map<string,int> bk;
+  REP(i,n){
+    if(i==n-1) continue;
+    string tmp = s.substr(i,2);
+    fr[tmp]++;
   }
+  PER(i,n){
+    if(i==0) continue;
+    string tmp = s.substr(i-1,2);
+    bk[tmp]++;
+  }
+  vector<pair<int,string>> fkw;
+  vector<pair<int,string>> bkw;
+  RSORT(fkw);
+  RSORT(bkw);
+  string fkw1;
+  string fkw2;
+  if(fkw.size()>=2) fkw2 = fkw[1].second;
+  if(fkw.size()>=1) fkw1 = fkw[0].second;
+  string bkw1;
+  string bkw2;
+  if(bkw.size()>=2) bkw2 = bkw[1].second;
+  if(bkw.size()>=1) bkw1 = bkw[0].second;
+  int ans = 0;
+  int ans2 = 0;
+  REP(i,n){
+    if(i==n-1) {
+      ans++;
+      break;
+    } else {
+      if(!fkw1.empty() && fkw1 == s.substr(i,2)) i++;
+      if(!fkw2.empty() && fkw2 == s.substr(i,2)) i++;
+      ans++;
+    }
+  }
+  PER(i,n){
+    if(i==0) {
+      ans2++;
+      break;
+    } else {
+      if(!bkw1.empty() && bkw1 == s.substr(i-1,2)) i++;
+      if(!bkw2.empty() && bkw2 == s.substr(i-1,2)) i++;
+      ans2++;
+    }
+  }
+  OUT(max(ans,ans2));
 }

@@ -186,19 +186,38 @@ signed main() {
   //
 
   // ここから
-  IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  IN3(n,x,y);
+  Graph G(n);
+  //グラフの生成
+  REP(i,n-1) {
+    G[i].pb(i+1);
+    G[i+1].pb(i);
+  }
+  G[x-1].pb(y-1);
+  G[y-1].pb(x-1);
+  Vi ans(n, 0);
+  M mp;
+  REP(i,n){
+    // 始点はi
+    Vi dist(n,-1); //未訪問
+    queue<int> que;
+    dist[i] = 0;
+    que.push(i);
+
+    while(!que.empty()){
+      int v = que.front();
+      que.pop();
+      for(int nv: G[v]) {
+        if(dist[nv] != -1) continue;
+        dist[nv] = dist[v] + 1;
+        que.push(nv);
+      }
+    }
+    REP(i,n){
+      mp[dist[i]]++;
+    }
+  }
+  FOR(i,1,n){
+    OUT(mp[i]/2);
   }
 }

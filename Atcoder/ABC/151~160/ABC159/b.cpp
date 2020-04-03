@@ -186,19 +186,18 @@ signed main() {
   //
 
   // ここから
-  IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  IN(s);
+  bool ok = true;
+  REP(i,s.size()/2){
+    if(s[i]!=s[s.size()-1-i]) ok=false;
   }
+  REP(i,s.size()/4){
+    if(s[i]!=s[s.size()/2-1-i]) ok=false;
+  }
+  int index = 0;
+  FOR(i,s.size()/2+1,s.size()/2+(s.size()/2+1)/2) {
+    if(s[i]!=s[s.size()-1-index]) ok=false;
+    index++;
+  }
+  Yes(ok);
 }

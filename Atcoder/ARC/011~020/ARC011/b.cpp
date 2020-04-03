@@ -186,19 +186,31 @@ signed main() {
   //
 
   // ここから
-  IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  IN(n);
+  Vs w(n);
+  VIN(w)
+  Vs ans;
+  REP(i,n){
+    string str = "";
+    REP(j,w[i].size()){
+      char v = tolower(w[i][j]);
+      char u = '?';
+      if(v=='b'||v=='c') u = '1';
+      if(v=='d'||v=='w') u = '2';
+      if(v=='t'||v=='j') u = '3';
+      if(v=='f'||v=='q') u = '4';
+      if(v=='l'||v=='v') u = '5';
+      if(v=='s'||v=='x') u = '6';
+      if(v=='p'||v=='m') u = '7';
+      if(v=='h'||v=='k') u = '8';
+      if(v=='n'||v=='g') u = '9';
+      if(v=='z'||v=='r') u = '0';
+      if(u != '?') {
+        str.pb(u);
+      }
+    }
+    ans.pb(str);
   }
+  if(ans.empty()) cout<<endl;
+  else VOUT2(ans);
 }

@@ -167,20 +167,21 @@ signed main() {
   // ここから
   IN2(n,x);
   Vi A(n);
-  Vi left(n);
-  Vi right(n);
   VIN(A)
+  int ans = 0;
+  int sum = 0;
+  int r = 0;
   REP(i,n){
-    if(i==0) left[i] = A[i];
-    else left[i] = A[i] + left[i-1];
+    while(sum < x) {
+      if(r == n) break;
+      else {
+        sum += A[r];
+        ++r;
+      }
+    }
+    if(sum < x) break;
+    ans += n-r+1;
+    sum -= A[i];
   }
-  REP(i,n){
-    if(i==0) right[i] = A[n-i-1];
-    else right[i] = A[n-i-1] + right[i-1];
-  }
-  REP(i,n){
-    if(left[i] >= x) y++;
-    if(right[i] >= x) y++;
-  }
-  OUT(y-1);
+  OUT(ans);
 }

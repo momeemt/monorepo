@@ -186,19 +186,39 @@ signed main() {
   //
 
   // ここから
-  IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  int h,w;
+  IN2(h,w);
+  Vs maze(h);
+  VIN(maze)
+  VVi dist(h, Vi(w, -1));
+  dist[0][0] = 0;
+  queue<pair<int,int>> que;
+  que.push(make_pair(0,0));
+  int white = 0;
+  REP(i,h){
+    REP(j,w) {
+      if(maze[i][j]=='.') ++white;
+    }
+  }
+  while(!que.empty()) {
+    pair<int,int> current_pos = que.front();
+    x = current_pos.first;
+    y = current_pos.second;
+    que.pop();
+    REP(direction,4) {
+      int next_x = x + dx[direction];
+      int next_y = y + dy[direction];
+      if (next_x < 0 || next_x >= h || next_y < 0 || next_y >= w) continue;
+      if (maze[next_x][next_y] == '#') continue;
+      if (dist[next_x][next_y] == -1) {
+        que.push(make_pair(next_x, next_y));
+        dist[next_x][next_y] = dist[x][y] + 1;
+      }
+    }
+  }
+  if(dist[h-1][w-1]==-1) {
+    OUT(-1);
+  } else {
+    OUT(white-dist[h-1][w-1]);
   }
 }

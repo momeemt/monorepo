@@ -186,19 +186,24 @@ signed main() {
   //
 
   // ここから
-  IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  IN2(n,x);
+  priority_queue<pair<int,bool>> q;
+  REP(i,n){
+    IN2(a,b);
+    q.push(make_pair(a,false));
+    q.push(make_pair(b,true));
   }
+  int cnt = 0;
+  while(x > 0) {
+    pair<int,bool> sw = q.top();
+    if(sw.second) {
+      q.pop();
+      x -= sw.first;
+      cnt++;
+    } else {
+      cnt += (x+sw.first-1)/sw.first;
+      break;
+    }
+  }
+  OUT(cnt);
 }

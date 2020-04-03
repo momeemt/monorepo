@@ -29,7 +29,7 @@ using namespace std;
 #define VIN(V) for(int i = 0; i < (V).size(); i++) {cin >> (V).at(i);}
 #define OUT(n) cout << n << endl
 #define VOUT(V) REP(i, (V).size()) {cout << (V)[i] << endl;}
-#define VOUT2(V) REP(i, (V).size()) {cout << (V)[i] << " ";} cout<<endl;
+#define VOUT2(V) REP(i, (V).size()) {if((V).size()-1!=i){cout << (V)[i] << " ";}else{cout << (V)[i] << endl;}}
 
 #define int long long
 #define P pair<ll,ll>
@@ -54,29 +54,43 @@ const double PI  = acos(-1.0);
 const int dx[4] = {1, 0, -1, 0};
 const int dy[4] = {0, 1, 0, -1};
 
-struct UnionFind {
-  vector<int> par;
+class UnionFind {
+public:
+  vector <int> par;
+  vector <int> siz;
 
-  UnionFind(int n) : par(n) {
-    for(int i = 0; i < n; ++i) par[i] = i;
+  UnionFind(int sz_): par(sz_), siz(sz_, 1LL) {
+    for (int i = 0; i < sz_; ++i) par[i] = i;
+  }
+  void init(ll sz_) {
+    par.resize(sz_);
+    siz.assign(sz_, 1LL);
+    for (int i = 0; i < sz_; ++i) par[i] = i;
   }
 
   int root(int x) {
-    if(par[x] == x) return x;
-    return par[x] = root(par[x]);
+    while (par[x] != x) {
+      x = par[x] = par[par[x]];
+    }
+    return x;
   }
 
-  void unite(int x, int y) {
-    int rx = root(x);
-    int ry = root(y);
-    if(rx == ry) return;
-    par[rx] = ry;
+  bool merge(int x, int y) {
+    x = root(x);
+    y = root(y);
+    if (x == y) return false;
+    if (siz[x] < siz[y]) swap(x, y);
+    siz[x] += siz[y];
+    par[y] = x;
+    return true;
   }
 
-  bool same(int x, int y) {
-    int rx = root(x);
-    int ry = root(y);
-    return rx == ry;
+  bool issame(int x, int y) {
+    return root(x) == root(y);
+  }
+
+  int size(int x) {
+    return siz[root(x)];
   }
 };
 
@@ -154,6 +168,13 @@ template<class T> inline bool chmax(T& a, T b) {
   return false;
 }
 
+int modPow(int a, int n) {
+  if(n == 1) return a%MOD;
+  if(n%2 == 1) return (a*modPow(a,n-1)) % MOD;
+  int t = modPow(a, n/2);
+  return (t*t) % MOD;
+}
+
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -169,15 +190,19 @@ signed main() {
   Vs str(n);
   VIN(str)
   REP(i,n){
-    REP(j,str[i].size()-1){
-      if(str[i][j]=='A' && str[i][j+1]=='B') x++;
+    char fr = str[i][0];
+    char bc = str[i][str[i].size()-1];
+    if(fr=='B' && bc=='A') x++;
+    else if(fr=='B') y++;
+    else if(bc=='A') z++;
+
+    REP(j,(str[i].size()-1)){
+      if(str[i][j]=='A' && str[i][j+1]=='B') d++;
     }
-    bool bb = str[i][0]=='B';
-    bool ab = str[i][str[i].size()-1]=='A';
-    if(bb) b++;
-    if(ab) a++;
-    if(bb && ab) c++;
   }
-  if(min(a,b)==c && c!=0) OUT(x + min(a,b) - 1);
-  else OUT(x + min(a,b));
+  int ans = 0;
+  if(x==0) ans = min(y,z) + d;
+  else if(y+z > 0) ans = min(y,z) + d + x;
+  else ans = d + x - 1;
+  OUT(ans);
 }

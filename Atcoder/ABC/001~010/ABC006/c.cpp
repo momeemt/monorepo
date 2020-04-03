@@ -187,18 +187,20 @@ signed main() {
 
   // ここから
   IN2(n,m);
-  Vi A(m);
-  Vi B(m);
-  VVi yd(n+1);
-  REP(i,m) IN2(A[i],B[i]);
-  REP(i,m) yd[A[i]].pb(B[i]);
-  REP(i,n)SORT(yd[i+1]);
-  REP(i,m) {
-    int ci = A[i]*1000000;
-    int id = lower_bound(ALL(yd[A[i]]),B[i]) - yd[A[i]].begin() + 1;
-    REP(j,6-to_string(ci).size()) cout << 0;
-    cout << ci;
-    REP(j,6-to_string(id).size()) cout << 0;
-    cout << id << endl;
+  // 方程式 2x+3y+4z = M, x+y+z = N を解く
+  // y + 2z = ex1 の式を作る
+  // y = ex - 2z
+  int ex1 = m - n * 2;
+  // zを全探索する
+  Vi ans(3,-1);
+  REP(i,5*10*10*10*10*10) {
+    y = ex1 - 2*i;
+    x = n - y - i;
+    if(x >= 0 && y >= 0 && i >= 0) {
+      ans[0] = x;
+      ans[1] = y;
+      ans[2] = i;
+    }
   }
+  VOUT2(ans)
 }
