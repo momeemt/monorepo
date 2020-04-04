@@ -175,29 +175,23 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
-long double f(int a, int n, int R) {
-    if (a <= 0 || a >= n) return 0;
-    long double r = R;
-    long double h = abs(r-(r+r)/n*a);
-    return sqrtl(r*r-h*h)*2;
-}
-
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
   cout << fixed << setprecision(15);
 
   // デフォルト変数定義
-  int n=0,m=0,a=0,c=0,d=0,x=0,y=0,z=0;
+  int n=0,m=0,a=0,b=0,c=0,d=0,x=0,y=0,z=0;
   string s="",t="";
   //
 
   // ここから
-  int r;
-  IN3(r,n,m);
-  long double ans = 0;
-  FOR(i,1,(n+m)){
-    ans += max(f(i,n,r), f(i-m,n,r));
+  IN(n);
+  n = n%30;
+  Vi A{1,2,3,4,5,6};
+  REP(i,n){
+    swap(A[i%5],A[i%5 + 1]);
   }
-  OUT(ans);
+  REP(i,6) cout<<A[i];
+  cout << endl;
 }
