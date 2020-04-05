@@ -175,22 +175,6 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
-M nhn;
-set<int> ans;
-
-void dfs(string s, int dig) {
-  if(dig == 0) {
-    ans.insert(stoll(s));
-  } else {
-    REP(i,10){
-      if(nhn[i]==0) {
-        string t = to_string(i);
-        dfs(t+s, dig-1);
-      }
-    }
-  }
-}
-
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -203,25 +187,25 @@ signed main() {
 
   // ここから
   int k;
-  IN2(n,k);
-  Vi D(k);
-  VIN(D)
-  int index = 0;
-  REP(i,k){
-    nhn[D[i]] = 1;
+  IN2(s,k);
+  n = s.size();
+  Vi diff(n,0);
+  REP(i,n){
+    if(s[i]!='a') diff[i] = 'z' - s[i] + 1;
+    else diff[i] = 0;
   }
-  REP(i,5) {
-    dfs("", i+1);
-  }
-  FOR(i,1,10){
-    if(nhn[i]==0) {
-      ans.insert(i);
+  REP(i,n){
+    if(k >= diff[i]) {
+      s[i] = 'a';
+      k -= diff[i];
     }
   }
-  for(auto p:ans) {
-    if(p >= n) {
-      OUT(p);
-      return 0;
+  if(k > 0) {
+    int step = k % 26;
+    REP(i,step){
+      if(s[n-1]=='z') s[n-1] = 'a';
+      else s[n-1]++;
     }
   }
+  OUT(s);
 }

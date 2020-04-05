@@ -175,22 +175,6 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
-M nhn;
-set<int> ans;
-
-void dfs(string s, int dig) {
-  if(dig == 0) {
-    ans.insert(stoll(s));
-  } else {
-    REP(i,10){
-      if(nhn[i]==0) {
-        string t = to_string(i);
-        dfs(t+s, dig-1);
-      }
-    }
-  }
-}
-
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -202,26 +186,48 @@ signed main() {
   //
 
   // ここから
-  int k;
-  IN2(n,k);
-  Vi D(k);
-  VIN(D)
-  int index = 0;
-  REP(i,k){
-    nhn[D[i]] = 1;
-  }
-  REP(i,5) {
-    dfs("", i+1);
-  }
-  FOR(i,1,10){
-    if(nhn[i]==0) {
-      ans.insert(i);
+  int h,w;
+  IN2(h,w);
+  Vs maze(h);
+  VIN(maze)
+  VVi ans(h, Vi(w));
+  REP(i,h){
+    int cnt = 0;
+    int memo = 0;
+    REP(j,w+1){
+      if(j==w || maze[i][j]=='#') {
+        FOR(k,memo,j){
+          ans[i][k] = cnt;
+        }
+        memo = j+1;
+        cnt = 0;
+        continue;
+      } else {
+        ++cnt;
+      }
     }
   }
-  for(auto p:ans) {
-    if(p >= n) {
-      OUT(p);
-      return 0;
+  REP(i,w){
+    int cnt = 0;
+    int memo = 0;
+    REP(j,h+1){
+      if(j==h || maze[j][i]=='#') {
+        FOR(k,memo,j){
+          ans[k][i] += cnt;
+        }
+        memo = j+1;
+        cnt = 0;
+        continue;
+      } else {
+        ++cnt;
+      }
     }
   }
+  int maxe = 0;
+  REP(i,h){
+    REP(j,w){
+      maxe = max(maxe, ans[i][j]);
+    }
+  }
+  OUT(maxe-1);
 }

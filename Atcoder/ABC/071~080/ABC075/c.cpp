@@ -175,22 +175,6 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
-M nhn;
-set<int> ans;
-
-void dfs(string s, int dig) {
-  if(dig == 0) {
-    ans.insert(stoll(s));
-  } else {
-    REP(i,10){
-      if(nhn[i]==0) {
-        string t = to_string(i);
-        dfs(t+s, dig-1);
-      }
-    }
-  }
-}
-
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -202,26 +186,31 @@ signed main() {
   //
 
   // ここから
-  int k;
-  IN2(n,k);
-  Vi D(k);
-  VIN(D)
-  int index = 0;
-  REP(i,k){
-    nhn[D[i]] = 1;
+  IN2(n,m);
+  Vi A(m);
+  Vi B(m);
+  int ans = 0;
+  REP(i,m){
+    IN2(A[i],B[i]);
   }
-  REP(i,5) {
-    dfs("", i+1);
-  }
-  FOR(i,1,10){
-    if(nhn[i]==0) {
-      ans.insert(i);
+  REP(i,m) {
+    UnionFind uf(n);
+
+    REP(j,m){
+      if(i==j) continue;
+      uf.merge(A[j]-1, B[j]-1);
     }
-  }
-  for(auto p:ans) {
-    if(p >= n) {
-      OUT(p);
-      return 0;
+
+    // グラフが連結か？
+    bool ok = true;
+    REP(j,n){
+      REP(k,n){
+        if(j>=k) continue;
+        if(!uf.issame(j,k)) ok = false;
+      }
     }
+
+    if(!ok) ++ans;
   }
+  OUT(ans);
 }
