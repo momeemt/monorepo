@@ -175,24 +175,6 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
-Vi L(8);
-int N,A,B,C;
-
-int dfs(int cur, int a, int b, int c) {
-  if(cur == N) {
-    if(min({a,b,c}) > 0) {
-      return abs(a-A)+abs(b-B)+abs(c-C)-30;
-    } else {
-      return INF;
-    }
-  }
-  int ret0 = dfs(cur+1, a, b, c);
-  int ret1 = dfs(cur+1, a+L[cur], b, c) + 10;
-  int ret2 = dfs(cur+1, a, b+L[cur], c) + 10;
-  int ret3 = dfs(cur+1, a, b, c+L[cur]) + 10;
-  return min({ret0, ret1, ret2, ret3});
-}
-
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -204,7 +186,16 @@ signed main() {
   //
 
   // ここから
-  IN4(N,A,B,C);
-  REP(i,N) IN(L[i]);
-  OUT(dfs(0,0,0,0));
+  int k;
+  IN2(n,k);
+  Vi h(n);
+  VIN(h)
+  Vi dp(n+10, INF);
+  dp[0] = 0;
+  FOR(i,1,n){
+    REP(j,k+1){
+      if(i >= j) chmin(dp[i], dp[i-j]+abs(h[i]-h[i-j]));
+    }
+  }
+  OUT(dp[n-1]);
 }

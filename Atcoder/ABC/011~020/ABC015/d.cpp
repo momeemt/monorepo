@@ -175,24 +175,6 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
-Vi L(8);
-int N,A,B,C;
-
-int dfs(int cur, int a, int b, int c) {
-  if(cur == N) {
-    if(min({a,b,c}) > 0) {
-      return abs(a-A)+abs(b-B)+abs(c-C)-30;
-    } else {
-      return INF;
-    }
-  }
-  int ret0 = dfs(cur+1, a, b, c);
-  int ret1 = dfs(cur+1, a+L[cur], b, c) + 10;
-  int ret2 = dfs(cur+1, a, b+L[cur], c) + 10;
-  int ret3 = dfs(cur+1, a, b, c+L[cur]) + 10;
-  return min({ret0, ret1, ret2, ret3});
-}
-
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -204,7 +186,35 @@ signed main() {
   //
 
   // ここから
-  IN4(N,A,B,C);
-  REP(i,N) IN(L[i]);
-  OUT(dfs(0,0,0,0));
+  int w,k;
+  IN3(w,n,k);
+  Vi A(n);
+  Vi B(n);
+  REP(i,n) IN2(A[i],B[i]);
+  vector<VVi> dp(n+10, VVi(w+10, Vi(k+10)));
+  REP(o,n){
+    //i個までの品物を選ぶ
+    REP(p,w){
+      //幅wを超えない選び方
+      REP(q,k){
+        //枚数kを超えない選び方
+        if(p - A[o] >= 0) {
+          if(k > 0) {
+            chmax(dp[o+1][p][q], dp[o][p-A[o]][q-1]+B[o]);
+          }
+        }
+        chmax(dp[o+1][p][q], dp[o][p][q]);
+      }
+    }
+  }
+  REP(i,n){
+    REP(j,w){
+      REP(p,k){
+        cout << dp[i][j][p] << " ";
+      }
+      cout << endl;
+    }
+    cout << endl;
+  }
+  OUT(dp[n][w][k]);
 }

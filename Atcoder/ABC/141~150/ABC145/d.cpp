@@ -175,22 +175,17 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
-Vi L(8);
-int N,A,B,C;
-
-int dfs(int cur, int a, int b, int c) {
-  if(cur == N) {
-    if(min({a,b,c}) > 0) {
-      return abs(a-A)+abs(b-B)+abs(c-C)-30;
-    } else {
-      return INF;
+// mod. m での a の逆元 a^{-1} を計算する
+long long modinv(long long a, long long m) {
+    long long b = m, u = 1, v = 0;
+    while (b) {
+        long long t = a / b;
+        a -= t * b; swap(a, b);
+        u -= t * v; swap(u, v);
     }
-  }
-  int ret0 = dfs(cur+1, a, b, c);
-  int ret1 = dfs(cur+1, a+L[cur], b, c) + 10;
-  int ret2 = dfs(cur+1, a, b+L[cur], c) + 10;
-  int ret3 = dfs(cur+1, a, b, c+L[cur]) + 10;
-  return min({ret0, ret1, ret2, ret3});
+    u %= m;
+    if (u < 0) u += m;
+    return u;
 }
 
 signed main() {
@@ -204,7 +199,34 @@ signed main() {
   //
 
   // ここから
-  IN4(N,A,B,C);
-  REP(i,N) IN(L[i]);
-  OUT(dfs(0,0,0,0));
+  IN2(x,y);
+  // 連立方程式を解く
+  if((2*x - y) % 3 != 0) {
+    OUT(0);
+    return 0;
+  }
+  b = (2*x - y) / 3;
+  a = x - 2 * b;
+  if(a < 0 || b < 0) {
+    OUT(0);
+    return 0;
+  }
+  int ans = 1;
+  int e1 = 1;
+  FOR(i,1,a+b+1){
+    //(a+b)!を求める
+    e1 *= i;
+    e1 %= MOD;
+  }
+  int e2 = 1;
+  // a!b!を求める
+  FOR(i,1,a+1){
+    e2 *= i;
+    e2 %= MOD;
+  }
+  FOR(i,1,b+1){
+    e2 *= i;
+    e2 %= MOD;
+  }
+  OUT(e1 * modinv(e2, MOD) % MOD);
 }
