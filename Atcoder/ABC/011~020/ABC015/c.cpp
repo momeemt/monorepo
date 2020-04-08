@@ -175,39 +175,43 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
+VVi ans(5, Vi(5));
+Vi result;
+int n;
+int k;
+
+bool dfs(int numQ, int value) {
+  if(numQ == n) {
+    return (value == 0);
+  }
+  REP(i,k){
+    if(dfs(numQ+1, value^ans[numQ][i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
   cout << fixed << setprecision(15);
 
   // デフォルト変数定義
-  int n=0,m=0,a=0,b=0,c=0,d=0,x=0,y=0,z=0;
+  int m=0,a=0,b=0,c=0,d=0,x=0,y=0,z=0;
   string s="",t="";
   //
 
   // ここから
-  IN(n);
-  Vi CV(n-1);
-  Vi SV(n-1);
-  Vi FV(n-1);
-  REP(i,n-1){
-    IN3(CV[i],SV[i],FV[i]);
-  }
-  Vi ans(n);
-  ans[n-1] = 0;
-  REP(i,n-1){
-    int time = 0;
-    FOR(j,i,n-1){
-      if(SV[j] > time) {
-        time = SV[j];
-      }
-      if(time % FV[j] == 0) {
-        time += CV[j];
-      } else {
-        time += FV[j]-(time%FV[j]) + CV[j];
-      }
+  IN2(n,k);
+  REP(i,n){
+    REP(j,k){
+      IN(ans[i][j]);
     }
-    ans[i] = time;
   }
-  VOUT(ans)
+  if(dfs(0,0)) {
+    OUT("Found");
+  } else {
+    OUT("Nothing");
+  }
 }

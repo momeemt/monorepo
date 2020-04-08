@@ -187,27 +187,16 @@ signed main() {
 
   // ここから
   IN(n);
-  Vi CV(n-1);
-  Vi SV(n-1);
-  Vi FV(n-1);
-  REP(i,n-1){
-    IN3(CV[i],SV[i],FV[i]);
+  Vi A(n);
+  VIN(A)
+  REP(i,n){
+    A[i] = A[i] - (i+1);
   }
-  Vi ans(n);
-  ans[n-1] = 0;
-  REP(i,n-1){
-    int time = 0;
-    FOR(j,i,n-1){
-      if(SV[j] > time) {
-        time = SV[j];
-      }
-      if(time % FV[j] == 0) {
-        time += CV[j];
-      } else {
-        time += FV[j]-(time%FV[j]) + CV[j];
-      }
-    }
-    ans[i] = time;
+  SORT(A);
+  int mid = A[n/2];
+  int ans = 0;
+  REP(i,n){
+    ans += abs(mid - A[i]);
   }
-  VOUT(ans)
+  OUT(ans);
 }

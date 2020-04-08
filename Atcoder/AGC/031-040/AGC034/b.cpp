@@ -186,28 +186,19 @@ signed main() {
   //
 
   // ここから
-  IN(n);
-  Vi CV(n-1);
-  Vi SV(n-1);
-  Vi FV(n-1);
+  IN(s);
+  n = s.size();
   REP(i,n-1){
-    IN3(CV[i],SV[i],FV[i]);
-  }
-  Vi ans(n);
-  ans[n-1] = 0;
-  REP(i,n-1){
-    int time = 0;
-    FOR(j,i,n-1){
-      if(SV[j] > time) {
-        time = SV[j];
-      }
-      if(time % FV[j] == 0) {
-        time += CV[j];
-      } else {
-        time += FV[j]-(time%FV[j]) + CV[j];
-      }
+    if(s[i]=='B'&&s[i+1]=='C'){
+      s=s.replace(i,2,"D");
+      --i;
     }
-    ans[i] = time;
   }
-  VOUT(ans)
+  int cnt=0,tmp=0;
+  REP(i,n){
+    if(s[i]=='A') ++tmp;
+    else if(s[i]=='D') cnt+=tmp;
+    else tmp=0;
+  }
+  OUT(cnt);
 }

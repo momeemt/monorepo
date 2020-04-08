@@ -187,27 +187,25 @@ signed main() {
 
   // ここから
   IN(n);
-  Vi CV(n-1);
-  Vi SV(n-1);
-  Vi FV(n-1);
-  REP(i,n-1){
-    IN3(CV[i],SV[i],FV[i]);
-  }
-  Vi ans(n);
-  ans[n-1] = 0;
-  REP(i,n-1){
-    int time = 0;
-    FOR(j,i,n-1){
-      if(SV[j] > time) {
-        time = SV[j];
-      }
-      if(time % FV[j] == 0) {
-        time += CV[j];
-      } else {
-        time += FV[j]-(time%FV[j]) + CV[j];
+  Vi B(n);
+  VIN(B)
+  Vi ans;
+  int size = n;
+  while(!B.empty()) {
+    int best = -1;
+    REP(i,size) {
+      if(B[i] == i+1) {
+        best = i;
       }
     }
-    ans[i] = time;
+    if(best == -1) {
+      OUT("-1");
+      return 0;
+    }
+    ans.pb(best+1);
+    B.erase(B.begin()+best);
+    --size;
   }
+  REV(ans);
   VOUT(ans)
 }

@@ -187,27 +187,26 @@ signed main() {
 
   // ここから
   IN(n);
-  Vi CV(n-1);
-  Vi SV(n-1);
-  Vi FV(n-1);
-  REP(i,n-1){
-    IN3(CV[i],SV[i],FV[i]);
-  }
-  Vi ans(n);
-  ans[n-1] = 0;
-  REP(i,n-1){
-    int time = 0;
-    FOR(j,i,n-1){
-      if(SV[j] > time) {
-        time = SV[j];
+  vector<P> pos(n);
+  REP(i,n) IN2(pos[i].first, pos[i].second);
+  map<P, int> cost;
+  REP(i,n){
+    REP(j,n){
+      if(i <= j) continue;
+      int xp = pos[i].first - pos[j].first;
+      int yp = pos[i].second - pos[j].second;
+      if(xp < 0) {
+        xp *= -1;
+        yp *= -1;
+      } else if(xp == 0) {
+        yp = abs(yp);
       }
-      if(time % FV[j] == 0) {
-        time += CV[j];
-      } else {
-        time += FV[j]-(time%FV[j]) + CV[j];
-      }
+      cost[make_pair(xp,yp)]++;
     }
-    ans[i] = time;
   }
-  VOUT(ans)
+  int ans = n;
+  for(auto p:cost){
+    ans = min(ans, n-p.second);
+  }
+  OUT(ans);
 }

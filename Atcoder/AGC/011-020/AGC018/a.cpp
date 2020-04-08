@@ -186,28 +186,23 @@ signed main() {
   //
 
   // ここから
-  IN(n);
-  Vi CV(n-1);
-  Vi SV(n-1);
-  Vi FV(n-1);
-  REP(i,n-1){
-    IN3(CV[i],SV[i],FV[i]);
+  int k;
+  IN2(n,k);
+  Vi A(n);
+  VIN(A)
+  int maxe=0;
+  REP(i,n){
+    maxe = max(maxe,A[i]);
   }
-  Vi ans(n);
-  ans[n-1] = 0;
-  REP(i,n-1){
-    int time = 0;
-    FOR(j,i,n-1){
-      if(SV[j] > time) {
-        time = SV[j];
-      }
-      if(time % FV[j] == 0) {
-        time += CV[j];
-      } else {
-        time += FV[j]-(time%FV[j]) + CV[j];
-      }
-    }
-    ans[i] = time;
+  bool nover = maxe >= k;
+  int gcdn = gcd(A[0],A[1]);
+  REP(i,n){
+    gcdn = gcd(A[i],gcdn);
   }
-  VOUT(ans)
+  bool cdiv = k % gcdn == 0;
+  if(nover && cdiv) {
+    OUT("POSSIBLE");
+  } else {
+    OUT("IMPOSSIBLE");
+  }
 }

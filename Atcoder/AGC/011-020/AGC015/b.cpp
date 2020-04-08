@@ -186,28 +186,17 @@ signed main() {
   //
 
   // ここから
-  IN(n);
-  Vi CV(n-1);
-  Vi SV(n-1);
-  Vi FV(n-1);
-  REP(i,n-1){
-    IN3(CV[i],SV[i],FV[i]);
-  }
-  Vi ans(n);
-  ans[n-1] = 0;
-  REP(i,n-1){
-    int time = 0;
-    FOR(j,i,n-1){
-      if(SV[j] > time) {
-        time = SV[j];
-      }
-      if(time % FV[j] == 0) {
-        time += CV[j];
-      } else {
-        time += FV[j]-(time%FV[j]) + CV[j];
-      }
+  IN(s);
+  n = s.size();
+  int ans = 0;
+  REP(i,n){
+    if(s[i]=='U') {
+      ans += n-i-1; //上の階
+      ans += i * 2; //下の階
+    } else {
+      ans += i; //上の階
+      ans += (n-i-1)*2; //上の階
     }
-    ans[i] = time;
   }
-  VOUT(ans)
+  OUT(ans);
 }
