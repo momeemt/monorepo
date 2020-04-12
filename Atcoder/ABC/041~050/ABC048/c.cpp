@@ -186,29 +186,23 @@ signed main() {
   //
 
   // ここから
-  IN2(n,s);
-  Vs vals;
-  string tmp = "ABXY";
-  REP(i,4){
-     REP(j,4){
-       string u = {tmp[i], tmp[j]};
-       vals.pb(u);
-     }
-  }
-  int cnt = INF;
-  REP(i,16){
-    REP(j,16){
-      int tmp_cnt = 0;
-      REP(k,n-1){
-        string u = s.substr(k,2);
-        if(u==vals[i] || u==vals[j]) {
-          ++k;
-        }
-        ++tmp_cnt;
+  IN2(n,x);
+  Vi A(n);
+  VIN(A)
+  int ans = 0;
+  REP(i,n-1) {
+    // 貪欲に見ていく
+    if((A[i]+A[i+1]) > x) {
+      int diff = A[i] + A[i+1] - x;
+      ans += diff;
+      if(A[i+1] > diff) {
+        A[i+1] -= diff;
+      } else {
+        int res = diff - A[i+1];
+        A[i+1] = 0;
+        A[i] -= res;
       }
-      if(n%2==1) ++tmp_cnt;
-      cnt = min(cnt, tmp_cnt);
     }
   }
-  OUT(cnt);
+  OUT(ans);
 }

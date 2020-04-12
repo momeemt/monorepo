@@ -187,28 +187,67 @@ signed main() {
 
   // ここから
   IN2(n,s);
-  Vs vals;
-  string tmp = "ABXY";
-  REP(i,4){
-     REP(j,4){
-       string u = {tmp[i], tmp[j]};
-       vals.pb(u);
-     }
-  }
-  int cnt = INF;
-  REP(i,16){
-    REP(j,16){
-      int tmp_cnt = 0;
-      REP(k,n-1){
-        string u = s.substr(k,2);
-        if(u==vals[i] || u==vals[j]) {
-          ++k;
-        }
-        ++tmp_cnt;
-      }
-      if(n%2==1) ++tmp_cnt;
-      cnt = min(cnt, tmp_cnt);
+  Vi R(n);
+  Vi G(n);
+  Vi B(n);
+  if(s[0]=='R') R[0]=1;
+  else if(s[0]=='G') G[0]=1;
+  else B[0]=1;
+  FOR(i,1,n){
+    if(s[i]=='R') {
+      R[i] = R[i-1] + 1; 
+    } else {
+      R[i] = R[i-1];
+    }
+    if(s[i]=='G') {
+      G[i] = G[i-1] + 1;
+    } else {
+      G[i] = G[i-1];
+    }
+    if(s[i]=='B') {
+      B[i] = B[i-1] + 1;
+    } else {
+      B[i] = B[i-1];
     }
   }
-  OUT(cnt);
+  REP(i,n){
+    FOR(j,i+1,n){
+      if(s[i] == s[j]) continue;
+      // iとjが固定
+      int diff = j-i;
+      bool skip = false;
+      if(j+diff >= n) skip = true;
+      // もし j+diff が 残りの一つ -1
+      // そうでないなら 累積を足す
+      string s2 = {s[i], s[j]};
+      SORT(s2);
+      char tag;
+      if(s2=="BG") tag = 'R';
+      else if(s2=="BR") tag = 'G';
+      else tag='B';
+      if(!skip && s[j+diff]==tag) {
+        if(tag=='R') x += R[n-1]-R[j]-1;
+        else if(tag=='G') x += G[n-1]-G[j]-1;
+        else x += B[n-1]-B[j]-1;
+      } else {
+        if(tag=='R') x += R[n-1]-R[j];
+        else if(tag=='G') x += G[n-1]-G[j];
+        else x += B[n-1]-B[j];
+      }
+      // FOR(k,j+1,n){
+      //   if(s[i]==s[k] || s[j]==s[k]) continue;
+      //   if(j-i == k-j) continue; 
+      //   ++x;
+      // }
+    }
+  }
+  OUT(x);
+  // VOUT2(R)
+  // VOUT2(G)
+  // VOUT2(B)
 }
+
+/*
+39
+RBRBGRBGGBBRRGBBRRRBGGBRBGBRBGBRBBBGBBB
+*/

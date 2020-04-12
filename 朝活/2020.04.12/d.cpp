@@ -186,29 +186,35 @@ signed main() {
   //
 
   // ここから
-  IN2(n,s);
-  Vs vals;
-  string tmp = "ABXY";
-  REP(i,4){
-     REP(j,4){
-       string u = {tmp[i], tmp[j]};
-       vals.pb(u);
-     }
-  }
-  int cnt = INF;
-  REP(i,16){
-    REP(j,16){
-      int tmp_cnt = 0;
-      REP(k,n-1){
-        string u = s.substr(k,2);
-        if(u==vals[i] || u==vals[j]) {
-          ++k;
-        }
-        ++tmp_cnt;
-      }
-      if(n%2==1) ++tmp_cnt;
-      cnt = min(cnt, tmp_cnt);
+  IN(n);
+  Vi A(n);
+  VVi X(n, Vi(n-1));
+  VVi Y(n, Vi(n-1));
+  REP(i,n){
+    IN(A[i]);
+    REP(j,A[i]){
+      IN2(X[i][j], Y[i][j]);
     }
   }
-  OUT(cnt);
+  int ans = 0;
+  REP(bit, 1<<n){
+    // 全パターン試す
+    bool ok = true;
+    REP(i,n) {
+      if(bit & (1<<i)) {
+        REP(j,A[i]){
+          bool res = Y[i][j]; // 内容
+          bool acc = bit & (1 << X[i][j]-1); // 実際は
+          if(res != acc) {
+            // 矛盾
+            ok = false;
+          }
+        }
+      }
+    }
+    if(ok) {
+      ans = max(ans, (int)__builtin_popcount(bit));
+    }
+  }
+  OUT(ans);
 }

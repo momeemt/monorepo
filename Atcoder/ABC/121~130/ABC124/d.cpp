@@ -186,29 +186,31 @@ signed main() {
   //
 
   // ここから
-  IN2(n,s);
-  Vs vals;
-  string tmp = "ABXY";
-  REP(i,4){
-     REP(j,4){
-       string u = {tmp[i], tmp[j]};
-       vals.pb(u);
-     }
-  }
-  int cnt = INF;
-  REP(i,16){
-    REP(j,16){
-      int tmp_cnt = 0;
-      REP(k,n-1){
-        string u = s.substr(k,2);
-        if(u==vals[i] || u==vals[j]) {
-          ++k;
-        }
-        ++tmp_cnt;
-      }
-      if(n%2==1) ++tmp_cnt;
-      cnt = min(cnt, tmp_cnt);
+  int k;
+  IN3(n,k,s);
+  Vi V;
+  int cnt = 1;
+  REP(i,n){
+    if(i==n-1 || s[i]!=s[i+1]) {
+      if(s[i]=='0') V.pb(-cnt);
+      else V.pb(cnt);
+      cnt = 1;
+    } else {
+      ++cnt;
     }
   }
-  OUT(cnt);
+  int ans = 0;
+  REP(i,V.size()){
+    int cnt = 0;
+    int tmp = 0;
+    int j = i;
+    while(j < V.size() && cnt <= k) {
+      if(V[j] < 0) ++cnt;
+      if(cnt > k) break;
+      tmp += abs(V[j]);
+      ++j;
+    }
+    ans = max(ans, tmp);
+  }
+  OUT(ans);
 }

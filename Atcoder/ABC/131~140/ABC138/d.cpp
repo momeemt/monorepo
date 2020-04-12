@@ -175,16 +175,46 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
+
+
+
+
+
+
+
+int N,Q;
+Vi edges[200000];
+int num[200000];
+
+void dfs(int i, int p) {
+  for(int j: edges[i]) {
+    if(j != p) {
+      num[j] += num[i];
+      dfs(j, i);
+    }
+  }
+}
+
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
   cout << fixed << setprecision(15);
-
-  // デフォルト変数定義
-  int n=0,m=0,a=0,b=0,c=0,d=0,x=0,y=0,z=0;
-  string s="",t="";
-  //
-
   // ここから
 
+  IN2(N,Q);
+  REP(i,N-1){
+    int a,b;
+    IN2(a,b);
+    edges[a-1].pb(b-1);
+    edges[b-1].pb(a-1);
+  }
+  REP(i,Q){
+    int p,x;
+    IN2(p,x);
+    num[p-1] += x;
+  }
+  dfs(0, -1);
+  REP(i,N){
+    cout << num[i] << " \n"[i==N-1];
+  }
 }

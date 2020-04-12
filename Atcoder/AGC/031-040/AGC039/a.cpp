@@ -6,6 +6,7 @@ using ll = long long;
 
 #define FOR(i, a, b) for (int i = (a); i < (b); ++i)
 #define REP(i, n) FOR(i, 0, n)
+#define PER(i, n) for (int i = (n-1); i >= 0; --i)
 #define ALL(V) (V).begin(),(V).end()
 #define SORT(V) sort(ALL(V)) //小さい方からソート
 #define REV(V) reverse(ALL(V)) //リバース
@@ -60,6 +61,16 @@ int lcm(int a, int b){return a * b / gcd(a, b);}
 string toStrUp(string str){char diff = 'A'-'a';REP(i,str.size()) str[i] += diff;return str;}
 string gCh(string str, int key){return str.substr(key,1);}
 
+int f(string s) {
+  int n = s.size();
+  int sum = 0;
+  for(int i = 0, j = 0; i < n; i = j) {
+    while(j < n && s[i] == s[j]) ++j;
+    sum += (j-i) / 2;
+  }
+  return sum;
+}
+
 signed main() {
   RAPID;
   // デフォルト変数定義
@@ -68,15 +79,21 @@ signed main() {
   //
 
   // ここから
-  IN2(s,x);
-  REP(i,s.size()-1){
-    if(s[i]==s[i+1]){
-      z++;
-    }else{
-      y += (z+1)/2;
-      z = 0;
+  int k;
+  IN2(s,k);
+
+  bool all_same = true;
+  REP(i,s.size()-1) {
+    if(s[i]!=s[i+1]){
+      all_same = false;
     }
   }
-  y += (z+1)/2;
-  OUT(y*x);
+
+  if(all_same) {
+    OUT(s.size()*k/2);
+  } else {
+    int cnt1 = f(s);
+    int cnt2 = f(s+s);
+    OUT(cnt1 + (k-1) * (cnt2-cnt1));
+  }
 }

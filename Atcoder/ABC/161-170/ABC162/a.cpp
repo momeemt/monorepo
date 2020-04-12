@@ -186,29 +186,10 @@ signed main() {
   //
 
   // ここから
-  IN2(n,s);
-  Vs vals;
-  string tmp = "ABXY";
-  REP(i,4){
-     REP(j,4){
-       string u = {tmp[i], tmp[j]};
-       vals.pb(u);
-     }
+  IN(s);
+  if(s[0]=='7' || s[1]=='7' || s[2]=='7') {
+    Yes(1);
+  } else {
+    Yes(0);
   }
-  int cnt = INF;
-  REP(i,16){
-    REP(j,16){
-      int tmp_cnt = 0;
-      REP(k,n-1){
-        string u = s.substr(k,2);
-        if(u==vals[i] || u==vals[j]) {
-          ++k;
-        }
-        ++tmp_cnt;
-      }
-      if(n%2==1) ++tmp_cnt;
-      cnt = min(cnt, tmp_cnt);
-    }
-  }
-  OUT(cnt);
 }

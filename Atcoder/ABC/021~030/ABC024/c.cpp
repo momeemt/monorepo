@@ -40,7 +40,6 @@ using namespace std;
 #define Vs vector<string>
 #define Vc vector<char>
 #define M map<ll,ll>
-#define S set<ll>
 #define PQ priority_queue<ll>
 #define PQG priority_queue<ll,V,greater<ll>
 
@@ -186,29 +185,35 @@ signed main() {
   //
 
   // ここから
-  IN2(n,s);
-  Vs vals;
-  string tmp = "ABXY";
-  REP(i,4){
-     REP(j,4){
-       string u = {tmp[i], tmp[j]};
-       vals.pb(u);
-     }
+  int k;
+  IN3(n,d,k);
+  Vi L(d);
+  Vi R(d);
+  REP(i,d){
+    IN2(L[i],R[i]);
   }
-  int cnt = INF;
-  REP(i,16){
-    REP(j,16){
-      int tmp_cnt = 0;
-      REP(k,n-1){
-        string u = s.substr(k,2);
-        if(u==vals[i] || u==vals[j]) {
-          ++k;
-        }
-        ++tmp_cnt;
+  Vi S(k);
+  Vi T(k);
+  vector<P> able(k);
+  REP(i,k){
+    IN2(S[i],T[i]);
+    able[i].first = S[i];
+    able[i].second = S[i];
+  }
+  Vi ans(k, INF);
+  REP(i,d){
+    REP(j,k){
+      Vi tmp{L[i],R[i]};
+      SORT(tmp);
+      if(MIDe(tmp[0],able[j].first,tmp[1]) or MIDe(tmp[0],able[j].second,tmp[1])) {
+        able[j].first = min(able[j].first, L[i]);
+        able[j].second = max(able[j].second, R[i]);
       }
-      if(n%2==1) ++tmp_cnt;
-      cnt = min(cnt, tmp_cnt);
+
+      if(MIDe(able[j].first, T[j] ,able[j].second)) {
+        ans[j] = min(ans[j], i+1);
+      }
     }
   }
-  OUT(cnt);
+  VOUT(ans)
 }
