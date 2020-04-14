@@ -1,6 +1,4 @@
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
+#pragma gcc optimize("Ofast")
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -235,21 +233,6 @@ vector<T> bellman_ford(Edges<T> &edges, int V, int s) {
   return dist;
 }
 
-// 全点対間最短路 O(V^3)
-template<typename T>
-void warshall_floyd(Matrix<T> &g, T lINF) {
-  ll n = g.size();
-  REP(k,n){
-    REP(i,n){
-      REP(j,n){
-        if(g[i][k] == lINF || g[k][j] == lINF) continue;
-        g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
-      }
-    }
-  }
-  return;
-}
-
 // 入出力高速化
 void fast(void) {
   cin.tie(0);
@@ -439,4 +422,18 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
+  int v,e,r;
+  in(v,e,r);
+  Edges<int> es;
+  REP(i,e) {
+    int a,b,c;
+    in(a,b,c);
+    es.emplace_back(a,b,c);
+  }
+  auto dists = bellman_ford(es, v, r);
+  if(dists.empty()) out("NEGATIVE CYCLE");
+  for(auto &dist : dists) {
+    if(dist == numeric_limits<int>::max()) out("INF");
+    else out(dist);
+  }
 }

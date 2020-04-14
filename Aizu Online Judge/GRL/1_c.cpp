@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define int long long // 禁忌
+//#define int long long // 禁忌
 using ll = long long;
 using lld = long double;
 #define P pair<ll,ll>
@@ -439,4 +439,28 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
+  int v,e;
+  in(v,e);
+  Matrix<int> mat(v, vector<int>(v,INT_MAX));
+  REP(i,v) mat[i][i] = 0;
+  REP(i,e) {
+    int a,b,c;
+    in(a,b,c);
+    mat[a][b] = c;
+  }
+  warshall_floyd(mat, INT_MAX);
+  REP(i,v) {
+    if(mat[i][i] < 0) {
+      out("NEGATIVE CYCLE");
+      return 0;
+    }
+  }
+  REP(i,v) {
+    REP(j,v) {
+      if(j > 0) putchar(' ');
+      if(mat[i][j] == INT_MAX) printf("INF");
+      else printf("%d", mat[i][j]);
+    }
+    putchar('\n');
+  }
 }

@@ -186,14 +186,13 @@ signed main() {
   //
 
   // ここから
-  IN(n);
-  Vi R(n);
-  VIN(R)
-  int mine = R[0];
-  int maxe = -INF;
-  FOR(i,1,n){
-    maxe = max(maxe, R[i]-mine);
-    mine = min(mine, R[i]);
+  IN(s);
+  stack<char> s;
+  REP(i,s.size()) {
+    if(s[i]==' ') {
+      continue;
+    } else {
+      
+    }
   }
-  OUT(maxe);
 }

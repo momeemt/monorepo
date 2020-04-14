@@ -175,6 +175,23 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
+int cnt = 0;
+
+Vi bubbleSort(Vi A, int n) {
+  bool flag = true;
+  while(flag) {
+    flag = false;
+    for(int i = n-1; i >= 1; --i) {
+      if(A[i] < A[i-1]) {
+        ++cnt;
+        swap(A[i], A[i-1]);
+        flag = true;
+      }
+    }
+  }
+  return A;
+}
+
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -187,13 +204,9 @@ signed main() {
 
   // ここから
   IN(n);
-  Vi R(n);
-  VIN(R)
-  int mine = R[0];
-  int maxe = -INF;
-  FOR(i,1,n){
-    maxe = max(maxe, R[i]-mine);
-    mine = min(mine, R[i]);
-  }
-  OUT(maxe);
+  Vi A(n);
+  VIN(A)
+  Vi sorted = bubbleSort(A,n);
+  VOUT2(sorted);
+  OUT(cnt);
 }

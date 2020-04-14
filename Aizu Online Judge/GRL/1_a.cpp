@@ -1,6 +1,4 @@
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
+#pragma gcc optimize("Ofast")
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -191,7 +189,7 @@ struct ModInt {
 };
 using modint = ModInt< MOD >;
 
-// dijkstra O(E logV)
+// dijkstra
 template<typename T>
 vector<T> dijkstra(WeightedGraph<T> &g, int s) {
   const auto INF2 = numeric_limits<T>::max();
@@ -214,40 +212,6 @@ vector<T> dijkstra(WeightedGraph<T> &g, int s) {
     }
   }
   return dist;
-}
-
-// 負の辺を持つ単一始点最短路 O(VE)
-template<typename T>
-vector<T> bellman_ford(Edges<T> &edges, int V, int s) {
-  const auto INF2 = numeric_limits<T>::max();
-  vector<T> dist(V, INF2);
-  dist[s] = 0;
-  REP(i,(V-1)) {
-    for(auto &e : edges) {
-      if(dist[e.src] == INF2) continue;
-      dist[e.to] = min(dist[e.to], dist[e.src] + e.cost);
-    }
-  }
-  for(auto &e : edges) {
-    if(dist[e.src] == INF2) continue;
-    if(dist[e.src] + e.cost < dist[e.to]) return vector<T>();
-  }
-  return dist;
-}
-
-// 全点対間最短路 O(V^3)
-template<typename T>
-void warshall_floyd(Matrix<T> &g, T lINF) {
-  ll n = g.size();
-  REP(k,n){
-    REP(i,n){
-      REP(j,n){
-        if(g[i][k] == lINF || g[k][j] == lINF) continue;
-        g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
-      }
-    }
-  }
-  return;
 }
 
 // 入出力高速化
@@ -439,4 +403,16 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
+  int v,e,r;
+  in(v,e,r);
+  WeightedGraph<int> G(v);
+  REP(i,e) {
+    int a,b,c;
+    in(a,b,c);
+    G[a].emplace_back(b,c);
+  }
+  for(auto &dist: dijkstra(G, r)) {
+    if(dist == numeric_limits<int>::max()) out("INF");
+    else out(dist);
+  }
 }

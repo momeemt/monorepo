@@ -175,6 +175,22 @@ int modPow(int a, int n) {
   return (t*t) % MOD;
 }
 
+int cnt = 0;
+
+Vi selectionSort(Vi A, int n) {
+  REP(i,n) {
+    int mine = i;
+    FOR(j,i,n) {
+      if(A[j] < A[mine]) {
+        mine = j;
+      }
+    }
+    if(A[i]!=A[mine]) ++cnt;
+    swap(A[i],A[mine]);
+  }
+  return A;
+}
+
 signed main() {
   cin.tie(0);
   ios::sync_with_stdio(false);
@@ -187,13 +203,9 @@ signed main() {
 
   // ここから
   IN(n);
-  Vi R(n);
-  VIN(R)
-  int mine = R[0];
-  int maxe = -INF;
-  FOR(i,1,n){
-    maxe = max(maxe, R[i]-mine);
-    mine = min(mine, R[i]);
-  }
-  OUT(maxe);
+  Vi A(n);
+  VIN(A)
+  Vi sorted = selectionSort(A, n);
+  VOUT2(sorted)
+  OUT(cnt);
 }
