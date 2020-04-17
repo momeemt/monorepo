@@ -439,16 +439,32 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi R; Vi B;
-  REP(i,n) {
-    int a; char b;
-    in(a,b);
-    if(b=='R') R.pb(a);
-    else B.pb(a);
+  in(n,m);
+  Matrix<int> mat(n, Vi(n, __LONG_LONG_MAX__));
+  REP(i,n) mat[i][i] = 0;
+  REP(i,m){
+    int a,b,c;
+    in(a,b,c);
+    mat[a][b] = c;
   }
-  SORT(R);
-  SORT(B);
-  vout(R);
-  vout(B);
+  warshall_floyd(mat, __LONG_LONG_MAX__);
+  int mine = __LONG_LONG_MAX__;
+  REP(i,n){
+    REP(j,n){
+      mine = min(mine, mat[i][j]);
+    }
+  }
+  // if(mine == __LONG_LONG_MAX__) {
+  //   out(-1);
+  // } else {
+  //   out(mine);
+  // }
+  REP(i,n) {
+    REP(j,n) {
+      if(j > 0) putchar(' ');
+      if(mat[i][j] == __LONG_LONG_MAX__) printf("INF");
+      else printf("%d", mat[i][j]);
+    }
+    putchar('\n');
+  }
 }

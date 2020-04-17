@@ -440,15 +440,10 @@ signed main() {
   // ここから
   int n,m,k; string s;
   in(n);
-  Vi R; Vi B;
-  REP(i,n) {
-    int a; char b;
-    in(a,b);
-    if(b=='R') R.pb(a);
-    else B.pb(a);
+  Matrix<int> mat()
+  REP(i,n){
+    REP(j,n){
+
+    }
   }
-  SORT(R);
-  SORT(B);
-  vout(R);
-  vout(B);
 }

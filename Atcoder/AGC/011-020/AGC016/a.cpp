@@ -66,7 +66,7 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) emplace_back(n)
+#define pb(n) push_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -433,22 +433,48 @@ inline bool chmax(T& a, T b) {
   return false;
 }
 
+bool allCharSame(string s) {
+  char first = s[0];
+  bool ok = true;
+  REP(i,s.size()) {
+    if(s[i]!=first) ok = false;
+  }
+  return ok;
+}
+
+int ans = INF;
+map<string,bool> mp;
+
+void dfs(string s, int cnt, char target) {
+  if(mp[s]) return; //一回調べた文字は探索不要
+  if(allCharSame(s)) {
+    ans = min(ans, cnt);
+    return;
+  }
+  // targetをできるだけ増やす 他の文字はどうでもいい
+  map<int,bool> pos;
+  REP(i,s.size()) {
+    if(s[i]==target) pos[i] = true;
+  }
+  string t;
+  REP(i,s.size()-1) {
+    if(pos[i]) t.pb(target);
+    else if(pos[i+1]) t.pb(target);
+    else t.pb(s[i]);
+  }
+  dfs(t, cnt+1, target);
+}
+
 signed main() {
   fast();
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi R; Vi B;
-  REP(i,n) {
-    int a; char b;
-    in(a,b);
-    if(b=='R') R.pb(a);
-    else B.pb(a);
+  // 全探索すれば良さそう？
+  in(s);
+  REP(i,s.size()){
+    dfs(s, 0, s[i]);
   }
-  SORT(R);
-  SORT(B);
-  vout(R);
-  vout(B);
+  out(ans);
 }
