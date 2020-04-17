@@ -261,7 +261,10 @@ void fast(void) {
 // vectorの合計値を返します
 ll vsum(Vi V) {
   ll res = 0LL;
-  REP(i,V.size()) res += V[i];
+  ll size = V.size();
+  REP(i,size) {
+    res += V.at(i);
+  }
   return res;
 }
 
@@ -269,6 +272,18 @@ ll vsum(Vi V) {
 lld vave(Vi V) {
   lld size = V.size();
   return (lld)vsum(V) / size;
+}
+
+// vectorの最大値を返します
+ll vmax(Vi V) {
+  RSORT(V);
+  return V.at(0);
+}
+
+// vectorの最小値を返します
+ll vmin(Vi V) {
+  SORT(V);
+  return V.at(0);
 }
 
 // 数値 b が a より大きく、 c より小さいことを判定します
@@ -321,7 +336,8 @@ void in(First& first, Rest&... rest) {
 // vectorを標準入力
 template<typename T>
 void vin(T& V) {
-  REP(i,V.size()) {
+  ll size = V.size();
+  REP(i,size) {
     cin >> V[i];
   }
   return;
@@ -347,16 +363,18 @@ void out(First first, Rest... rest) {
 // vectorを標準出力
 template<typename T>
 void vout(T& V) {
-  REP(i,V.size()) {
-    cout << V[i] << endl;
+  ll size = V.size();
+  REP(i,size) {
+    cout << V.at(i) << endl;
   }
 }
 
 // vectorを１行に標準出力
 template<typename T>
 void vout2(T& V) {
-  REP(i,V.size()) {
-    cout << V[i] << " \n"[i==(V.size()-1)];
+  ll size = V.size();
+  REP(i,size) {
+    cout << V[i] << " \n"[i==(size-1)];
   }
 }
 
