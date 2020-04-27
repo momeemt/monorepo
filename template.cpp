@@ -1,6 +1,3 @@
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -457,4 +454,7 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
+  
+
+  
 }
