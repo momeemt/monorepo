@@ -1,6 +1,3 @@
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -457,29 +454,12 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi V(n);
-  vin(V);
-  Vi sta;
-  REP(i,n){
-    if(sta.empty()) {
-      sta.pb(V[i]);
-      continue;
-    }
-
-    SORT(sta); //ソートする
-    bool ok = false;
-    REP(j,sta.size()) {
-      if(sta[j] >= V[i]) {
-        ok = true;
-        sta[j] = V[i];
-        break;
-      }
-    }
-
-    if(ok) continue;
-
-    sta.pb(V[i]);
+  int a,b,c,d;
+  in(a,b,c,d);
+  while(a > 0 && c > 0) {
+    c -= b;
+    if(c <= 0) break;
+    a -= d;
   }
-  out(sta.size());
+  Yes(a > 0);
 }

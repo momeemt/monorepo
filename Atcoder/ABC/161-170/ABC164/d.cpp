@@ -1,6 +1,3 @@
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -457,29 +454,29 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi V(n);
-  vin(V);
-  Vi sta;
+  in(s);
+  n = s.size();
+  int c = 0;
   REP(i,n){
-    if(sta.empty()) {
-      sta.pb(V[i]);
-      continue;
+    int sum = 0;
+    FOR(j,i,n){
+      sum += (s[j]-'0');
+      if(j-i+1 < 4) continue;
+      if(sum%3!=0) continue;
+      string t = s.substr(i,j-i+1);
+      int p = stoll(t);
+      if(p%2019==0) ++c;
     }
-
-    SORT(sta); //ソートする
-    bool ok = false;
-    REP(j,sta.size()) {
-      if(sta[j] >= V[i]) {
-        ok = true;
-        sta[j] = V[i];
-        break;
-      }
-    }
-
-    if(ok) continue;
-
-    sta.pb(V[i]);
   }
-  out(sta.size());
+  Vi hutaketame;
+  REP(i,1000){
+    int cv = 2019*(i+1);
+    int ss = (to_string(cv)).size();
+    REP(j,(15-ss)) cout<<" ";
+    int sums = 0;
+    REP(j,ss) sums += to_string(cv)[j]-'0';
+    cout<<cv<<"  "<<sums<<endl;
+    hutaketame.pb(to_string(cv)[ss-2]-'0');
+  }
+  out(c);
 }

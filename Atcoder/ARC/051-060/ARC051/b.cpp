@@ -378,9 +378,13 @@ void vout2(T& V) {
   }
 }
 
+int counter = 0;
 // 最大公約数を求めます
 int gcd(int a, int b) {
-  return b != 0 ? gcd(b, a % b) : a;
+  if (b == 0) return a;
+  counter++;
+  out(a,b);
+  return gcd(b, a%b);
 }
 
 // 最小公倍数を求めます
@@ -457,29 +461,12 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi V(n);
-  vin(V);
-  Vi sta;
-  REP(i,n){
-    if(sta.empty()) {
-      sta.pb(V[i]);
-      continue;
-    }
-
-    SORT(sta); //ソートする
-    bool ok = false;
-    REP(j,sta.size()) {
-      if(sta[j] >= V[i]) {
-        ok = true;
-        sta[j] = V[i];
-        break;
-      }
-    }
-
-    if(ok) continue;
-
-    sta.pb(V[i]);
+  in(k);
+  Vi fib(2);
+  fib[0] = 1;
+  fib[1] = 1;
+  FOR(i,2,42) {
+    fib.pb(fib[i-1] + fib[i-2]);
   }
-  out(sta.size());
+  out(fib[k+1],fib[k]);
 }
