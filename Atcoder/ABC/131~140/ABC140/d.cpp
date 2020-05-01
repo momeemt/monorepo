@@ -455,5 +455,10 @@ signed main() {
   // ここから
   int n,m,k; string s;
   in(n,k,s);
-  // LとRをそれぞれ全探索すればいいっぽい？
+  int ans = 0;
+  REP(i,n-1) {
+    if(s[i]==s[i+1]) ans++;
+  }
+  ans += 2 * k;
+  out(min(n-1, ans));
 }

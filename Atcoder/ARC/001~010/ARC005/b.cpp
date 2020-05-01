@@ -453,49 +453,27 @@ signed main() {
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n,m; string s;
-  in(s);
-  //s,h,d,cを全て試す
-  Vs card{"S","H","D","C"};
-  Vc cardt{'S','H','D','C'};
-  Vs num{"10","J","Q","K","A"};
-  map<string, string> mp;
-  bool nothing = false;
-  REP(i,4) {
-    int cnt = 0;
-    string now = string("") + s[0];
-    FOR(j,1,s.size()) {
-      if(cnt == 5) break;
-      bool iscard = false;
-      bool one = false;
-      REP(k, 4) {
-        if(cardt[k] == s[j]) iscard = true;
-      }
-      if(s[j] == '1') one = true;
-      if(iscard) now = "";
-      now.pb(s[j]);
-      if(iscard or one) continue;
-      bool drop = true;
-      REP(k, 5) {
-        if(card[i]+num[k] == now) {
-          ++cnt;
-          drop = false;
-        }
-      }
-      if(drop) {
-        mp[card[i]] += now;
-        now = "";
-      }
+  int n,m,k; string s;
+  int x,y;
+  in(x,y,s);
+  Vs rndstr(9);
+  vin(rndstr);
+  --x; --y; // 0-indexに直す
+  string key = "";
+  REP(_,4) {
+    key.pb(rndstr[y][x]);
+    REP(i,s.size()) {
+      if(s[i] == 'R' && x == 8) s[i] = 'L';
+      if(s[i] == 'L' && x == 0) s[i] = 'R';
+      if(s[i] == 'U' && y == 0) s[i] = 'D';
+      if(s[i] == 'D' && y == 8) s[i] = 'U'; 
+    }
+    REP(i,s.size()) {
+      if(s[i] == 'R') ++x;
+      if(s[i] == 'L') --x;
+      if(s[i] == 'U') --y;
+      if(s[i] == 'D') ++y;
     }
   }
-  string ans = "";
-  int size = INF;
-  for(auto p:mp) {
-    if(size >= p.second.size()) {
-      ans = p.second;
-      size = p.second.size();
-    }
-  }
-  if(mp.size()!=4) out(0);
-  else out(ans);
+  out(key);
 }

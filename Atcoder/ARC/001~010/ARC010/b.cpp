@@ -63,7 +63,7 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) push_back(n)
+#define pb(n) emplace_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -448,54 +448,74 @@ inline bool chmax(T& a, T b) {
   return false;
 }
 
+P date(string datestr) {
+  int n = datestr.size();
+  P res;
+  if(n == 3) {
+    res.first = datestr[0] - '0';
+    res.second = datestr[2] - '0';
+  } else if(n == 4) {
+    if (datestr[1] == '/') {
+      res.first = datestr[0] - '0';
+      res.second = (datestr[2] - '0') * 10 + (datestr[3] - '0');
+    } else {
+      res.first = (datestr[0] - '0') * 10 + (datestr[1] - '0');
+      res.second = datestr[3] - '0';
+    }
+  } else {
+    res.first = (datestr[0] - '0') * 10 + (datestr[1] - '0');
+    res.second = (datestr[3] - '0') * 10 + (datestr[4] - '0');
+  }
+  res.first--;
+  res.second--;
+  return res;
+}
+
 signed main() {
   fast();
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n,m; string s;
-  in(s);
-  //s,h,d,cを全て試す
-  Vs card{"S","H","D","C"};
-  Vc cardt{'S','H','D','C'};
-  Vs num{"10","J","Q","K","A"};
-  map<string, string> mp;
-  bool nothing = false;
-  REP(i,4) {
-    int cnt = 0;
-    string now = string("") + s[0];
-    FOR(j,1,s.size()) {
-      if(cnt == 5) break;
-      bool iscard = false;
-      bool one = false;
-      REP(k, 4) {
-        if(cardt[k] == s[j]) iscard = true;
+  int n,m,k; string s;
+  in(n);
+  Vs holi(n);
+  vin(holi);
+  int yobi = 0; //0が日曜日
+  Vi month{31,29,31,30,31,30,31,31,30,31,30,31};
+  vector<Vb> year(12, Vb(31));
+  REP(i,12) {
+    REP(j,31) {
+      if(j+1 >= month[i]) break;
+      if(yobi == 0 || yobi == 6) {
+        year[i][j] = true;
       }
-      if(s[j] == '1') one = true;
-      if(iscard) now = "";
-      now.pb(s[j]);
-      if(iscard or one) continue;
-      bool drop = true;
-      REP(k, 5) {
-        if(card[i]+num[k] == now) {
-          ++cnt;
-          drop = false;
-        }
+      ++yobi;
+      if(yobi == 7) yobi = 0;
+    }
+  }
+  REP(i,n) {
+    P p1 = date(holi[i]);
+    while(year[p1.first][p1.second]) {
+      p1.second += 1;
+      if(p1.second >= month[p1.first]) {
+        p1.second = 1;
+        p1.first += 1;
       }
-      if(drop) {
-        mp[card[i]] += now;
-        now = "";
+    }
+    year[p1.first][p1.second] = true;
+  }
+  int ans = 0;
+  int cnt = 0;
+  REP(i,12) {
+    REP(j,31) {
+      if(j+1 >= month[i]) break;
+      if(year[i][j]) ++cnt;
+      else {
+        ans = max(ans, cnt);
+        cnt = 0;
       }
     }
   }
-  string ans = "";
-  int size = INF;
-  for(auto p:mp) {
-    if(size >= p.second.size()) {
-      ans = p.second;
-      size = p.second.size();
-    }
-  }
-  if(mp.size()!=4) out(0);
-  else out(ans);
+  ans = max(ans, cnt);
+  out(ans);
 }

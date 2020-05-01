@@ -63,7 +63,7 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) push_back(n)
+#define pb(n) emplace_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -453,49 +453,38 @@ signed main() {
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n,m; string s;
-  in(s);
-  //s,h,d,cを全て試す
-  Vs card{"S","H","D","C"};
-  Vc cardt{'S','H','D','C'};
-  Vs num{"10","J","Q","K","A"};
-  map<string, string> mp;
-  bool nothing = false;
-  REP(i,4) {
-    int cnt = 0;
-    string now = string("") + s[0];
-    FOR(j,1,s.size()) {
-      if(cnt == 5) break;
-      bool iscard = false;
-      bool one = false;
-      REP(k, 4) {
-        if(cardt[k] == s[j]) iscard = true;
-      }
-      if(s[j] == '1') one = true;
-      if(iscard) now = "";
-      now.pb(s[j]);
-      if(iscard or one) continue;
-      bool drop = true;
-      REP(k, 5) {
-        if(card[i]+num[k] == now) {
-          ++cnt;
-          drop = false;
-        }
-      }
-      if(drop) {
-        mp[card[i]] += now;
-        now = "";
+  int h,w;
+  in(h,w);
+  int cnt = 0;
+  VVi A(h, Vi(w));
+  REP(i,h) {
+    REP(j,w) {
+      in(A[i][j]);
+    }
+  }
+  VVi ans;
+  REP(i,h) {
+    REP(j,w-1) {
+      if(A[i][j]%2==1) {
+        A[i][j]--;
+        A[i][j+1]++;
+        Vi tmp{i+1, j+1, i+1, j+2};
+        ans.push_back(tmp);
+        ++cnt;
       }
     }
   }
-  string ans = "";
-  int size = INF;
-  for(auto p:mp) {
-    if(size >= p.second.size()) {
-      ans = p.second;
-      size = p.second.size();
+  REP(i,h-1) {
+    if(A[i][w-1]%2==1) {
+      A[i][w-1]--;
+      A[i+1][w-1]++;
+      Vi tmp{i+1, w, i+2, w};
+      ans.push_back(tmp);
+      ++cnt;
     }
   }
-  if(mp.size()!=4) out(0);
-  else out(ans);
+  out(cnt);
+  REP(i,ans.size()){
+    vout2(ans[i]);
+  }
 }

@@ -63,7 +63,7 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) push_back(n)
+#define pb(n) emplace_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -453,49 +453,31 @@ signed main() {
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n,m; string s;
-  in(s);
-  //s,h,d,cを全て試す
-  Vs card{"S","H","D","C"};
-  Vc cardt{'S','H','D','C'};
-  Vs num{"10","J","Q","K","A"};
-  map<string, string> mp;
-  bool nothing = false;
-  REP(i,4) {
-    int cnt = 0;
-    string now = string("") + s[0];
-    FOR(j,1,s.size()) {
-      if(cnt == 5) break;
-      bool iscard = false;
-      bool one = false;
-      REP(k, 4) {
-        if(cardt[k] == s[j]) iscard = true;
-      }
-      if(s[j] == '1') one = true;
-      if(iscard) now = "";
-      now.pb(s[j]);
-      if(iscard or one) continue;
-      bool drop = true;
-      REP(k, 5) {
-        if(card[i]+num[k] == now) {
-          ++cnt;
-          drop = false;
-        }
-      }
-      if(drop) {
-        mp[card[i]] += now;
-        now = "";
-      }
+  int n,m,k; string s;
+  in(n,m);
+  Vs str(n);
+  vin(str);
+  VVi B(n, Vi(m));
+  REP(i,n){
+    REP(j,m){
+      B[i][j] = str[i][j] - '0';
     }
   }
-  string ans = "";
-  int size = INF;
-  for(auto p:mp) {
-    if(size >= p.second.size()) {
-      ans = p.second;
-      size = p.second.size();
+  VVi ans(n, Vi(m));
+  REP(i,n) {
+    REP(j,m) {
+      if(B[i][j]==0) continue;
+      int base = B[i][j];
+      ans[i+1][j] = base;
+      B[i][j] = 0;
+      B[i+1][j-1] -= base;
+      B[i+1][j+1] -= base;
+      B[i+2][j] -= base;
     }
   }
-  if(mp.size()!=4) out(0);
-  else out(ans);
+
+  REP(i,n){
+    REP(j,m) cout<<ans[i][j];
+    cout << endl;
+  }
 }
