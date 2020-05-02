@@ -25,17 +25,18 @@
 </template>
 
 <script>
-// eslint-disable-next-line standard/object-curly-even-spacing
-import { /* mapGetters, */ mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import Cookies from 'universal-cookie'
 export default {
   computed: {
     buttonText () {
       return this.isCreateMode ? '新規登録' : 'ログイン'
-    }
+    },
+    ...mapGetters(['user'])
   },
   asyncData ({ redirect, store }) {
     if (store.getters.user) {
-      redirect('/posts')
+      redirect('/words')
     }
     return {
       isCreateMode: false,
@@ -46,6 +47,7 @@ export default {
   },
   methods: {
     async handleClickSubmit () {
+      const cookies = new Cookies()
       if (this.isCreateMode) {
         try {
           await this.register({ ...this.formData })
@@ -56,6 +58,7 @@ export default {
             position: 'bottom-right',
             duration: 5000
           })
+          cookies.set('user', JSON.stringify(this.user))
           await this.$router.push('/words')
         } catch (_) {
           this.$notify.error({
@@ -75,6 +78,7 @@ export default {
             position: 'button-right',
             duration: 5000
           })
+          cookies.set('user', JSON.stringify(this.user))
           await this.$router.push('/words/')
         } catch (e) {
           this.$notify.error({

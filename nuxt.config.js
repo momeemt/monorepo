@@ -62,5 +62,8 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+  router: {
+    middleware: ['auth-cookie']
   }
 }
