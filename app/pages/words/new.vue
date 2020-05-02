@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   computed: {
     ...mapGetters(['user'])
@@ -35,8 +35,16 @@ export default {
     }
   },
   methods: {
-    registerWord () {
-    }
+    async registerWord () {
+      const payload = {
+        user: this.user,
+        ...this.formData
+      }
+      await this.publishWord({ payload })
+      await this.$router.push('/words')
+    },
+    ...mapActions('users', ['updateUser']),
+    ...mapActions('words', ['publishWord'])
   }
 }
 </script>

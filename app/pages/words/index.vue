@@ -25,8 +25,8 @@ export default {
       return [
         {
           id: '1',
-          hint: '発表',
-          problem: 'presentation',
+          problem: '発表',
+          answer: 'presentation',
           created_at: '2020/01/01 12:00:00',
           user: {
             id: 'pasta'
