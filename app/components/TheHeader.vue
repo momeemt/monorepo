@@ -6,11 +6,17 @@
     <el-menu-item :route="{ path: '/words' }" index="2">
       単語一覧
     </el-menu-item>
-    <no-ssr>
-      <el-menu-item :route="{ path: '/' }" index="4" style="float: right;">
-        <span>ログイン</span>
-      </el-menu-item>
-    </no-ssr>
+    <el-menu-item
+      :route="{ path: '/users/${user.id}/' }"
+      v-if="user"
+      style="float: right;"
+      index="4"
+    >
+      <span>{{ user.id }}</span>
+    </el-menu-item>
+    <el-menu-item :route="{ path: '/' }" v-else index="4" style="float: right;">
+      <span>ログイン</span>
+    </el-menu-item>
     <el-menu-item :route="{ path: '/words/new' }" index="5" style="float: right">
       単語を追加
     </el-menu-item>
@@ -18,8 +24,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  name: 'TheHeader'
+  computed: {
+    ...mapGetters(['user'])
+  }
 }
 </script>
 
