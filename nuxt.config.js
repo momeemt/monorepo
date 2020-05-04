@@ -65,5 +65,8 @@ export default {
   },
   router: {
     middleware: ['auth-cookie']
+  },
+  generate: {
+    fallback: true
   }
 }
