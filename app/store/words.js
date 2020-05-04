@@ -5,7 +5,7 @@ export const state = () => ({
 })
 
 export const getters = {
-  posts: state => state.words
+  words: state => state.words
 }
 
 export const mutations = {
@@ -17,10 +17,32 @@ export const mutations = {
   },
   clearWords (state) {
     state.words = []
+  },
+  deleteWord (state, { id }) {
+    state.words = state.words.filter(w => w.id !== id)
   }
 }
 
 export const actions = {
+  async fetchWord ({ commit }, { id }) {
+    const word = await this.$axios.$get(`/words/${id}.json`)
+    commit('addWord', { word: { ...word, id } })
+  },
+  async fetchWords ({ commit }) {
+    const words = await this.$axios.$get(`/words.json`)
+    commit('clearWords')
+    if (words == null) { return }
+    Object.entries(words)
+      .reverse()
+      .forEach(([id, content]) =>
+        commit('addWord', {
+          word: {
+            id,
+            ...content
+          }
+        })
+      )
+  },
   async publishWord ({ commit }, { payload }) {
     const user = await this.$axios.$get(`/users/${payload.user.id}.json`)
     const wordID = (await this.$axios.$post('/words.json', payload)).name
@@ -33,5 +55,9 @@ export const actions = {
       putData
     ])
     commit('addWord', { word })
+  },
+  async removeWord ({ commit }, { id }) {
+    await this.$axios.$delete(`/words/${id}.json`)
+    commit('deleteWord', { id })
   }
 }

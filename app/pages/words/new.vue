@@ -12,6 +12,10 @@
           <span class="el-icon-upload2" />
           <span>登録する</span>
         </el-button>
+        <el-button @click="continueRegisterWord" type="primary" round>
+          <span class="el-icon-upload2" />
+          <span>連続して登録する</span>
+        </el-button>
       </div>
     </el-card>
   </section>
@@ -35,13 +39,34 @@ export default {
     }
   },
   methods: {
-    async registerWord () {
+    async register () {
       const payload = {
         user: this.user,
         ...this.formData
       }
       await this.publishWord({ payload })
+    },
+    async registerWord () {
+      await this.register()
       await this.$router.push('/words')
+      this.$notify({
+        type: 'success',
+        title: `単語登録完了`,
+        message: `${this.formData.problem} / ${this.formData.answer} として登録しました`,
+        position: 'bottom-right',
+        duration: 3000
+      })
+    },
+    async continueRegisterWord () {
+      await this.register()
+      this.$notify({
+        type: 'success',
+        title: `単語登録完了`,
+        message: `${this.formData.problem} / ${this.formData.answer} として登録しました`,
+        position: 'bottom-right',
+        duration: 3000
+      })
+      this.formData = {}
     },
     ...mapActions('users', ['updateUser']),
     ...mapActions('words', ['publishWord'])
