@@ -63,7 +63,8 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) emplace_back(n)
+#define pb(n) push_back(n)
+#define eb(n) emplace_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -448,25 +449,44 @@ inline bool chmax(T& a, T b) {
   return false;
 }
 
+Vs land(10);
+
+vector<Vb> seen(10,Vb(10));
+
+int dfs(int x, int y, int cnt) {
+  if(x==9 && y ==9) {
+    //goal
+    return cnt;
+  }
+  if(seen[y][x]) return;
+  if(land[y][x]=='o') {
+    
+  }
+}
+
+
 signed main() {
   fast();
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n; in(n);
-  Vi A(n); vin(A);
-  modint ans = 1;
-  REP(i,n) A[i]++;
-  Vi cnt(n);
-  cnt[0] = 3;
-  REP(i,n) {
-    if(cnt[A[i]-1] > 0) {
-      ans *= cnt[A[i]-1];
-      cnt[A[i] - 1]--;
-      cnt[A[i]]++;
-    } else {
-      ans = 0;
+  int n,m,k; string s;
+  vin(land);
+  int x=-1,y=-1;
+  int cnt = 1;
+  REP(i,10){
+    REP(j,10){
+      if(land[i][j]=='o') {
+        if(x==-1) x = j;
+        if(y==-1) y = i;
+        ++cnt;
+      }
     }
   }
-  out(ans);
+  REP(i,10) {
+    REP(j,10) {
+      if(land[i][j]=='o') continue;
+      
+    }
+  }
 }

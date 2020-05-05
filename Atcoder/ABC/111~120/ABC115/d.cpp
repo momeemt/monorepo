@@ -1,37 +1,9 @@
-#pragma gcc optimize("Ofast")
 #include <bits/stdc++.h>
 using namespace std;
 
-#define FOR(i, a, b) for (int i = (a); i < (b); ++i)
-#define REP(i, n) for (int i = 0; i < (n); ++i)
-#define PER(i, n) for (int i = (n-1); i >= 0; --i)
-#define ALL(V) (V).begin(),(V).end()
-#define SORT(V) sort(ALL(V)) //小さい方からソート
-#define REV(V) reverse(ALL(V)) //リバース
-#define RSORT(V) SORT(V);REV(V) //大きい方からソート
-#define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) push_back(n)
-#define popb(n) pop_back(n)
-#define endl '\n'
-#define Endl '\n'
-#define DUMP(x)  cout << #x << " = " << (x) << endl
-#define YES(n) cout << ((n) ? "YES" : "NO"  ) << endl
-#define Yes(n) cout << ((n) ? "Yes" : "No"  ) << endl
-#define yes(n) cout << ((n) ? "yes" : "no"  ) << endl
-#define Yay(n) cout << ((n) ? "Yay!": ":(") << endl
-#define VSUM(V) accumulate(ALL(V), 0)
-#define MID(a,b,c) (a) < (b) && (b) < (c)
-#define MIDe(a,b,c) (a) <= (b) && (b) <= (c)
-#define IN(n) cin >> n
-#define IN2(a,b) cin >> a >> b
-#define IN3(a,b,c) cin >> a >> b >> c 
-#define IN4(a,b,c,d) cin >> a >> b >> c >> d
-#define VIN(V) for(int i = 0; i < (V).size(); i++) {cin >> (V).at(i);}
-#define OUT(n) cout << n << endl
-#define VOUT(V) REP(i, (V).size()) {cout << (V)[i] << endl;}
-#define VOUT2(V) REP(i, (V).size()) {if((V).size()-1!=i){cout << (V)[i] << " ";}else{cout << (V)[i] << endl;}}
-
-#define int long long
+#define int long long // 禁忌
+using ll = long long;
+using lld = long double;
 #define P pair<ll,ll>
 #define Vi vector<ll>
 #define VVi vector<vector<ll>>
@@ -44,8 +16,37 @@ using namespace std;
 #define PQ priority_queue<ll>
 #define PQG priority_queue<ll,V,greater<ll>
 
-using ll = long long;
-using Graph = vector<vector<int>>;
+// 重み付き辺
+template<typename T>
+struct edge {
+  int src, to;
+  T cost;
+  
+  edge(int to, T cost) : src(-1), to(to), cost(cost) {}
+
+  edge(int src, int to, T cost) : src(src), to(to), cost(cost) {}
+
+  edge &operator=(const int &x) {
+    to = x;
+    return *this;
+  }
+
+  operator int() const { return to; }
+};
+
+// 重み付き辺集合
+template<typename T>
+using Edges = vector<edge<T>>;
+
+// 重み付きグラフ
+template<typename T>
+using WeightedGraph = vector<Edges<T>>;
+
+using UnWeightedGraph = VVi; // 重みなしグラフ
+
+// 距離行列
+template<typename T>
+using Matrix = vector<vector<T>>;
 
 const int MOD = 1000000007;
 const int INF = 1061109567;
@@ -54,6 +55,22 @@ const double PI  = acos(-1.0);
 const int dx[4] = {1, 0, -1, 0};
 const int dy[4] = {0, 1, 0, -1};
 
+#define FOR(i, a, b) for (int i = (a); i < (b); ++i)
+#define REP(i, n) for (int i = 0; i < (n); ++i)
+#define PER(i, n) for (int i = (n-1); i >= 0; --i)
+#define ALL(V) (V).begin(),(V).end()
+#define SORT(V) sort(ALL(V)) //小さい方からソート
+#define REV(V) reverse(ALL(V)) //リバース
+#define RSORT(V) SORT(V);REV(V) //大きい方からソート
+#define NEXP(V) next_permutation(ALL(V)) //順列
+#define pb(n) push_back(n)
+#define eb(n) emplace_back(n)
+#define popb pop_back()
+#define endl '\n'
+#define Endl '\n'
+#define DUMP(x)  cout << #x << " = " << (x) << endl
+
+// UnionFind
 class UnionFind {
 public:
   vector <int> par;
@@ -94,10 +111,277 @@ public:
   }
 };
 
+// modint
+template< int mod >
+struct ModInt {
+  int x;
+
+  ModInt() : x(0) {}
+
+  ModInt(int64_t y) : x(y >= 0 ? y % mod : (mod - (-y) % mod) % mod) {}
+
+  ModInt &operator+=(const ModInt &p) {
+    if((x += p.x) >= mod) x -= mod;
+    return *this;
+  }
+
+  ModInt &operator-=(const ModInt &p) {
+    if((x += mod - p.x) >= mod) x -= mod;
+    return *this;
+  }
+
+  ModInt &operator*=(const ModInt &p) {
+    x = (int) (1LL * x * p.x % mod);
+    return *this;
+  }
+
+  ModInt &operator/=(const ModInt &p) {
+    *this *= p.inverse();
+    return *this;
+  }
+
+  ModInt operator-() const { return ModInt(-x); }
+
+  ModInt operator+(const ModInt &p) const { return ModInt(*this) += p; }
+
+  ModInt operator-(const ModInt &p) const { return ModInt(*this) -= p; }
+
+  ModInt operator*(const ModInt &p) const { return ModInt(*this) *= p; }
+
+  ModInt operator/(const ModInt &p) const { return ModInt(*this) /= p; }
+
+  bool operator==(const ModInt &p) const { return x == p.x; }
+
+  bool operator!=(const ModInt &p) const { return x != p.x; }
+
+  ModInt inverse() const {
+    int a = x, b = mod, u = 1, v = 0, t;
+    while(b > 0) {
+      t = a / b;
+      swap(a -= t * b, b);
+      swap(u -= t * v, v);
+    }
+    return ModInt(u);
+  }
+
+  ModInt pow(int64_t n) const {
+    ModInt ret(1), mul(x);
+    while(n > 0) {
+      if(n & 1) ret *= mul;
+      mul *= mul;
+      n >>= 1;
+    }
+    return ret;
+  }
+
+  friend ostream &operator<<(ostream &os, const ModInt &p) {
+    return os << p.x;
+  }
+
+  friend istream &operator>>(istream &is, ModInt &a) {
+    int64_t t;
+    is >> t;
+    a = ModInt< mod >(t);
+    return (is);
+  }
+
+  static int get_mod() { return mod; }
+};
+using modint = ModInt< MOD >;
+
+// dijkstra O(E logV)
+template<typename T>
+vector<T> dijkstra(WeightedGraph<T> &g, int s) {
+  const auto INF2 = numeric_limits<T>::max();
+  vector<T> dist(g.size(), INF2);
+  using Pi = pair<T, int>;
+  priority_queue<Pi, vector<Pi>, greater<Pi>> que;
+  dist[s] = 0;
+  que.emplace(dist[s], s);
+  while(!que.empty()) {
+    T cost;
+    int idx;
+    tie(cost, idx) = que.top();
+    que.pop();
+    if(dist[idx] < cost) continue;
+    for(auto &e : g[idx]) {
+      auto next_cost = cost + e.cost;
+      if(dist[e.to] <= next_cost) continue;
+      dist[e.to] = next_cost;
+      que.emplace(dist[e.to], e.to);
+    }
+  }
+  return dist;
+}
+
+// 負の辺を持つ単一始点最短路 O(VE)
+template<typename T>
+vector<T> bellman_ford(Edges<T> &edges, int V, int s) {
+  const auto INF2 = numeric_limits<T>::max();
+  vector<T> dist(V, INF2);
+  dist[s] = 0;
+  REP(i,(V-1)) {
+    for(auto &e : edges) {
+      if(dist[e.src] == INF2) continue;
+      dist[e.to] = min(dist[e.to], dist[e.src] + e.cost);
+    }
+  }
+  for(auto &e : edges) {
+    if(dist[e.src] == INF2) continue;
+    if(dist[e.src] + e.cost < dist[e.to]) return vector<T>();
+  }
+  return dist;
+}
+
+// 全点対間最短路 O(V^3)
+template<typename T>
+void warshall_floyd(Matrix<T> &g, T lINF) {
+  ll n = g.size();
+  REP(k,n){
+    REP(i,n){
+      REP(j,n){
+        if(g[i][k] == lINF || g[k][j] == lINF) continue;
+        g[i][j] = min(g[i][j], g[i][k] + g[k][j]);
+      }
+    }
+  }
+  return;
+}
+
+// 入出力高速化
+void fast(void) {
+  cin.tie(0);
+  ios::sync_with_stdio(false);
+  cout << fixed << setprecision(15);
+  return;
+}
+
+// vectorの合計値を返します
+ll vsum(Vi V) {
+  ll res = 0LL;
+  ll size = V.size();
+  REP(i,size) {
+    res += V.at(i);
+  }
+  return res;
+}
+
+// vectorの平均値を返します
+lld vave(Vi V) {
+  lld size = V.size();
+  return (lld)vsum(V) / size;
+}
+
+// vectorの最大値を返します
+ll vmax(Vi V) {
+  RSORT(V);
+  return V.at(0);
+}
+
+// vectorの最小値を返します
+ll vmin(Vi V) {
+  SORT(V);
+  return V.at(0);
+}
+
+// 数値 b が a より大きく、 c より小さいことを判定します
+template<typename T>
+bool mid1(T a, T b, T c) {
+  return (a < b) && (b < c);
+}
+
+// 数値 b が a以上 で、c以下 であることを判定します
+template<typename T>
+bool mid2(T a, T b, T c) {
+  return (a <= b) && (b <= c);
+}
+
+// YES or NO
+template<typename T>
+void YES(T n) {
+  cout << ((n) ? "YES" : "NO" ) << endl;
+}
+
+// Yes or No
+template<typename T>
+void Yes(T n) {
+  cout << ((n) ? "Yes" : "No" ) << endl;
+}
+
+// yes or no
+template<typename T>
+void yes(T n) {
+  cout << ((n) ? "yes" : "no" ) << endl;
+}
+
+// Yay! or :(
+template<typename T>
+void Yay(T n) {
+  cout << ((n) ? "Yay!": ":(") << endl;
+}
+
+// 標準入力します
+inline void in(void){
+  return;
+}
+template<typename First, typename... Rest>
+void in(First& first, Rest&... rest) {
+  cin >> first;
+  in(rest...);
+  return;
+}
+
+// vectorを標準入力
+template<typename T>
+void vin(T& V) {
+  ll size = V.size();
+  REP(i,size) {
+    cin >> V[i];
+  }
+  return;
+}
+
+// 標準出力します
+inline void out(void){
+  cout << endl;
+  return;
+}
+template<typename T>
+void out(T only) {
+  cout << only << endl;
+  return;
+}
+template<typename First, typename... Rest>
+void out(First first, Rest... rest) {
+  cout << first << " ";
+  out(rest...);
+  return;
+}
+
+// vectorを標準出力
+template<typename T>
+void vout(T& V) {
+  ll size = V.size();
+  REP(i,size) {
+    cout << V.at(i) << endl;
+  }
+}
+
+// vectorを１行に標準出力
+template<typename T>
+void vout2(T& V) {
+  ll size = V.size();
+  REP(i,size) {
+    cout << V[i] << " \n"[i==(size-1)];
+  }
+}
+
+// 最大公約数を求めます
 int gcd(int a, int b) {
   return b != 0 ? gcd(b, a % b) : a;
 }
 
+// 最小公倍数を求めます
 int lcm(int a, int b) {
   return a * b / gcd(a, b);
 }
@@ -109,12 +393,7 @@ string toStrUp(string str) {
   return str;
 }
 
-// 文字をstring型で一文字取得します
-string get1ch(string str, int key) {
-  return str.substr(key,1);
-}
-
-// 素因数分解 (O(sqrt(n)))
+// 素因数分解します (O(sqrt(n)))
 map<int,int> prime_factor(int n) {
   map<int,int> ret;
   for(int i = 2; i * i <= n; i++) {
@@ -152,7 +431,8 @@ vector<T> convert_base(T x, T b) {
   return ret;
 }
 
-template<class T> inline bool chmin(T& a, T b) {
+template<class T>
+inline bool chmin(T& a, T b) {
   if(a > b) {
     a = b;
     return true;
@@ -160,7 +440,8 @@ template<class T> inline bool chmin(T& a, T b) {
   return false;
 }
 
-template<class T> inline bool chmax(T& a, T b) {
+template<class T>
+inline bool chmax(T& a, T b) {
   if(a < b){
     a = b;
     return true;
@@ -168,35 +449,32 @@ template<class T> inline bool chmax(T& a, T b) {
   return false;
 }
 
-Vi layer{1};
-Vi patty{1};
+Vi BG{1};
+Vi PT{1};
 
-int dfs(int n, int x){
-  if(n == 0) {
-    if(x <= 0) return 0;
-    else 1;
-  } else if (x <= 1+layer[n-1]) {
-    return dfs(n-1, x-1);
+int solve(int n, int x) {
+  if (n == 0 && x <= 0) {
+    return 0;
+  } else if (n == 0) {
+    return 1;
+  } else if (x <= (1 + BG[n-1])) {
+    return solve(n-1, x-1);
   } else {
-    return patty[n-1] + 1 + dfs(n-1, x-2-layer[n-1]);
+    return PT[n-1] + 1 + solve(n-1, x-2-BG[n-1]);
   }
 }
 
 signed main() {
-  cin.tie(0);
-  ios::sync_with_stdio(false);
-  cout << fixed << setprecision(15);
-
-  // デフォルト変数定義
-  int n=0,m=0,a=0,b=0,c=0,d=0,x=0,y=0,z=0;
-  string s="",t="";
-  //
-
+  fast();
+  // 使えない変数名
+  // P, M, S, PQ, PQG
   // ここから
-  IN2(n,x);
-  REP(i,n){
-    layer.pb(layer[i]*2+3);
-    patty.pb(patty[i]*2+1);
+  int n,m,k; string s;
+  int x;
+  in(n,x);
+  REP(i,n) {
+    BG.pb(BG[i]*2+3);
+    PT.pb(PT[i]*2+1);
   }
-  OUT(dfs(n,x));
+  out(solve(n, x));
 }

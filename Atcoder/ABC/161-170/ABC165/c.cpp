@@ -11,7 +11,6 @@ using lld = long double;
 #define Vb vector<bool>
 #define Vs vector<string>
 #define Vc vector<char>
-#define M map<ll,ll>
 #define S set<ll>
 #define PQ priority_queue<ll>
 #define PQG priority_queue<ll,V,greater<ll>
@@ -63,7 +62,8 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) emplace_back(n)
+#define pb(n) push_back(n)
+#define eb(n) emplace_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -448,25 +448,40 @@ inline bool chmax(T& a, T b) {
   return false;
 }
 
+int N,M,Q;
+Vi A(60);
+Vi B(60);
+Vi C(60);
+Vi D(60);
+int ans = 0;
+
+void dfs(Vi arr) {
+  if(arr.size() == N) {
+    int point = 0;
+    REP(i,Q) {
+      if(arr[B[i]-1]-arr[A[i]-1] == C[i]) {
+        point += D[i];
+      }
+    }
+    ans = max(ans, point);
+  } else {
+    FOR(i,arr.back(),M+1) {
+      arr.pb(i);
+      dfs(arr);
+      arr.pop_back();
+    }
+  }
+}
+
 signed main() {
   fast();
-  // 使えない変数名
-  // P, M, S, PQ, PQG
-  // ここから
-  int n; in(n);
-  Vi A(n); vin(A);
-  modint ans = 1;
-  REP(i,n) A[i]++;
-  Vi cnt(n);
-  cnt[0] = 3;
-  REP(i,n) {
-    if(cnt[A[i]-1] > 0) {
-      ans *= cnt[A[i]-1];
-      cnt[A[i] - 1]--;
-      cnt[A[i]]++;
-    } else {
-      ans = 0;
-    }
+  in(N,M,Q);
+  REP(i,Q) {
+    in(A[i],B[i],C[i],D[i]);
+  }
+  REP(i,M) {
+    Vi tmp{i+1};
+    dfs(tmp);
   }
   out(ans);
 }

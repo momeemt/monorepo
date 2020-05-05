@@ -63,7 +63,8 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) emplace_back(n)
+#define pb(n) push_back(n)
+#define eb(n) emplace_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -453,19 +454,28 @@ signed main() {
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n; in(n);
-  Vi A(n); vin(A);
-  modint ans = 1;
-  REP(i,n) A[i]++;
-  Vi cnt(n);
-  cnt[0] = 3;
-  REP(i,n) {
-    if(cnt[A[i]-1] > 0) {
-      ans *= cnt[A[i]-1];
-      cnt[A[i] - 1]--;
-      cnt[A[i]]++;
-    } else {
-      ans = 0;
+  int n,m,k; string s1,s2;
+  in(n,s1,s2);
+  int ans = 1;
+  int idx = 0;
+  if(s1[0]==s2[0]){
+    ans *= 3;
+  } else {
+    ans *= 6;
+    idx = 1;
+  }
+  FOR(i,idx,n-1) {
+    if(s1[i]==s2[i]) {
+      ans *= 2;
+      ans %= MOD;
+
+    } else if(s1[i]!=s2[i] && s1[i+1]!=s2[i+1]) {
+      ans *= 3;
+      ans %= MOD;
+    }
+
+    if(s1[i+1]!=s2[i+1]) {
+      ++i;
     }
   }
   out(ans);

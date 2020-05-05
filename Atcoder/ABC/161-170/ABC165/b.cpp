@@ -63,7 +63,8 @@ const int dy[4] = {0, 1, 0, -1};
 #define REV(V) reverse(ALL(V)) //リバース
 #define RSORT(V) SORT(V);REV(V) //大きい方からソート
 #define NEXP(V) next_permutation(ALL(V)) //順列
-#define pb(n) emplace_back(n)
+#define pb(n) push_back(n)
+#define eb(n) emplace_back(n)
 #define popb pop_back()
 #define endl '\n'
 #define Endl '\n'
@@ -453,20 +454,15 @@ signed main() {
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n; in(n);
-  Vi A(n); vin(A);
-  modint ans = 1;
-  REP(i,n) A[i]++;
-  Vi cnt(n);
-  cnt[0] = 3;
-  REP(i,n) {
-    if(cnt[A[i]-1] > 0) {
-      ans *= cnt[A[i]-1];
-      cnt[A[i] - 1]--;
-      cnt[A[i]]++;
-    } else {
-      ans = 0;
-    }
+  int n,m,k; string s;
+  int x;
+  in(x);
+  int money = 100;
+  int index = 0;
+  while(money < x) {
+    double tmp = money * 1.01;
+    money = floor(tmp);
+    ++index;
   }
-  out(ans);
+  out(index);
 }
