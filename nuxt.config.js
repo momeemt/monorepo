@@ -50,7 +50,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: 'https://repeatango.firebaseio.com'
+    baseURL: 'https://cycle-words.firebaseio.com'
   },
   /*
   ** Build configuratiosn
@@ -63,9 +63,9 @@ export default {
     extend (config, ctx) {
     }
   },
-  router: {
-    middleware: ['auth-cookie']
-  },
+  // router: {
+  //   middleware: ['auth']
+  // },
   generate: {
     fallback: true
   }
