@@ -6,6 +6,7 @@
       </div>
       <el-table
         :data="exams"
+        @row-click="goExamShow"
         style="width: 100%"
         class="table"
       >
@@ -16,17 +17,18 @@
 </template>
 
 <script>
-import { firestore } from '~/plugins/firebase'
-
+import { mapGetters } from 'vuex'
 export default {
-  async asyncData () {
-    const exams = []
-    const colRef = firestore.collection('exams')
-    const allSnapShot = await colRef.get()
-    allSnapShot.forEach((w) => {
-      exams.push(w.data())
-    })
-    return { exams }
+  computed: {
+    ...mapGetters('exams', ['exams'])
+  },
+  async asyncData ({ store }) {
+    await store.dispatch('exams/fetchExams')
+  },
+  methods: {
+    goExamShow (exam) {
+      this.$router.push(`/exams/${exam.id}`)
+    }
   }
 }
 </script>

@@ -1,63 +1,55 @@
-import moment from '~/plugins/moment'
+import { firestore } from '~/plugins/firebase'
 
 export const state = () => ({
-  words: []
+  words: [],
+  word: {}
 })
 
 export const getters = {
-  words: state => state.words
+  words: state => state.words,
+  word: state => state.word
 }
 
 export const mutations = {
-  addWord (state, { word }) {
-    state.words.push(word)
+  addWord (state, word) {
+    state.word = word
   },
-  updateWord (state, { word }) {
-    state.words = state.words.map(w => (w.id === word.id ? word : w))
+  addWords (state, word) {
+    state.words.push(word)
   },
   clearWords (state) {
     state.words = []
-  },
-  deleteWord (state, { id }) {
-    state.words = state.words.filter(w => w.id !== id)
   }
 }
 
 export const actions = {
   async fetchWord ({ commit }, { id }) {
-    const word = await this.$axios.$get(`/words/${id}.json`)
-    commit('addWord', { word: { ...word, id } })
+    await firestore
+      .collection('words')
+      .doc(id)
+      .then((res) => {
+        commit('addWord', res.data())
+      })
+  },
+  async fetchWordsFromExam ({ commit }, { examID }) {
+    commit('clearWords')
+    const allSnapShot = await firestore
+      .collection('words')
+      .where('examID', '==', examID)
+      .get()
+    if (allSnapShot == null) { return }
+    allSnapShot.forEach((word) => {
+      commit('addWords', word.data())
+    })
   },
   async fetchWords ({ commit }) {
-    const words = await this.$axios.$get(`/words.json`)
     commit('clearWords')
-    if (words == null) { return }
-    Object.entries(words)
-      .reverse()
-      .forEach(([id, content]) =>
-        commit('addWord', {
-          word: {
-            id,
-            ...content
-          }
-        })
-      )
-  },
-  async publishWord ({ commit }, { payload }) {
-    const user = await this.$axios.$get(`/users/${payload.user.id}.json`)
-    const wordID = (await this.$axios.$post('/words.json', payload)).name
-    const createdAt = moment().format()
-    const word = { id: wordID, ...payload, created_at: createdAt }
-    const putData = { id: wordID, ...payload, created_at: createdAt }
-    delete putData.user
-    await this.$axios.$put(`/users/${user.id}/words.json`, [
-      ...(user.words || []),
-      putData
-    ])
-    commit('addWord', { word })
-  },
-  async removeWord ({ commit }, { id }) {
-    await this.$axios.$delete(`/words/${id}.json`)
-    commit('deleteWord', { id })
+    const allShopShot = await firestore
+      .collection('words')
+      .get()
+    if (allShopShot == null) { return }
+    allShopShot.forEach((word) => {
+      commit('addWords', word.data())
+    })
   }
 }

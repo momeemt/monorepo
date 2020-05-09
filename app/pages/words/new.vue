@@ -41,7 +41,8 @@ export default {
       const dbExams = await firestore.collection('exams')
       const res = await dbExams
         .add({
-          name: this.examName
+          name: this.examName,
+          id: this.examName
         })
         .then((res) => {
           return res.id
