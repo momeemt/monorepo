@@ -19,6 +19,11 @@ export const mutations = {
   },
   clearWords (state) {
     state.words = []
+  },
+  addProbabilityData (state, probability) {
+    for (const word of state.words) {
+      word.probability = probability[word.id]
+    }
   }
 }
 
@@ -51,5 +56,8 @@ export const actions = {
     allShopShot.forEach((word) => {
       commit('addWords', word.data())
     })
+  },
+  addProbability ({ commit }, { probability }) {
+    commit('addProbabilityData', probability)
   }
 }

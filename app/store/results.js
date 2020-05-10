@@ -39,12 +39,14 @@ export const actions = {
       .where('examID', '==', examID)
       .get()
     if (allSnapShot == null) { return }
+    const results = []
     allSnapShot.forEach((result) => {
       const resultData = result.data()
-      const time = moment(resultData.datetime.toDate()).format('YYYY-MM-DD HH:mm:ss')
-      resultData.datetime = time
+      resultData.datetime = moment(resultData.datetime.toDate()).format('YYYY-MM-DD HH:mm:ss')
+      results.push(resultData)
       commit('addResults', resultData)
     })
+    return { results }
   },
   async fetchResults ({ commit }) {
     commit('clearResults')
