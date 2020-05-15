@@ -3,16 +3,13 @@
     <el-menu-item index="1" style="pointer-events:none;">
       CycleWords
     </el-menu-item>
-    <el-menu-item :route="{ path: '/words' }" index="2">
-      単語一覧
-    </el-menu-item>
-    <el-menu-item :route="{ path: '/exams' }" index="3">
+    <el-menu-item :route="{ path: '/exams' }" index="2">
       テスト一覧
     </el-menu-item>
-    <el-menu-item :route="{ path: '/words/new' }" index="5">
+    <el-menu-item :route="{ path: '/words/new' }" index="3">
       単語を追加
     </el-menu-item>
-    <el-menu-item :route="{ path: '/exams/new' }" index="6">
+    <el-menu-item :route="{ path: '/exams/new' }" index="4">
       テストをする
     </el-menu-item>
   </el-menu>
