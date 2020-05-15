@@ -9,12 +9,22 @@
             <el-input v-model="formData[`problem${i}`]" placeholder="問題を入力" />
           </el-form-item>
           <el-form-item>
+            <el-select v-model="formData[`class${i}`]" placeholder="品詞">
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
             <el-input v-model="formData[`answer${i}`]" placeholder="答えを入力" />
           </el-form-item>
         </div>
       </el-form>
       <div class="text-right" style="margin-top: 16px;">
-        <el-button @click="registerWord" type="primary" round>
+        <el-button @click="register" type="primary" round>
           <span class="el-icon-upload2" />
           <span>登録する</span>
         </el-button>
@@ -25,8 +35,42 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { firestore } from '~/plugins/firebase'
+import { Loading } from 'element-ui'
 export default {
+  data () {
+    return {
+      options: [
+        {
+          value: 'noon',
+          label: '名詞'
+        },
+        {
+          value: 'verb',
+          label: '動詞'
+        },
+        {
+          value: 'adjective',
+          label: '形容詞'
+        },
+        {
+          value: 'adverb',
+          label: '副詞'
+        },
+        {
+          value: 'conjunction',
+          label: '接続詞'
+        },
+        {
+          value: 'preposition',
+          label: '前置詞'
+        },
+        {
+          value: 'idioms',
+          label: '熟語'
+        }
+      ]
+    }
+  },
   computed: {
     ...mapGetters(['user'])
   },
@@ -37,38 +81,36 @@ export default {
     }
   },
   methods: {
-    async addExam () {
-      const dbExams = await firestore.collection('exams')
-      const res = await dbExams
-        .add({
-          name: this.examName,
-          id: this.examName
-        })
-        .then((res) => {
-          return res.id
-        })
-        .catch((err) => {
-          return err
-        })
-      return { res }
-    },
     async register () {
-      const res = await this.addExam()
-      const examID = res.res
-      const dbWords = firestore.collection('words')
+      const examPayload = { id: this.examName, words: [], results: [] }
+      let loadingProgress = 0
+      const loadingInstance = Loading.service({ text: '0' })
       for (let i = 1; i <= 50; ++i) {
         const problem = this.formData[`problem${i}`]
         const answer = this.formData[`answer${i}`]
-        await dbWords.add({
-          id: `${examID}${i}`,
-          problem,
-          answer,
-          examID
-        })
+        const word = {
+          problem: [],
+          scoring: []
+        }
+        const problemArr = problem.split(',')
+        for (const pr of problemArr) {
+          const prData = {
+            word: pr,
+            class: this.formData[`class${i}`]
+          }
+          word.problem.push(prData)
+        }
+        const payload = {
+          word,
+          answer
+        }
+        await this.createWord({ payload })
+        examPayload.words.push(answer)
+        loadingProgress += (100 / 5)
+        loadingInstance.text = String(loadingProgress) + '%'
       }
-    },
-    async registerWord () {
-      await this.register()
+      this.createExam({ payload: examPayload })
+      loadingInstance.close()
       await this.$router.push('/words')
       this.$notify({
         type: 'success',
@@ -78,8 +120,8 @@ export default {
         duration: 3000
       })
     },
-    ...mapActions('users', ['updateUser']),
-    ...mapActions('words', ['publishWord'])
+    ...mapActions('exams', ['createExam']),
+    ...mapActions('words', ['createWord'])
   }
 }
 </script>

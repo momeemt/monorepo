@@ -59,5 +59,49 @@ export const actions = {
   },
   addProbability ({ commit }, { probability }) {
     commit('addProbabilityData', probability)
+  },
+  async createWord ({ commit }, { payload }) {
+    const collection = firestore.collection('words_v2').doc(payload.answer)
+    const word = await collection.get()
+    const exists = word.exists
+    if (exists) {
+      const wordData = word.data()
+      const problem = payload.word.problem
+      for (const value of problem) {
+        wordData.problem.push(value)
+      }
+      await collection
+        .set(wordData)
+        .then(res => res)
+        .catch(err => err)
+    } else {
+      await collection
+        .set(payload.word)
+        .then(res => res)
+        .catch(err => err)
+    }
+  },
+  async fetchWordsByExam ({ commit }, { payload }) {
+    commit('clearWords')
+    const words = payload.words
+    const collection = firestore.collection('words_v2')
+    for (const word of words) {
+      const wordObj = await collection.doc(word).get()
+      const answer = wordObj.id
+      const wordData = wordObj.data()
+      wordData.answer = answer
+      commit('addWords', wordData)
+    }
+  },
+  async applyScoring ({ commit }, { payload }) {
+    const collection = firestore.collection('words_v2').doc(payload.answer)
+    const word = await collection.get()
+    const wordData = word.data()
+    const scoring = payload.scoring
+    wordData.scoring.push(scoring)
+    await collection
+      .set(wordData)
+      .then(res => res)
+      .catch(err => err)
   }
 }

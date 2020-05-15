@@ -4,10 +4,10 @@
       <p>テストをする</p>
       <el-select v-model="examName" @input="disabled = false" placeholder="テストを選ぶ">
         <el-option
-          v-for="e in exams"
-          :value="e.id"
-          :key="e.id"
-          :label="e.name"
+          v-for="exam in exams"
+          :value="exam.id"
+          :key="exam.id"
+          :label="exam.name"
         />
       </el-select>
       <el-button @click="startExam" :disabled="disabled">
@@ -15,10 +15,12 @@
       </el-button>
     </template>
     <template v-else-if="condition === 'isTesting'">
-      <p>問題</p>
-      <div v-for="w in targetWords">
-        <p>{{ w.problem }}</p>
-        <el-input v-model="userAnswer[w.id]" />
+      <div v-for="w in words">
+        <p>一文字目: {{ w.answer[0] }}</p>
+        <ul v-for="p in w.problem">
+          <li>{{ p.word }}</li>
+        </ul>
+        <el-input v-model="userAnswer[w.answer]" />
       </div>
       <el-button @click="submitAnswer">
         解答
@@ -26,12 +28,12 @@
     </template>
     <template v-else>
       <p>結果</p>
-      <el-progress :percentage="examResult * 2" type="circle" />
-      <p>{{ examResult }}点でした！</p>
+      <el-progress :percentage="resultPoint * 100 / numOfProblems" type="circle" />
+      <p>{{ resultPoint }}点でした！</p>
       <p>間違えた単語を復習しておきましょう</p>
       <p>不正解だった単語</p>
       <el-table :data="wrongWords">
-        <el-table-column prop="problem" label="日本語" />
+        <el-table-column prop="problem[0].word" label="日本語" />
         <el-table-column prop="answer" label="英語" />
       </el-table>
     </template>
@@ -39,7 +41,7 @@
 </template>
 
 <script>
-import { firestore } from '~/plugins/firebase'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -48,84 +50,67 @@ export default {
       disabled: true,
       targetWords: [],
       userAnswer: {},
-      examResult: 0,
+      resultPoint: 0,
+      numOfProblems: 0,
       wrongWords: []
     }
   },
-  async asyncData () {
-    const exams = []
-    const examRef = firestore.collection('exams')
-    const allExams = await examRef.get()
-    allExams.forEach((e) => {
-      exams.push(e.data())
-    })
-    const words = []
-    const wordRef = firestore.collection('words')
-    const allWords = await wordRef.get()
-    allWords.forEach((w) => {
-      words.push(w.data())
-    })
-    return { exams, words }
+  computed: {
+    ...mapGetters('exams', ['exams', 'exam']),
+    ...mapGetters('words', ['words'])
+  },
+  async asyncData ({ store }) {
+    await store.dispatch('exams/fetchExams')
   },
   methods: {
     startExam () {
+      this.fetchExam({ id: this.examName })
+      this.fetchWordsByExam({ payload: this.exam })
+      console.log(this.exam)
+      this.numOfProblems = 50 // TODO:lengthでエラー、なぜ this.exam.words.length
       this.condition = 'isTesting'
-      this.words.forEach((w) => {
-        if (w.examID === this.examName) {
-          this.targetWords.push(w)
-        }
-      })
-    },
-    async addResult (point) {
-      const dbResults = await firestore.collection('results')
-      const datetime = new Date()
-      const res = await dbResults
-        .add({
-          datetime,
-          point
-        })
-        .then((res) => {
-          return res.id
-        })
-        .catch((err) => {
-          return err
-        })
-      return { res }
     },
     async submitAnswer () {
       let point = 0
-      for (const word of this.targetWords) {
-        const id = word.id
-        const userAnswer = this.userAnswer[id]
+      const resultID = new Date()
+      for (const word of this.words) {
+        const answer = word.answer
+        const userAnswer = this.userAnswer[answer]
         if (userAnswer === word.answer) {
           point++
+          const payload = {
+            answer,
+            scoring: {
+              resultID,
+              judge: 1
+            }
+          }
+          await this.applyScoring({ payload })
         } else {
           this.wrongWords.push(word)
+          const payload = {
+            answer,
+            scoring: {
+              resultID,
+              judge: 0
+            }
+          }
+          await this.applyScoring({ payload })
         }
       }
-      this.examResult = point
+      const payload = {
+        id: this.exam.id,
+        result: {
+          point,
+          id: resultID
+        }
+      }
+      this.resultPoint = point
       this.condition = 'result'
-      const dbScoring = firestore.collection('scoring')
-      const resultRes = await this.addResult(point)
-      const resultID = resultRes.res
-      for (const word of this.targetWords) {
-        const id = word.id
-        const userAnswer = this.userAnswer[id]
-        if (userAnswer === word.answer) {
-          dbScoring.add({
-            resultID,
-            wordID: id,
-            judge: 1
-          })
-        } else {
-          dbScoring.add({
-            resultID,
-            wordID: id,
-            judge: 0
-          })
-        }
-      }
-    }
+      await this.applyResult({ payload })
+    },
+    ...mapActions('exams', ['fetchExam', 'applyResult']),
+    ...mapActions('words', ['fetchWordsByExam', 'applyScoring'])
   }
 }
 </script>

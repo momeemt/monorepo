@@ -10,7 +10,8 @@
         style="width: 100%"
         class="table"
       >
-        <el-table-column prop="name" label="テスト名" />
+        <el-table-column prop="id" label="テスト名" />
+        <el-table-column prop="words.length" label="問題数" />
       </el-table>
     </el-card>
   </section>
