@@ -1,6 +1,6 @@
 <template>
   <el-menu :router="true" mode="horizontal">
-    <el-menu-item index="1" style="pointer-events:none;">
+    <el-menu-item :route="{ path: '/' }" index="1">
       CycleWords
     </el-menu-item>
     <el-menu-item :route="{ path: '/exams' }" index="2">

@@ -24,29 +24,13 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetchResult ({ commit }, { id }) {
-    await firestore
-      .collection('results')
-      .doc(id)
-      .then((res) => {
-        commit('addResult', res.data())
-      })
-  },
-  async fetchResultsFromExam ({ commit }, { examID }) {
+  fetchResultsFromExam ({ commit }, { payload }) {
     commit('clearResults')
-    const allSnapShot = await firestore
-      .collection('results')
-      .where('examID', '==', examID)
-      .get()
-    if (allSnapShot == null) { return }
-    const results = []
-    allSnapShot.forEach((result) => {
-      const resultData = result.data()
-      resultData.datetime = moment(resultData.datetime.toDate()).format('YYYY-MM-DD HH:mm:ss')
-      results.push(resultData)
-      commit('addResults', resultData)
-    })
-    return { results }
+    for (const result of payload) {
+      result.id = moment(result.id.toDate()).format('YYYY-MM-DD HH:mm:ss')
+      commit('addResults', result)
+    }
+    return { results: payload }
   },
   async fetchResults ({ commit }) {
     commit('clearResults')

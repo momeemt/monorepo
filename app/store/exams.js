@@ -1,4 +1,5 @@
-import { firestore } from '~/plugins/firebase'
+import { firestore, timestamp } from '~/plugins/firebase'
+import moment from '~/plugins/moment'
 
 export const state = () => ({
   exams: [],
@@ -26,7 +27,10 @@ export const actions = {
   async fetchExam ({ commit }, { id }) {
     const collection = firestore.collection('exams_v2').doc(id)
     const exam = await collection.get()
-    commit('addExam', exam.data())
+    const examData = exam.data()
+    examData.startDate = moment(examData.startDate.toDate()).format('YYYY-MM-DD')
+    commit('addExam', examData)
+    return examData
   },
   async fetchExams ({ commit }) {
     const collection = firestore.collection('exams_v2').orderBy('id')
@@ -34,7 +38,9 @@ export const actions = {
     commit('clearExams')
     if (allSnapShot == null) { return }
     allSnapShot.forEach((exam) => {
-      commit('addExams', exam.data())
+      const examData = exam.data()
+      examData.startDate = moment(examData.startDate.toDate()).format('YYYY-MM-DD')
+      commit('addExams', examData)
     })
   },
   async createExam ({ commit }, { payload }) {
@@ -54,5 +60,36 @@ export const actions = {
       .set(examData)
       .then(res => res)
       .catch(err => err)
+  },
+  async fetchToDoExam ({ commit }) {
+    commit('clearExams')
+    const previousDays = [0, 1, 3, 7, 30, 60, 120]
+    for (const beforeDate of previousDays) {
+      const todo = await getTodoExam(beforeDate)
+      todo.forEach((exam) => {
+        const examData = exam.data()
+        examData.startDate = moment(examData.startDate.toDate()).format('YYYY-MM-DD')
+        examData.whenTask = beforeDate
+        commit('addExams', examData)
+      })
+    }
   }
+}
+
+const getTodoExam = async (beforeDate) => {
+  const todo = await firestore
+    .collection('exams_v2')
+    .where('startDate', '==', getYearDateObject(beforeDate))
+    .get()
+  return todo
+}
+
+const getYearDateObject = (beforeDate) => {
+  const now = new Date()
+  const today = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() - beforeDate
+  )
+  return timestamp.fromDate(today)
 }

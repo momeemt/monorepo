@@ -12,6 +12,7 @@
       >
         <el-table-column prop="id" label="テスト名" />
         <el-table-column prop="words.length" label="問題数" />
+        <el-table-column prop="startDate" label="開始日" />
       </el-table>
     </el-card>
   </section>

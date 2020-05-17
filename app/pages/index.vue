@@ -1,33 +1,37 @@
 <template>
   <section class="index-page">
-    <div>
-      <el-button @click="signIn">
-        ログインする
-      </el-button>
-    </div>
+    <el-card>
+      <div>
+        <p>今日の暗記タスク</p>
+        <el-divider />
+      </div>
+      <el-table
+        :data="exams"
+        @row-click="goExamShow"
+        style="width: 100%"
+        class="table"
+      >
+        <el-table-column prop="id" label="テスト名" />
+        <el-table-column prop="whenTask" label="タスク" />
+        <el-table-column prop="words.length" label="問題数" />
+        <el-table-column prop="startDate" label="開始日" />
+      </el-table>
+    </el-card>
   </section>
 </template>
 
 <script>
-import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 export default {
-  asyncData () {
-    return {
-      isAuth: false
-    }
+  computed: {
+    ...mapGetters('exams', ['exams'])
   },
-  mounted () {
-    firebase.auth().onAuthStateChanged((user) => {
-      this.isAuth = !!user
-      // if (this.isAuth) {
-      //   this.$router.push('/home')
-      // }
-    })
+  async asyncData ({ store }) {
+    await store.dispatch('exams/fetchToDoExam')
   },
   methods: {
-    signIn () {
-      const provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().signInWithRedirect(provider)
+    goExamShow (exam) {
+      this.$router.push(`/exams/${exam.id}`)
     }
   }
 }

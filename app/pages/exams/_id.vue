@@ -1,16 +1,16 @@
 <template>
   <el-card>
-    <h1>{{ exam.name }}</h1>
+    <h1>{{ exam.id }}</h1>
     <el-divider />
     <p>習得率</p>
-    <el-progress :percentage="masteryRate" type="circle" />
+    <el-progress :percentage="0" type="circle" />
     <el-table :data="results">
-      <el-table-column prop="datetime" label="日付" />
+      <el-table-column prop="id" label="日付" />
       <el-table-column prop="point" label="得点" />
     </el-table>
     <h2>単語</h2>
     <el-table id="momeemtWordTable" :data="words" :row-class-name="tableRowClassName">
-      <el-table-column prop="problem" label="日本語" />
+      <el-table-column prop="problem[0].word" label="日本語" />
       <el-table-column prop="answer" label="英語" />
       <el-table-column prop="probability" label="得点" />
     </el-table>
@@ -20,21 +20,23 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
+  // TODO: 日本語のpropに意味が複数ある場合に文字列を結合させるcomputedをかく
   computed: {
     ...mapGetters('exams', ['exam']),
-    ...mapGetters('words', ['words'])
+    ...mapGetters('words', ['words']),
+    ...mapGetters('results', ['results'])
   },
   async asyncData ({ store, route }) {
     const id = await route.params.id
-    await store.dispatch('exams/fetchExam', { id })
-    const { results } = await store.dispatch('results/fetchResultsFromExam', { examID: id })
-    const { probability } = await store.dispatch('scoring/fetchScoringFromResults', { results })
-    await store.dispatch('words/fetchWordsFromExam', { examID: id })
-    await store.dispatch('words/addProbability', { probability })
-    return { probability }
+    const exam = await store.dispatch('exams/fetchExam', { id })
+    await store.dispatch('results/fetchResultsFromExam', { payload: exam.results })
+    // await store.dispatch('scoring/fetchScoringFromResults', { results })
+    await store.dispatch('words/fetchWordsByExam', { payload: exam })
+    // await store.dispatch('words/addProbability', { probability })
+    // return { probability }
   },
   methods: {
-    tableRowClassName ({ row, rowIndex }) {
+    tableRowClassName ({ row, _ }) {
       const prob = row.probability
       if (prob >= 90) {
         return 'master'

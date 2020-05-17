@@ -36,17 +36,6 @@ export const actions = {
         commit('addWord', res.data())
       })
   },
-  async fetchWordsFromExam ({ commit }, { examID }) {
-    commit('clearWords')
-    const allSnapShot = await firestore
-      .collection('words')
-      .where('examID', '==', examID)
-      .get()
-    if (allSnapShot == null) { return }
-    allSnapShot.forEach((word) => {
-      commit('addWords', word.data())
-    })
-  },
   async fetchWords ({ commit }) {
     commit('clearWords')
     const allShopShot = await firestore
@@ -86,11 +75,15 @@ export const actions = {
     const words = payload.words
     const collection = firestore.collection('words_v2')
     for (const word of words) {
-      const wordObj = await collection.doc(word).get()
-      const answer = wordObj.id
-      const wordData = wordObj.data()
-      wordData.answer = answer
-      commit('addWords', wordData)
+      try {
+        const wordObj = await collection.doc(word).get()
+        const answer = wordObj.id
+        const wordData = wordObj.data()
+        wordData.answer = answer
+        commit('addWords', wordData)
+      } catch (e) {
+        console.log(word)
+      }
     }
   },
   async applyScoring ({ commit }, { payload }) {
