@@ -458,17 +458,21 @@ signed main() {
   in(n);
   Vi A(n);
   vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
-  }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+  int q;
+  in(q);
+  Vi mi(q);
+  vin(mi);
+  M ans;
+  REP(bit, (1<<n)) {
+    int sum = 0;
+    REP(i,n) {
+      if (bit & (1<<i)) {
+        sum += A[i];
+      }
+      ans[sum] = 1;
     }
   }
-  out(ans);
+  REP(i,q) {
+    yes(ans[mi[i]]);
+  }
 }

@@ -455,19 +455,30 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
+  in(n,m);
+  Vi X(m);
+  Vi Y(m);
+  REP(i,m) {
+    in(X[i],Y[i]);
   }
   int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+  REP(bit, (1<<n)) {
+    bool ok = true;
+    REP(i,n) {
+      REP(j,n) {
+        if(i==j) continue;
+        if(!(bit & (1<<i))) continue;
+        if(!(bit & (1<<j))) continue;
+        bool find = false;
+        REP(k,m) {
+          if(i+1 == X[k] && j+1 == Y[k]) find=true;
+          if(i+1 == Y[k] && j+1 == X[k]) find=true;
+        }
+        ok = ok && find;
+      }
+    }
+    if(ok) {
+      ans = max(ans, (int)__builtin_popcount(bit));
     }
   }
   out(ans);

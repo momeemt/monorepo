@@ -455,20 +455,35 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
-  }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+  in(n,m);
+  Vi K(m);
+  VVi swi(m, Vi(10));
+  Vi p(m);
+  REP(i,m) {
+    in(K[i]);
+    REP(j,K[i]) {
+      in(swi[i][j]);
     }
   }
-  out(ans);
+  vin(p);
+  int cnt = 0;
+  REP(bit, (1<<n)) {
+    bool isOn = true;
+    M mp;
+    REP(i,n) {
+      // switch bitを見る
+      if(bit & (1<<i)) {
+        mp[i+1] = 1;
+      }
+    }
+    REP(i,m) {
+      int c = 0;
+      REP(j,K[i]) {
+        if(mp[swi[i][j]]) ++c;
+      }
+      isOn = isOn && (c%2 == p[i]%2);
+    }
+    if(isOn) ++cnt;
+  }
+  out(cnt);
 }

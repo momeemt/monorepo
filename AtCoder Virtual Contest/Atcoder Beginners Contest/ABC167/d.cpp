@@ -455,20 +455,41 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
+  in(n,k);
   Vi A(n);
   vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
+  Vi action;
+  int idx = 0;
+  REP(i,2*n) {
+    action.pb(A[idx]);
+    idx = A[idx]-1;
   }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+  M exist;
+  int end;
+  int endidx; //周期
+  REP(i,2*n) {
+    if(exist[action[i]]) {
+      end = action[i];
+      endidx = (i-1);
+      break;
+    } else {
+      exist[action[i]]++;
     }
   }
-  out(ans);
+  int startidx;
+  REP(i,2*k) {
+    if(action[i]==end) {
+      startidx = i;
+      break;
+    }
+  }
+  // REV(action);
+  // REP(i,startidx) {
+  //   action.pop_back();
+  // }
+  // REV(action);
+  int loop = endidx-startidx+1; //周期
+  int target = (k-startidx-1) % loop;
+  int ansidx = (target+startidx) % loop;
+  out(action[ansidx]);
 }

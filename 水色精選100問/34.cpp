@@ -456,19 +456,11 @@ signed main() {
   // ここから
   int n,m,k; string s;
   in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
+  Vi fib(n+1);
+  fib[0] = 1;
+  fib[1] = 1;
+  FOR(i,2,n+1) {
+    fib[i] = fib[i-1] + fib[i-2];
   }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
-    }
-  }
-  out(ans);
+  out(fib[n]);
 }

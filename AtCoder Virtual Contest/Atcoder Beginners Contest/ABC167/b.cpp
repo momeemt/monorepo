@@ -455,20 +455,18 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
+  int a,b,c,d;
+  in(a,b,c,k);
+  if(a >= k) {
+    out(k);
+    return 0;
   }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
-    }
+  k -= a;
+  if(b >= k) {
+    out(a);
+    return 0;
   }
-  out(ans);
+  k -= b;
+  out(a-k);
+
 }

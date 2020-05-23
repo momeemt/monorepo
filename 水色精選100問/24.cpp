@@ -449,6 +449,23 @@ inline bool chmax(T& a, T b) {
   return false;
 }
 
+using Graph = VVi;
+Vb seen;
+Vi ti(110);
+Vi fi(110);
+int t = 1;
+
+void dfs(Graph &G, int v) {
+  seen[v] = true;
+  ti[v] = t;
+  for(auto nv: G[v]) {
+    t += 1;
+    if (seen[nv]) continue;
+    dfs(G, nv);
+  }
+  fi[v] = t;
+}
+
 signed main() {
   fast();
   // 使えない変数名
@@ -456,19 +473,18 @@ signed main() {
   // ここから
   int n,m,k; string s;
   in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
+  Graph G(n);
   REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
-  }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+    int u,k;
+    in(u,k);
+    Vi V(k);
+    vin(V);
+    REP(j,k) {
+      G[u-1].pb(V[j]-1);
     }
   }
-  out(ans);
+  seen.assign(n, false);
+  dfs(G, 0);
+  vout2(ti);
+  vout2(fi);
 }

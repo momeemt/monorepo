@@ -454,21 +454,12 @@ signed main() {
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
-  int n,m,k; string s;
-  in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
-  }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
-    }
-  }
-  out(ans);
+  double n,m,k; string s;
+  double a,b,h;
+  in(a,b,h,m);
+  double mindg = m * 6;
+  double hdg = h * 30 + m * 0.5;
+  double diff = abs(hdg-mindg);
+  double c2 = a*a + b*b - 2*a*b*cos(diff*PI/180);
+  out(sqrt(c2));
 }

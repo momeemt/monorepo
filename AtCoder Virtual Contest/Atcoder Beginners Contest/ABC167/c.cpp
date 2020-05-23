@@ -455,20 +455,35 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
+  int x;
+  in(n,m,x);
+  Vi C(n);
+  VVi A(n,Vi(m));
   REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
+    in(C[i]);
+    vin(A[i]);
   }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+  int money = INF;
+  bool able = false;
+  REP(bit,(1<<n)) {
+    Vi mean(m);
+    int mo = 0;
+    REP(i,n) {
+      if(!(bit & (1<<i))) continue;
+      REP(j,m) {
+        mean[j] += A[i][j];
+      }
+      mo += C[i];
+    }
+    bool ok = true;
+    REP(i,m) {
+      if(mean[i] < x) ok = false;
+    }
+    if(ok) {
+      able = true;
+      money = min(money, mo);
     }
   }
-  out(ans);
+  if(able) out(money);
+  else out(-1);
 }

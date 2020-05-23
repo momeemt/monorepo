@@ -455,20 +455,40 @@ signed main() {
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
+  int x;
+  in(n,m,x);
+  Vi C(n);
+  VVi A(n, Vi(m));
   REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
+    in(C[i]);
+    vin(A[i]);
   }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+  int cost = INF;
+  bool ok2 = false;
+  REP(bit, (1<<n)) {
+    Vi mean(m);
+    int tcost = 0;
+    REP(i, n) {
+      if(bit & (1<<i)) {
+        // i番目の本を選ぶ
+        REP(j, m) {
+          mean[j] += A[i][j];
+        }
+        tcost += C[i];
+      }
+    }
+    bool ok = true; //理解度足りてる？
+    REP(j, m) {
+      if(mean[j] < x) ok = false;
+    }
+    if(ok) {
+      cost = min(cost, tcost);
+      ok2 = true;
     }
   }
-  out(ans);
+  if(ok2) {
+    out(cost);
+  } else {
+    out(-1);
+  }
 }

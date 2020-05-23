@@ -449,26 +449,63 @@ inline bool chmax(T& a, T b) {
   return false;
 }
 
+using Graph = vector<vector<int>>;
+
 signed main() {
   fast();
   // 使えない変数名
   // P, M, S, PQ, PQG
   // ここから
   int n,m,k; string s;
-  in(n);
-  Vi A(n);
-  vin(A);
-  M L;
-  M R;
-  REP(i,n) {
-    L[i+1+A[i]]++;
-    R[i+1-A[i]]++;
+  in(n,m);
+  Graph G(n);
+  out(n,m);
+  REP(i,m) {
+    int a,b;
+    in(a,b);
+    --a;--b;
+    G.at(a).pb(b);
+    G.at(b).pb(a);
   }
-  int ans = 0;
-  for(auto p:L) {
-    if(R[p.first] > 0) {
-      ans += p.second * R[p.first];
+  // BFS のためのデータ構造
+  vector<int> dist(n, -1); // 全頂点を「未訪問」に初期化
+  queue<int> que;
+
+  // 初期条件 (頂点 0 を初期ノードとする)
+  dist[0] = 0;
+  que.push(0); // 0 を橙色頂点にする
+
+  // BFS 開始 (キューが空になるまで探索を行う)
+  while (!que.empty()) {
+    int v = que.front(); // キューから先頭頂点を取り出す
+    que.pop();
+    // v から辿れる頂点をすべて調べる
+    for (int nv : G[v]) {
+        if (dist[nv] != -1) continue; // すでに発見済みの頂点は探索しない
+
+        // 新たな白色頂点 nv について距離情報を更新してキューに追加する
+        dist[nv] = dist[v] + 1;
+        que.push(nv);
     }
   }
-  out(ans);
+  Vi ansv;
+  bool ok = true;
+  FOR(i,1,n) {
+    int ans = INF;
+    int tmp;
+    for(int nv: G[i]) {
+      if(ans > dist[nv]) {
+        tmp = nv;
+        ans = dist[nv];
+      }
+    }
+    if(ans == INF) ok = false;
+    ansv.pb(tmp+1);
+  }
+  if(ok) {
+    Yes(true);
+    vout(ansv);
+  } else {
+    Yes(false);
+  }
 }
