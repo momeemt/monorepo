@@ -1,4 +1,5 @@
 require "ammonite/ppm"
+require "ammonite/position"
 require "ammonite/version"
 
 module Ammonite
