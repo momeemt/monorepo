@@ -23,8 +23,8 @@ module Ammonite
     end
 
     def fill(red, green, blue, pos1, pos2)
-      (pos1.y...pos2.y).each do |y|
-        (pos1.x...pos2.x).each do |x|
+      (pos1[:y]...pos2[:y]).each do |y|
+        (pos1[:x]...pos2[:x]).each do |x|
           @binary[y][x][0] = red
           @binary[y][x][1] = green
           @binary[y][x][2] = blue
