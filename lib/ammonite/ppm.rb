@@ -1,5 +1,3 @@
-require 'position'
-
 module Ammonite
   class PPM
     def initialize(x, y)
@@ -13,23 +11,23 @@ module Ammonite
       self
     end
 
-    def fill_all(red, green, blue)
+    def fill_all(color)
       (0...@pixel_y).each { |y|
         (0...@pixel_x).each { |x|
-          @binary[y][x][0] = red
-          @binary[y][x][1] = green
-          @binary[y][x][2] = blue
+          @binary[y][x][0] = color.red
+          @binary[y][x][1] = color.green
+          @binary[y][x][2] = color.blue
         }
       }
       self
     end
 
-    def fill(red, green, blue, start_pos, end_pos)
+    def fill(color, start_pos, end_pos)
       (start_pos.y...end_pos.y).each do |y|
         (start_pos.x...end_pos.x).each do |x|
-          @binary[y][x][0] = red
-          @binary[y][x][1] = green
-          @binary[y][x][2] = blue
+          @binary[y][x][0] = color.red
+          @binary[y][x][1] = color.green
+          @binary[y][x][2] = color.blue
         end
       end
       self

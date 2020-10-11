@@ -1,4 +1,5 @@
 require "ammonite/ppm"
+require "ammonite/color"
 require "ammonite/position"
 require "ammonite/version"
 
