@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Ammonite
   class Position
     attr_accessor :x
