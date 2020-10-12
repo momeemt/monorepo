@@ -6,6 +6,7 @@ module Ammonite
     attr_accessor :binary
 
     def initialize
+      self
     end
 
     def size(x, y)
@@ -27,8 +28,8 @@ module Ammonite
         @pixel_x = size[0]
         @pixel_y = size[1]
         binary = file.gets
-        @binary = Array.new(x).map {
-          Array.new(y).map {
+        @binary = Array.new(@pixel_x).map {
+          Array.new(@pixel_y).map {
             Array.new(3, 255)
           }
         }
