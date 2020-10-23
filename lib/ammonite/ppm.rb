@@ -3,8 +3,6 @@
 module Ammonite
   class PPM
 
-    attr_accessor :binary
-
     def initialize
       self
     end
@@ -66,7 +64,7 @@ module Ammonite
       self
     end
 
-    def stroke(start_pos, end_pos)
+    def stroke(start_pos, end_pos, bold=1)
       dx = end_pos.x - start_pos.x
       dy = end_pos.y - start_pos.y
       x = start_pos.x
@@ -74,10 +72,9 @@ module Ammonite
       delta_x_mid = dy / 2
       delta_x = delta_x_mid
       while y != end_pos.y
-        if x >= @pixel_x or y >= @pixel_y
-          continue
+        (0...bold).each do |i|
+          @binary[y][x+i][0] = @binary[y][x+i][1] = @binary[y][x+i][2] = 255
         end
-        @binary[y][x][0] = @binary[y][x][1] = @binary[y][x][2] = 255
         y += 1
         delta_x += dx
         if delta_x >= dy
@@ -95,9 +92,12 @@ module Ammonite
         file.write "255\n"
         (0...@pixel_y).each { |y|
           (0...@pixel_x).each { |x|
-            file.write @binary[y][x][0].chr(Encoding::UTF_8)
-            file.write @binary[y][x][1].chr(Encoding::UTF_8)
-            file.write @binary[y][x][2].chr(Encoding::UTF_8)
+            # file.write @binary[y][x][0].chr(Encoding::UTF_8)
+            # file.write @binary[y][x][1].chr(Encoding::UTF_8)
+            # file.write @binary[y][x][2].chr(Encoding::UTF_8)
+            file.write @binary[y][x][0].chr
+            file.write @binary[y][x][1].chr
+            file.write @binary[y][x][2].chr
           }
         }
       end
