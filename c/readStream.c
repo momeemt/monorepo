@@ -1,13 +1,9 @@
 #include <stdio.h>
 
 int main () {
-  int c;
-
-  while ((c = getchar()) != EOF) {
-    if (c == ' ' || c == '\n' || c == '\t') {
-      putchar('\n');
-    } else {
-      putchar(c);
-    }
+  int words_count_arr[10];
+  for (int i = 0; i < 10; ++i) {
+    words_count_arr[i] = 0;
   }
+  
 }
