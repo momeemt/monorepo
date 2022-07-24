@@ -1,3 +1,5 @@
+zstyle ":completion:*:commands" rehash 1 # インストールしたコマンドを即認識させる
+
 PATH=/bin:$PATH
 PATH=/usr/bin:$PATH
 PATH=/usr/sbin:$PATH
