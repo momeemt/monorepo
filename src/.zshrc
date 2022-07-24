@@ -6,6 +6,14 @@ PATH=/opt/local/bin:$PATH
 
 alias nims='nim --hints:off'
 
+# zsh-completions,zsh-autosuggestions（cf. https://zenn.dev/sprout2000/articles/bd1fac2f3f83bc）
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  autoload -Uz compinit
+  compinit
+fi
+
 if [ "$(uname -m)" = "arm64" ]; then
   PATH=$HOME/.cargo/bin:$PATH
   PATH=$HOME/.nodebrew/current/bin:$PATH
