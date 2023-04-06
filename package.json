@@ -1,0 +1,27 @@
+{
+  "name": "enoki",
+  "version": "0.0.1",
+  "description": "Google Form to Todo-app Task",
+  "main": "index.js",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sohosai/enoki.git"
+  },
+  "keywords": [
+    "mail",
+    "GAS"
+  ],
+  "author": "momeemt",
+  "license": "(Apache-2.0 OR MIT)",
+  "bugs": {
+    "url": "https://github.com/sohosai/enoki/issues"
+  },
+  "homepage": "https://github.com/sohosai/enoki#readme",
+  "dependencies": {
+    "@types/google-apps-script": "^1.0.59",
+    "typescript": "^5.0.3"
+  }
+}
