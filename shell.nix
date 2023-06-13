@@ -1,9 +1,11 @@
 { pkgs ? import ./nix/pkgs.nix }:
 pkgs.mkShell rec {
   buildInputs = with pkgs; [
-    python311
-    python311Packages.numpy
-    python311Packages.shapely
-    python311Packages.opencv4
+    python310
+    python310Packages.numpy
+    python310Packages.shapely
+    python310Packages.opencv4
+    python310Packages.torch
+    python310Packages.torchvision
   ];
 }
