@@ -4,9 +4,14 @@ from shapely.ops import triangulate
 
 class Area:
     _points: list[tuple[float, float]]
+    _name: str
 
-    def __init__(self, *points: tuple[float, float]) -> None:
+    def __init__(self, name: str, *points: tuple[float, float]) -> None:
         self._points = list(points)
+        self._name = name
+    
+    def get_name(self) -> str:
+        return self._name
 
     def get_random_coord(self) -> tuple[float, float]:
         polygon = Polygon(self._points)
@@ -19,6 +24,7 @@ class Area:
         return point
 
 KasugaArea = Area(
+    "kasuga",
     (36.087248, 140.103515),
     (36.084353, 140.105566),
     (36.085190, 140.107963),
@@ -27,6 +33,7 @@ KasugaArea = Area(
 )
 
 HirasunaArea = Area(
+    "hirasuna",
     (36.0996388, 140.1020336),
     (36.0954847, 140.1030948),
     (36.0959022, 140.1041209),
@@ -37,6 +44,7 @@ HirasunaArea = Area(
 )
 
 IshinohirobaArea = Area(
+    "ishinohiroba",
     (36.1099104, 140.1012397),
     (36.1095396, 140.1014375),
     (36.1094797, 140.1018247),
@@ -44,6 +52,7 @@ IshinohirobaArea = Area(
 )
 
 SangakuArea = Area(
+    "sangaku",
     (36.1093592, 140.0993526),
     (36.1101263, 140.1010720),
     (36.1104714, 140.1011049),
@@ -53,14 +62,9 @@ SangakuArea = Area(
     (36.1113784, 140.0983643),
 )
 
-AllAreas = [
-    "ichinoya",
-    "daiichi",
-    "daini",
-    "daisan",
-    "ishinohiroba",
-    "hirasuna",
-    "oikoshi",
-    "igaku",
-    "kasuga"
+Areas = [
+    KasugaArea,
+    # HirasunaArea,
+    # IshinohirobaArea,
+    # SangakuArea,
 ]
