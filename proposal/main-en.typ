@@ -2,76 +2,54 @@
 
 = GSoC 2024 Proposal: nixpkgs pnpm tooling (Project: NixOS)
 Name: Mutsuha Asada
-#v(-8pt)
+#v(-4pt)
 Email: #link("mailto:me@momee.mt")
-#v(-8pt)
+#v(-4pt)
 Country and Timezone: Japan, UTC+9
-#v(-8pt)
+#v(-4pt)
 School Name and Study: University of Tsukuba, College of Information Science
-#v(-8pt)
+#v(-4pt)
 GitHub: #link("https://github.com/momeemt")
 
 == Abstruct
-pnpmはnpmと比較して#link("https://pnpm.io/#:~:text=pnpm%20is%20up%20to%202x%20faster%20than%20npm", "2倍高速");で、依存パッケージが単一のストレージから複製またはハードリンクされることでディスク領域の使用が効率的であることを主張するnodejsのパッケージマネージャです。
+pnpm is the package manager for nodejs which its community claims is #link("https://pnpm.io/#:~:text=pnpm%20is%20up%20to%202x%20faster%20than%20npm", "2x faster"); than npm and efficient in its use of disk space because dependency packages are cloned or hard linked from the only storage.
+Nixpkgs provides `buildNpmPackage` which is a derivation to build packages are managed by npm. It also does `fetchNpmDeps` and `fetchYarnDeps`, which are derivations to fetch dependencies, but they are not nearly compatible with pnpm. Therefore, it has not been possible to provide an official means to build pnpm packages.
+I'd like to develop a tool that handles pnpm with nix and prepare the document. It has the following advantages.
 
-Nixpkgsはnpmで管理されたプロジェクトをビルドするための導出である`buildNpmPackage`や、依存関係をフェッチする導出である`fetchNpmDeps`、`fetchYarnDeps`を提供していますが、これらはpnpmに対してはほとんど互換性がなく#footnote("npmとpnpm間の差異については、後の章で説明します。");、
-pnpmをビルドするための公式の手段を提供していません。
-そこで私はpnpmを使ったnodejsプロジェクトで、依存関係を準備するフェッチャーと、パッケージ化を行うビルダーを追加したいと考えています。
-これには以下のようなメリットがあります。
+- This project makes contributions that a developer adds the package with pnpm easy!
+  - Each of the derivations fetches the pnpm dependency packages individually.
+  - If the fetcher has bugs, they make a revision hard. Otherwise, it may be too hard, because they have to understand details of pnpm's behaviour and a fixed output fetcher.
+- If all goes well, I may make the build tools of nodejs common.
+  - `fetchNpmDeps` seems to work well.
+  - There will be new package managers for nodejs, as the JavaScript ecosystem changes relatively quickly. If I make `fetchPnpmDeps` using `fetchNpmDeps` as a reference, I could classify common processing for handling nodejs package manager with Nix as a library.
 
-=== pnpmパッケージをより簡単に追加できるようになる
-新しいfetcherをnixpkgsに追加することにより、pnpmを用いたプロジェクトを追加する貢献が、以前よりも簡単になります！
-
-現在はそれぞれのパッケージが個別にpnpmのパッケージをフェッチしていますが、仮にバグがあればパッケージが増えるほど修正が難しくなります。
-また、開発者がpnpmの挙動やFODへの理解しなければならないので、貢献は難しくなります。
-
-2022年にpnpmをダウンロードした人は以下の通り2021年と比較して5倍に増加しており、近年はpnpmの重要性はますます増しています。
-
-#figure(
-  image("./pnpm-downloads.png"),
-  caption: [
-    #link("https://pnpm.io/blog/2022/12/30/yearly-update", "The year 2022 for pnpm");より引用。
-  ]
-)
-
-また、既に多くのプロジェクトにpnpmが使われています。
-フロントエンドフレームワークである#link("https://github.com/vuejs/core", "vuejs/core");や#link("https://github.com/sveltejs/svelte", "sveltejs/svelte");はpnpmを採用しています。
-また、Nixpkgsに含まれている#link("https://github.com/Vencord/Vesktop", "Vencord/vesktop");などのツールも使っています。
-他のLinuxディストリビューションと比較して巨大なリポジトリであるnixpkgsが今後も幅広いソフトウェアをサポートするために、pnpmのツールが整備されることが重要です。
-
-さらに、pnpmユーザにとってもNixでパッケージングできることは有益です。
-pnpmはロックファイルによってバージョンや整合性ハッシュを用いて依存ライブラリを管理できますが、Nixはnodejsライブラリだけでなくビルドに関わるソフトウェア全ての再現性を保証しています。
-たとえば画像処理ライブラリであるsharpは、ビルド中にプラットフォームに応じたバイナリをダウンロードしますが、それによりローカル環境とCI環境で異なる動作を引き起こすことがあります。
-nodejsを用いた開発者はこのような再現性のないビルドによって悩まされている人が多くいるため、NixがpnpmをサポートすればNixユーザが増加する一因になる可能性もあります。
-
-=== ビルドツールの共通化
-上手くいけば、nodejsのビルドツールを共通化できるかもしれません。
-現在は`fetchNpmDeps`や`fetchYarnDeps`、その他Nixpkgs外にある多数のツールは独立して実装されています。
-
-`fetchNpmDeps`は上手く動作しているように見えます。
-JavaScriptのエコシステムは比較的スピードを持って変化するので、pnpm以外の新しいツールが出現するかもしれませんが、`fetchPnpmDeps`を`fetchNpmDeps`を参考にして作ることで、nodejsパッケージマネージャをNixで扱うための共通の処理をライブラリとして括り出せるかもしれません。
-
-== これまでの取り組み
-まず、これまでのNixコミュニティのpnpmツールへの取り組みを整理します。
+== Prior efforts
+First, I organize the work for pnpm tools in Nix community.
 
 === `pnpm2nix`
-#link("https://github.com/nix-community/pnpm2nix", "pnpm2nix")は、pnpmのロックファイルをNix式に変換するツールです。
+#link("https://github.com/nix-community/pnpm2nix", "pnpm2nix"); is the tool converts a lockfile of pnpm to Nix expressions.
+
+
+#link("pnpm2nix", "https://github.com/nix-community/pnpm2nix")は、pnpmのロックファイルをNix式に変換するツールです。
 ロックファイルを出力できるパッケージマネージャを持つプログラミング言語に対しては、このアプローチがよく採用されます。
 このツールは4年前まで更新されていましたが、現在は更新されていません。
-#link("https://github.com/pnpm/pnpm/issues/1035", "pnpm/pnpm #1035")で述べられているように、pnpmには整合性ハッシュ（`integrity`）がロックファイルに記載されないことがあるという問題があり、個別のパッケージをビルドすることができないのです。
+#link("pnpm/pnpm #1035", "https://github.com/pnpm/pnpm/issues/1035")で述べられているように、pnpmには整合性ハッシュ（`integrity`）がロックファイルに記載されないことがあるという問題があり、個別のパッケージをビルドすることができないのです。
 
 === `fetchPnpmDeps`
 pnpmの問題を回避するために、fixed output derivation（以下、FOD）を用いることが考えられます。
 Nixは通常のビルドでは再現性を確保するためにネットワークに接続することを禁止しますが、依存するソフトウェアをインストールする必要がある場合にはこの制限は非常に厄介です。
 そこで、得たいファイルのハッシュ値をあらかじめ示してからネットワーク経由でファイルを取得し、同一のファイルが得られたかどうかをチェックすることができます。これをFODと呼びます。
-最近提出された#link("https://github.com/NixOS/nixpkgs/pull/290715", "NixOS/nixpkgs #290715")はFODを用いた依存パッケージのフェッチャーです。
+最近提出された#link("NixOS/nixpkgs #290715", "https://github.com/NixOS/nixpkgs/pull/290715")はFODを用いた依存パッケージのフェッチャーです。
 
 これで問題は解決しているように思えますが、pnpmのバージョンが変更された場合に依存解決が同様に行われる保証がありません。
 パッケージのフェッチに`pnpm install`を使用していますが、仮に`pnpm`の実装や依存ライブラリが変化すればビルドが再現しない可能性があります。
 
 == 技術的な説明
-これらの問題を解決するために、pnpmのロックファイルを解析してpnpmのグローバルストアを作成する、独自のFODフェッチャーを定義します。
+これらの問題を解決するために、pnpmのロックファイルを解析してパッケージを取得する、独自のフェッチャーを定義します。
 `fetchNpmDeps`は提供されていますが、npmとpnpmには互換性が無いので新しくpnpm用に用意する価値があります。
+
+独自のフェッチャーによってパッケージを収集するため、`fetchPnpmDeps`で問題だったpnpmのバージョン間が異なっても同じ挙動をすることの保証ができます。
+また、`pnpm2nix`では依存パッケージを全て個別にビルドするために全てのパッケージの整合性ハッシュが必要でしたが、新しく実装するのはFODフェッチャーなので最終的な依存の整合性ハッシュが明らかであれば十分です。
 
 === npmとpnpmの違い
 具体的には、npmとpnpmの間には以下のような違いがあります。
@@ -108,19 +86,6 @@ pnpmの場合はロックファイルがYAML形式ですが、デシリアライ
 
 また、pnpmのグローバルストアを実装するにあたり、`fetchNpmDeps`が持つキャッシュを操作するプログラムが非常に参考になります。
 https://github.com/NixOS/nixpkgs/blob/918363e6fced7ae9e27c6b0c36195c2f9f94adde/pkgs/build-support/node/fetch-npm-deps/src/cacache.rs#L54-L124
-
-=== `pnpm2nix`との比較
-`pnpm2nix`はロックファイルをNix式に変換するアプローチを取っているので、FODフェッチャーと比較してNixのエコシステムとの統合が容易です。
-NixOSや他のNixベースのシステムでも依存パッケージのビルドを移植でき、拡張することもできます。
-しかし、`pnpm2nix`はロックファイルに完全に依存しており、全てのパッケージの整合性ハッシュが記述されている必要があります。
-現に、pnpmには#link("https://github.com/pnpm/pnpm/issues/1035", "pnpm/pnpm #1035")という問題があります。
-総合的に判断すると、新しいFODフェッチャーに注力する方が良いでしょう。
-
-=== `fetchPnpmDeps`との比較
-現在提出されている`fetchPnpmDeps`には、pnpmのバージョンが違うと依存性解決の方法が変わる可能性があり、ビルドの再現性が十分に保証できないことが問題点として挙げられます。
-このフェッチャーと比較すると、新しいFODフェッチャーはロックファイルからpnpmのグローバルストアを作成するので、pnpmのバージョンが異なっても同じように依存性が解決されます。
-さらに、新しいフェッチャーは新しいグローバルストアを別に作成するので、他のプロジェクトが依存するライブラリと混ざりません。唯一のストアからハードリンク、または複製を行うことはディスク容量を節約するという点において賢い方法ですが、ビルドの再現性を犠牲にしています。
-したがって、`fetchPnpmDeps`と比較して非常に高いビルドの再現性、依存解決の正確性を得ることができるでしょう。
 
 == 目標
 
