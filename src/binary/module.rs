@@ -12,7 +12,7 @@ use num_traits::FromPrimitive;
 use super::{
     instruction::Instruction,
     section::SectionCode,
-    types::{FuncType, Function, ValueType},
+    types::{FuncType, Function, FunctionLocal, ValueType},
 };
 
 #[derive(Debug, PartialEq, Eq)]
@@ -104,7 +104,7 @@ fn decode_type_section(input: &[u8]) -> IResult<&[u8], Vec<FuncType>> {
         let (rest, _) = le_u8(input)?;
         let mut func = FuncType::default();
         let (rest, size) = leb128_u32(rest)?; // num params
-        let (rest, types) = take(size)(rest)?; 
+        let (rest, types) = take(size)(rest)?;
         let (_, types) = many0(decode_value_type)(types)?;
         func.params = types;
         let (rest, size) = leb128_u32(rest)?; // num result
@@ -128,12 +128,34 @@ fn decode_function_section(input: &[u8]) -> IResult<&[u8], Vec<u32>> {
     Ok((&[], func_idx_list))
 }
 
-fn decode_code_section(_input: &[u8]) -> IResult<&[u8], Vec<Function>> {
-    let functions = vec![Function {
-        locals: vec![],
-        code: vec![Instruction::End],
-    }];
+fn decode_code_section(input: &[u8]) -> IResult<&[u8], Vec<Function>> {
+    let mut functions = vec![];
+    let (mut input, count) = leb128_u32(input)?;
+
+    for _ in 0..count {
+        let (rest, func_body_size) = leb128_u32(input)?;
+        let (rest, func_body) = take(func_body_size)(rest)?;
+        let (_, func_body) = decode_function_body(func_body)?;
+        functions.push(func_body);
+        input = rest;
+    }
     Ok((&[], functions))
+}
+
+fn decode_function_body(input: &[u8]) -> IResult<&[u8], Function> {
+    let mut body = Function::default();
+    let (mut input, count) = leb128_u32(input)?;
+    for _ in 0..count {
+        let (rest, type_count) = leb128_u32(input)?;
+        let (rest, value_type) = le_u8(rest)?;
+        body.locals.push(FunctionLocal {
+            type_count,
+            value_type: value_type.into(),
+        });
+        input = rest;
+    }
+    body.code = vec![Instruction::End];
+    Ok((&[], body))
 }
 
 #[cfg(test)]
@@ -143,7 +165,7 @@ mod tests {
 
     use crate::binary::{
         instruction::Instruction,
-        types::{FuncType, Function, ValueType},
+        types::{FuncType, Function, FunctionLocal, ValueType},
     };
 
     use super::Module;
@@ -189,6 +211,34 @@ mod tests {
                 function_section: Some(vec![0]),
                 code_section: Some(vec![Function {
                     locals: vec![],
+                    code: vec![Instruction::End],
+                }]),
+                ..Default::default()
+            }
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn decode_func_local() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/func_local.wat")?;
+        let module = Module::new(&wasm)?;
+        assert_eq!(
+            module,
+            Module {
+                type_section: Some(vec![FuncType::default()]),
+                function_section: Some(vec![0]),
+                code_section: Some(vec![Function {
+                    locals: vec![
+                        FunctionLocal {
+                            type_count: 1,
+                            value_type: ValueType::I32,
+                        },
+                        FunctionLocal {
+                            type_count: 2,
+                            value_type: ValueType::I64,
+                        },
+                    ],
                     code: vec![Instruction::End],
                 }]),
                 ..Default::default()
