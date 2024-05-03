@@ -6,7 +6,7 @@ use nom::{
     sequence::pair,
     IResult,
 };
-use nom_leb128::leb128_u32;
+use nom_leb128::{leb128_i32, leb128_u32};
 use num_traits::FromPrimitive;
 
 use super::{
@@ -188,6 +188,10 @@ fn decode_instructions(input: &[u8]) -> IResult<&[u8], Instruction> {
         Opcode::LocalSet => {
             let (rest, index) = leb128_u32(input)?;
             (rest, Instruction::LocalSet(index))
+        }
+        Opcode::I32Const => {
+            let (rest, num) = leb128_i32(input)?;
+            (rest, Instruction::I32Const(num))
         }
         Opcode::I32Add => (input, Instruction::I32Add),
         Opcode::End => (input, Instruction::End),

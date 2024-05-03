@@ -159,6 +159,9 @@ impl Runtime {
                     let index = *index as usize;
                     frame.locals[index] = value;
                 }
+                Instruction::I32Const(num) => {
+                    self.stack.push(Value::I32(*num));
+                }
                 Instruction::I32Add => {
                     let (Some(right), Some(left)) = (self.stack.pop(), self.stack.pop()) else {
                         bail!("not found any value in the stack")
@@ -275,6 +278,24 @@ mod tests {
         runtime.add_import("env", "undefined", |_, _| Ok(None))?;
         let result = runtime.call("call_add", vec![Value::I32(1)]);
         assert!(result.is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn i32_const() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/i32_const.wat")?;
+        let mut runtime = Runtime::instantiate(wasm)?;
+        let result = runtime.call("i32_const", vec![])?;
+        assert_eq!(result, Some(Value::I32(42)));
+        Ok(())
+    }
+
+    #[test]
+    fn local_set() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/local_set.wat")?;
+        let mut runtime = Runtime::instantiate(wasm)?;
+        let result = runtime.call("local_set", vec![])?;
+        assert_eq!(result, Some(Value::I32(42)));
         Ok(())
     }
 }
