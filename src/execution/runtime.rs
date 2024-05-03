@@ -183,6 +183,7 @@ impl Runtime {
                         }
                     }
                 }
+                _ => todo!(),
             }
         }
         Ok(())
@@ -212,7 +213,14 @@ mod tests {
     use anyhow::Result;
     use pretty_assertions::assert_eq;
 
-    use crate::execution::value::Value;
+    use crate::{
+        binary::{
+            instruction::Instruction,
+            module::Module,
+            types::{FuncType, Function},
+        },
+        execution::value::Value,
+    };
 
     use super::Runtime;
 
@@ -296,6 +304,35 @@ mod tests {
         let mut runtime = Runtime::instantiate(wasm)?;
         let result = runtime.call("local_set", vec![])?;
         assert_eq!(result, Some(Value::I32(42)));
+        Ok(())
+    }
+
+    #[test]
+    fn decode_i32_store() -> Result<()> {
+        let wasm = wat::parse_str("(module (func (i32.store offset=4 (i32.const 4))))")?;
+        let module = Module::new(&wasm)?;
+        assert_eq!(
+            module,
+            Module {
+                type_section: Some(vec![FuncType {
+                    params: vec![],
+                    results: vec![],
+                }]),
+                function_section: Some(vec![0]),
+                code_section: Some(vec![Function {
+                    locals: vec![],
+                    code: vec![
+                        Instruction::I32Const(4),
+                        Instruction::I32Store {
+                            align: 2,
+                            offset: 4
+                        },
+                        Instruction::End
+                    ]
+                }]),
+                ..Default::default()
+            }
+        );
         Ok(())
     }
 }

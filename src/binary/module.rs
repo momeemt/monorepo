@@ -13,7 +13,10 @@ use super::{
     instruction::Instruction,
     opcode::Opcode,
     section::SectionCode,
-    types::{Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc, ValueType},
+    types::{
+        Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc, Limits, Memory,
+        ValueType,
+    },
 };
 
 #[derive(Debug, PartialEq, Eq)]
@@ -25,6 +28,7 @@ pub struct Module {
     pub code_section: Option<Vec<Function>>,
     pub export_section: Option<Vec<Export>>,
     pub import_section: Option<Vec<Import>>,
+    pub memory_section: Option<Vec<Memory>>,
 }
 
 impl Default for Module {
@@ -37,6 +41,7 @@ impl Default for Module {
             code_section: None,
             export_section: None,
             import_section: None,
+            memory_section: None,
         }
     }
 }
@@ -83,6 +88,10 @@ impl Module {
                             let (_, imports) = decode_import_section(section_contents)?;
                             module.import_section = Some(imports);
                         }
+                        SectionCode::Memory => {
+                            let (_, memory) = decode_memory_section(section_contents)?;
+                            module.memory_section = Some(vec![memory]);
+                        }
                         _ => todo!(),
                     };
                     remaining = rest;
@@ -92,6 +101,23 @@ impl Module {
         }
         Ok((input, module))
     }
+}
+
+fn decode_memory_section(input: &[u8]) -> IResult<&[u8], Memory> {
+    let (input, _) = leb128_u32(input)?;
+    let (_, limits) = decode_limits(input)?;
+    Ok((input, Memory { limits }))
+}
+
+fn decode_limits(input: &[u8]) -> IResult<&[u8], Limits> {
+    let (input, (flags, min)) = pair(leb128_u32, leb128_u32)(input)?;
+    let max = if flags == 0 {
+        None
+    } else {
+        let (_, max) = leb128_u32(input)?;
+        Some(max)
+    };
+    Ok((input, Limits { min, max }))
 }
 
 fn decode_section_header(input: &[u8]) -> IResult<&[u8], (SectionCode, u32)> {
@@ -189,6 +215,11 @@ fn decode_instructions(input: &[u8]) -> IResult<&[u8], Instruction> {
             let (rest, index) = leb128_u32(input)?;
             (rest, Instruction::LocalSet(index))
         }
+        Opcode::I32Store => {
+            let (rest, align) = leb128_u32(input)?;
+            let (rest, offset) = leb128_u32(rest)?;
+            (rest, Instruction::I32Store { align, offset })
+        }
         Opcode::I32Const => {
             let (rest, num) = leb128_i32(input)?;
             (rest, Instruction::I32Const(num))
@@ -264,7 +295,8 @@ mod tests {
     use crate::binary::{
         instruction::Instruction,
         types::{
-            Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc, ValueType,
+            Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc, Limits,
+            Memory, ValueType,
         },
     };
 
@@ -451,6 +483,31 @@ mod tests {
                 ..Default::default()
             }
         );
+        Ok(())
+    }
+
+    #[test]
+    fn decode_memory() -> Result<()> {
+        let tests = vec![
+            ("(module (memory 1))", Limits { min: 1, max: None }),
+            (
+                "(module (memory 1 2))",
+                Limits {
+                    min: 1,
+                    max: Some(2),
+                },
+            ),
+        ];
+        for (wasm, limits) in tests {
+            let module = Module::new(&wat::parse_str(wasm)?)?;
+            assert_eq!(
+                module,
+                Module {
+                    memory_section: Some(vec![Memory { limits }]),
+                    ..Default::default()
+                }
+            );
+        }
         Ok(())
     }
 }

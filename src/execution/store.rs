@@ -8,10 +8,18 @@ use crate::binary::{
     types::{ExportDesc, FuncType, ImportDesc, ValueType},
 };
 
+pub const PAGE_SIZE: u32 = 65536;
+
 #[derive(Clone)]
 pub struct Func {
     pub locals: Vec<ValueType>,
     pub body: Vec<Instruction>,
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct MemoryInst {
+    pub data: Vec<u8>,
+    pub max: Option<u32>,
 }
 
 #[derive(Clone)]
@@ -47,6 +55,7 @@ pub struct ModuleInst {
 pub struct Store {
     pub funcs: Vec<FuncInst>,
     pub module: ModuleInst,
+    pub memories: Vec<MemoryInst>,
 }
 
 impl Store {
@@ -55,7 +64,9 @@ impl Store {
             Some(ref indexes) => indexes.clone(),
             _ => vec![],
         };
+
         let mut funcs = vec![];
+        let mut memories = vec![];
 
         if let Some(ref import_section) = module.import_section {
             for import in import_section {
@@ -124,8 +135,21 @@ impl Store {
             }
         };
         let module_inst = ModuleInst { exports };
+
+        if let Some(ref sections) = module.memory_section {
+            for memory in sections {
+                let min = memory.limits.min * PAGE_SIZE;
+                let memory = MemoryInst {
+                    data: vec![0; min as usize],
+                    max: memory.limits.max,
+                };
+                memories.push(memory)
+            }
+        }
+
         Ok(Self {
             funcs,
+            memories,
             module: module_inst,
         })
     }
