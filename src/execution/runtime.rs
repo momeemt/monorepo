@@ -1,3 +1,5 @@
+use std::mem::size_of;
+
 use anyhow::{anyhow, bail, Ok, Result};
 
 use crate::binary::{
@@ -159,6 +161,22 @@ impl Runtime {
                     let index = *index as usize;
                     frame.locals[index] = value;
                 }
+                Instruction::I32Store { align: _, offset } => {
+                    let (Some(value), Some(addr)) = (self.stack.pop(), self.stack.pop()) else {
+                        bail!("not found any value in the stack");
+                    };
+                    let addr = Into::<i32>::into(addr) as usize;
+                    let offset = (*offset) as usize;
+                    let at = addr + offset;
+                    let end = at + size_of::<i32>();
+                    let memory = self
+                        .store
+                        .memories
+                        .get_mut(0)
+                        .ok_or(anyhow!("not found memory"))?;
+                    let value: i32 = value.into();
+                    memory.data[at..end].copy_from_slice(&value.to_le_bytes());
+                }
                 Instruction::I32Const(num) => {
                     self.stack.push(Value::I32(*num));
                 }
@@ -183,7 +201,6 @@ impl Runtime {
                         }
                     }
                 }
-                _ => todo!(),
             }
         }
         Ok(())
@@ -333,6 +350,16 @@ mod tests {
                 ..Default::default()
             }
         );
+        Ok(())
+    }
+
+    #[test]
+    fn i32_store() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/i32_store.wat")?;
+        let mut runtime = Runtime::instantiate(wasm)?;
+        runtime.call("i32_store", vec![])?;
+        let memory = &runtime.store.memories[0].data;
+        assert_eq!(memory[0], 42);
         Ok(())
     }
 }

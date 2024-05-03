@@ -147,10 +147,47 @@ impl Store {
             }
         }
 
+        if let Some(ref sections) = module.data_section {
+            for data in sections {
+                let memory = memories
+                    .get_mut(data.memory_index as usize)
+                    .ok_or(anyhow::anyhow!("not found memory"))?;
+                let offset = data.offset as usize;
+                let init = &data.init;
+
+                if offset + init.len() > memory.data.len() {
+                    bail!("data is too large to fit in memory");
+                }
+                memory.data[offset..offset + init.len()].copy_from_slice(init);
+            }
+        }
+
         Ok(Self {
             funcs,
             memories,
             module: module_inst,
         })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use anyhow::Result;
+    use pretty_assertions::assert_eq;
+
+    use crate::binary::module::Module;
+
+    use super::Store;
+
+    #[test]
+    fn init_memory() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/memory.wat")?;
+        let module = Module::new(&wasm)?;
+        let store = Store::new(module)?;
+        assert_eq!(store.memories.len(), 1);
+        assert_eq!(store.memories[0].data.len(), 65536);
+        assert_eq!(&store.memories[0].data[0..5], b"hello");
+        assert_eq!(&store.memories[0].data[5..10], b"world");
+        Ok(())
     }
 }

@@ -14,8 +14,8 @@ use super::{
     opcode::Opcode,
     section::SectionCode,
     types::{
-        Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc, Limits, Memory,
-        ValueType,
+        Data, Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc, Limits,
+        Memory, ValueType,
     },
 };
 
@@ -29,6 +29,7 @@ pub struct Module {
     pub export_section: Option<Vec<Export>>,
     pub import_section: Option<Vec<Import>>,
     pub memory_section: Option<Vec<Memory>>,
+    pub data_section: Option<Vec<Data>>,
 }
 
 impl Default for Module {
@@ -42,6 +43,7 @@ impl Default for Module {
             export_section: None,
             import_section: None,
             memory_section: None,
+            data_section: None,
         }
     }
 }
@@ -92,7 +94,10 @@ impl Module {
                             let (_, memory) = decode_memory_section(section_contents)?;
                             module.memory_section = Some(vec![memory]);
                         }
-                        _ => todo!(),
+                        SectionCode::Data => {
+                            let (_, data) = decode_data_section(section_contents)?;
+                            module.data_section = Some(data);
+                        }
                     };
                     remaining = rest;
                 }
@@ -118,6 +123,31 @@ fn decode_limits(input: &[u8]) -> IResult<&[u8], Limits> {
         Some(max)
     };
     Ok((input, Limits { min, max }))
+}
+
+fn decode_expr(input: &[u8]) -> IResult<&[u8], u32> {
+    let (input, _) = leb128_u32(input)?;
+    let (input, offset) = leb128_u32(input)?;
+    let (input, _) = leb128_u32(input)?;
+    Ok((input, offset))
+}
+
+fn decode_data_section(input: &[u8]) -> IResult<&[u8], Vec<Data>> {
+    let (mut input, count) = leb128_u32(input)?;
+    let mut data = vec![];
+    for _ in 0..count {
+        let (rest, memory_index) = leb128_u32(input)?;
+        let (rest, offset) = decode_expr(rest)?;
+        let (rest, size) = leb128_u32(rest)?;
+        let (rest, init) = take(size)(rest)?;
+        data.push(Data {
+            memory_index,
+            offset,
+            init: init.into(),
+        });
+        input = rest;
+    }
+    Ok((input, data))
 }
 
 fn decode_section_header(input: &[u8]) -> IResult<&[u8], (SectionCode, u32)> {
@@ -295,8 +325,8 @@ mod tests {
     use crate::binary::{
         instruction::Instruction,
         types::{
-            Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc, Limits,
-            Memory, ValueType,
+            Data, Export, ExportDesc, FuncType, Function, FunctionLocal, Import, ImportDesc,
+            Limits, Memory, ValueType,
         },
     };
 
@@ -504,6 +534,50 @@ mod tests {
                 module,
                 Module {
                     memory_section: Some(vec![Memory { limits }]),
+                    ..Default::default()
+                }
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn decode_data() -> Result<()> {
+        let tests = vec![
+            (
+                "(module (memory 1) (data (i32.const 0) \"hello\"))",
+                vec![Data {
+                    memory_index: 0,
+                    offset: 0,
+                    init: "hello".as_bytes().to_vec(),
+                }],
+            ),
+            (
+                "(module (memory 1) (data (i32.const 0) \"hello\") (data (i32.const 5) \"world\"))",
+                vec![
+                    Data {
+                        memory_index: 0,
+                        offset: 0,
+                        init: b"hello".into(),
+                    },
+                    Data {
+                        memory_index: 0,
+                        offset: 5,
+                        init: b"world".into(),
+                    },
+                ],
+            ),
+        ];
+
+        for (wasm, data) in tests {
+            let module = Module::new(&wat::parse_str(wasm)?)?;
+            assert_eq!(
+                module,
+                Module {
+                    memory_section: Some(vec![Memory {
+                        limits: Limits { min: 1, max: None }
+                    }]),
+                    data_section: Some(data),
                     ..Default::default()
                 }
             );
