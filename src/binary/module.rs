@@ -185,6 +185,10 @@ fn decode_instructions(input: &[u8]) -> IResult<&[u8], Instruction> {
             let (rest, index) = leb128_u32(input)?;
             (rest, Instruction::LocalGet(index))
         }
+        Opcode::LocalSet => {
+            let (rest, index) = leb128_u32(input)?;
+            (rest, Instruction::LocalSet(index))
+        }
         Opcode::I32Add => (input, Instruction::I32Add),
         Opcode::End => (input, Instruction::End),
         Opcode::Call => {
