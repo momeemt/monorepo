@@ -42,7 +42,14 @@
         };
 
         devShell = pkgs.mkShell {
-          buildInputs = with pkgs; [toolchain rust-analyzer nil alejandra];
+          buildInputs = with pkgs; [
+            toolchain
+            rust-analyzer
+            nil
+            alejandra
+            wabt
+            wasmtime
+          ];
         };
       }
     );
