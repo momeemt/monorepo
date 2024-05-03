@@ -33,3 +33,14 @@ pub struct Function {
     pub locals: Vec<FunctionLocal>,
     pub code: Vec<Instruction>,
 }
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExportDesc {
+    Func(u32),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct Export {
+    pub name: String,
+    pub desc: ExportDesc,
+}
