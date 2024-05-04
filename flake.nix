@@ -27,7 +27,7 @@
           rustc = toolchain;
           cargo = toolchain;
         };
-        name = "hinoki";
+        name = "runw";
       in {
         packages.default = rustPlatform.buildRustPackage {
           inherit name;
