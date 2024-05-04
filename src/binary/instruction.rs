@@ -6,5 +6,6 @@ pub enum Instruction {
     I32Store { align: u32, offset: u32 },
     I32Const(i32),
     I32Add,
+    I32Sub,
     Call(u32),
 }

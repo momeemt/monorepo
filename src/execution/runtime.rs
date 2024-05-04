@@ -209,6 +209,13 @@ impl Runtime {
                     let result = left + right;
                     self.stack.push(result);
                 }
+                Instruction::I32Sub => {
+                    let (Some(right), Some(left)) = (self.stack.pop(), self.stack.pop()) else {
+                        bail!("not found any value in the stack")
+                    };
+                    let result = left - right;
+                    self.stack.push(result);
+                }
                 Instruction::Call(index) => {
                     let Some(func) = self.store.funcs.get(*index as usize) else {
                         bail!("not found func");
@@ -283,6 +290,20 @@ mod tests {
         let mut runtime = Runtime::instantiate(wasm)?;
         let result = runtime.call("undefined", vec![]);
         assert!(result.is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn i32_sub() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/i32_sub.wat")?;
+        let mut runtime = Runtime::instantiate(wasm)?;
+        let tests = vec![(3, 2, 1), (10, 6, 4), (5, 7, -2)];
+
+        for (left, right, want) in tests {
+            let args = vec![Value::I32(left), Value::I32(right)];
+            let result = runtime.call("sub", args)?;
+            assert_eq!(result, Some(Value::I32(want)));
+        }
         Ok(())
     }
 

@@ -255,6 +255,7 @@ fn decode_instructions(input: &[u8]) -> IResult<&[u8], Instruction> {
             (rest, Instruction::I32Const(num))
         }
         Opcode::I32Add => (input, Instruction::I32Add),
+        Opcode::I32Sub => (input, Instruction::I32Sub),
         Opcode::End => (input, Instruction::End),
         Opcode::Call => {
             let (rest, index) = leb128_u32(input)?;
