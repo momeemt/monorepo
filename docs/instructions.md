@@ -54,7 +54,7 @@
 | i64.const i64 | x | x | 0x42 |
 | f32.const f32 | x | x | 0x43 |
 | f64.const f64 | x | x | 0x44 |
-| i32.eqz | x | x | 0x45 |
+| i32.eqz | ✅ | x | 0x45 |
 | i32.eq | x | x | 0x46 |
 | i32.ne | x | x | 0x47 |
 | i32.lt_s | x | x | 0x48 |
