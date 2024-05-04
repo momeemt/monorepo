@@ -259,6 +259,7 @@ fn decode_instructions(input: &[u8]) -> IResult<&[u8], Instruction> {
             (rest, Instruction::I32Const(num))
         }
         Opcode::I32Eqz => (input, Instruction::I32Eqz),
+        Opcode::I32Eq => (input, Instruction::I32Eq),
         Opcode::I32Add => (input, Instruction::I32Add),
         Opcode::I32Sub => (input, Instruction::I32Sub),
         Opcode::I32Mul => (input, Instruction::I32Mul),

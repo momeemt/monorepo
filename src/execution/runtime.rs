@@ -209,6 +209,13 @@ impl Runtime {
                     let result = Value::I32((value == Value::I32(0)) as i32);
                     self.stack.push(result)
                 }
+                Instruction::I32Eq => {
+                    let (Some(left), Some(right)) = (self.stack.pop(), self.stack.pop()) else {
+                        bail!("not found any value in the stack")
+                    };
+                    let result = Value::I32((left == right) as i32);
+                    self.stack.push(result)
+                }
                 Instruction::I32Add => {
                     let (Some(right), Some(left)) = (self.stack.pop(), self.stack.pop()) else {
                         bail!("not found any value in the stack")
@@ -330,6 +337,20 @@ mod instructions {
         for (value, want) in tests {
             let args = vec![Value::I32(value)];
             let result = runtime.call("eqz", args)?;
+            assert_eq!(result, Some(Value::I32(want)))
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn i32_eq() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/i32_eq.wat")?;
+        let mut runtime = Runtime::instantiate(wasm)?;
+        let tests = vec![(0, 0, 1), (1, 2, 0), (-3, -3, 1), (3, -2, 0)];
+
+        for (left, right, want) in tests {
+            let args = vec![Value::I32(left), Value::I32(right)];
+            let result = runtime.call("eq", args)?;
             assert_eq!(result, Some(Value::I32(want)))
         }
         Ok(())
