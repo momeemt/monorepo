@@ -202,6 +202,13 @@ impl Runtime {
                 Instruction::I32Const(num) => {
                     self.stack.push(Value::I32(*num));
                 }
+                Instruction::I32Eqz => {
+                    let Some(value) = self.stack.pop() else {
+                        bail!("not found any value in the stack")
+                    };
+                    let result = Value::I32((value == Value::I32(0)) as i32);
+                    self.stack.push(result)
+                }
                 Instruction::I32Add => {
                     let (Some(right), Some(left)) = (self.stack.pop(), self.stack.pop()) else {
                         bail!("not found any value in the stack")
@@ -276,6 +283,20 @@ mod tests {
     };
 
     use super::Runtime;
+
+    #[test]
+    fn i32_eqz() -> Result<()> {
+        let wasm = wat::parse_file("src/fixtures/i32_eqz.wat")?;
+        let mut runtime = Runtime::instantiate(wasm)?;
+        let tests = vec![(0, 1), (1, 0), (-10, 0)];
+
+        for (value, want) in tests {
+            let args = vec![Value::I32(value)];
+            let result = runtime.call("eqz", args)?;
+            assert_eq!(result, Some(Value::I32(want)))
+        }
+        Ok(())
+    }
 
     #[test]
     fn execute_i32_add() -> Result<()> {

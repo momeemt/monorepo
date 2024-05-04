@@ -245,6 +245,10 @@ fn decode_instructions(input: &[u8]) -> IResult<&[u8], Instruction> {
             let (rest, index) = leb128_u32(input)?;
             (rest, Instruction::LocalSet(index))
         }
+        Opcode::Call => {
+            let (rest, index) = leb128_u32(input)?;
+            (rest, Instruction::Call(index))
+        }
         Opcode::I32Store => {
             let (rest, align) = leb128_u32(input)?;
             let (rest, offset) = leb128_u32(rest)?;
@@ -254,14 +258,11 @@ fn decode_instructions(input: &[u8]) -> IResult<&[u8], Instruction> {
             let (rest, num) = leb128_i32(input)?;
             (rest, Instruction::I32Const(num))
         }
+        Opcode::I32Eqz => (input, Instruction::I32Eqz),
         Opcode::I32Add => (input, Instruction::I32Add),
         Opcode::I32Sub => (input, Instruction::I32Sub),
         Opcode::I32Mul => (input, Instruction::I32Mul),
         Opcode::End => (input, Instruction::End),
-        Opcode::Call => {
-            let (rest, index) = leb128_u32(input)?;
-            (rest, Instruction::Call(index))
-        }
     };
     Ok((rest, inst))
 }
