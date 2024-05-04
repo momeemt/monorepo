@@ -7,5 +7,6 @@ pub enum Instruction {
     I32Const(i32),
     I32Add,
     I32Sub,
+    I32Mul,
     Call(u32),
 }
