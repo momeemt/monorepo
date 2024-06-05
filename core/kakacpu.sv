@@ -1,6 +1,7 @@
 module kakacpu (
     input logic CLOCK_50,
 	  input logic [3:0] KEY,
+    input logic [0:0] SW,
     output logic [6:0] HEX0
 );
 
@@ -32,10 +33,14 @@ always_ff @(posedge CLOCK_50 or negedge KEY[0]) begin
         counter <= counter + 1;
         if (counter == 50_000_000) begin
             counter <= 0;
-            if (digit == 9) begin
+            if (SW == 0 && digit == 9) begin
                 digit <= 0;
-            end else begin
+            end else if (SW == 0) begin
                 digit <= digit + 1;
+            end else if (digit == 0) begin
+                digit <= 9;
+            end else begin
+                digit <= digit - 1;
             end
         end
     end
