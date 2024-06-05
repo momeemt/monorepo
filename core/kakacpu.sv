@@ -1,12 +1,60 @@
 module kakacpu (
     input logic CLOCK_50,
 	  input logic [3:0] KEY,
-    input logic [0:0] SW,
-    output logic [6:0] HEX0
+    output logic [7:0] LEDR
 );
 
 logic [31:0] counter;
-logic [3:0] digit;
+logic [31:0] pipeline_data;
+logic valid_input;
+
+logic valid_output_stage1;
+logic valid_output_stage2;
+logic valid_output_stage3;
+
+logic [31:0] data_output_stage1;
+logic [31:0] data_output_stage2;
+logic [31:0] data_output_stage3;
+
+logic stall_input_stage1;
+logic stall_output_stage1;
+logic stall_input_stage2;
+logic stall_output_stage2;
+logic stall_input_stage3;
+logic stall_output_stage3;
+
+pipeline_stage stage1 (
+    .clk(CLOCK_50),
+    .rst(KEY[0]),
+    .valid_input(valid_input),
+    .valid_output(valid_output_stage1),
+    .data_input(pipeline_data),
+    .data_output(data_output_stage1),
+    .stall_input(stall_input_stage1),
+    .stall_output(stall_output_stage1)
+);
+
+pipeline_stage stage2 (
+    .clk(CLOCK_50),
+    .rst(KEY[0]),
+    .valid_input(valid_output_stage1),
+    .valid_output(valid_output_stage2),
+    .data_input(data_output_stage1),
+    .data_output(data_output_stage2),
+    .stall_input(stall_input_stage2),
+    .stall_output(stall_output_stage2)
+);
+
+pipeline_stage stage3 (
+    .clk(CLOCK_50),
+    .rst(KEY[0]),
+    .valid_input(valid_output_stage2),
+    .valid_output(valid_output_stage3),
+    .data_input(data_output_stage2),
+    .data_output(data_output_stage3),
+    .stall_input(stall_input_stage3),
+    .stall_output(stall_output_stage3)
+);
 
 function [6:0] digit_to_7seg;
   input [3:0] digit;
@@ -28,25 +76,27 @@ endfunction
 always_ff @(posedge CLOCK_50 or negedge KEY[0]) begin
     if (!KEY[0]) begin
         counter <= 0;
-        digit <= 0;
+        pipeline_data <= 0;
+        valid_input <= 0;
     end else begin
         counter <= counter + 1;
         if (counter == 50_000_000) begin
             counter <= 0;
-            if (SW == 0 && digit == 9) begin
-                digit <= 0;
-            end else if (SW == 0) begin
-                digit <= digit + 1;
-            end else if (digit == 0) begin
-                digit <= 9;
-            end else begin
-                digit <= digit - 1;
-            end
+            pipeline_data <= pipeline_data + 1;
+            valid_input <= 1;
+        end else begin
+            valid_input <= 0;
         end
     end
 end
 
-assign HEX0 = digit_to_7seg(digit);
+always_ff @(posedge CLOCK_50 or negedge KEY[0]) begin
+  if (!KEY[0]) begin
+    LEDR <= 8'b00000000;
+  end else if (valid_output_stage3) begin
+    LEDR <= data_output_stage3[7:0];
+  end
+end
 
 endmodule
 
