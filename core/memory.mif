@@ -1,0 +1,26 @@
+WIDTH=32;
+DEPTH=256;
+
+ADDRESS_RADIX=HEX;
+DATA_RADIX=HEX;
+
+CONTENT BEGIN
+    0   : DEADBEEF;
+    1   : CAFEBABE;
+    2   : 8BADF00D;
+    3   : FACEFEED;
+    4   : C001C0DE;
+    5   : D15EA5E1;
+    6   : F00DBEEF;
+    7   : DEADC0DE;
+    8   : BADC0FFE;
+    9   : 12345678;
+    A   : 9ABCDEF0;
+    B   : 0FEDCBA9;
+    C   : 56789ABC;
+    D   : 13579BDF;
+    E   : FEDCBA98;
+    F   : 2468ACE0;
+    [10..FF] : 00000000;
+END;
+

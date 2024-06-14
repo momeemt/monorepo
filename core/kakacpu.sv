@@ -7,53 +7,36 @@ module kakacpu (
 logic [31:0] counter;
 logic [31:0] pipeline_data;
 logic valid_input;
+logic if_valid_output;
+logic [31:0] if_data_output;
+logic stall_input;
+logic stall_output;
 
-logic valid_output_stage1;
-logic valid_output_stage2;
-logic valid_output_stage3;
+logic branch_input;
+logic [31:0] branch_dest_address;
 
-logic [31:0] data_output_stage1;
-logic [31:0] data_output_stage2;
-logic [31:0] data_output_stage3;
+logic [31:0] instruction_address;
+logic [31:0] instruction_data;
 
-logic stall_input_stage1;
-logic stall_output_stage1;
-logic stall_input_stage2;
-logic stall_output_stage2;
-logic stall_input_stage3;
-logic stall_output_stage3;
-
-pipeline_stage stage1 (
-    .clk(CLOCK_50),
-    .rst(KEY[0]),
-    .valid_input(valid_input),
-    .valid_output(valid_output_stage1),
-    .data_input(pipeline_data),
-    .data_output(data_output_stage1),
-    .stall_input(stall_input_stage1),
-    .stall_output(stall_output_stage1)
+instruction_fetch fetch (
+  .clk(CLOCK_50),
+  .rst(KEY[0]),
+  .valid_input(valid_input),
+  .valid_output(if_valid_output),
+  .data_output(if_data_output),
+  .branch_input(branch_input),
+  .branch_dest_address(branch_dest_address),
+  .stall_input(stall_input),
+  .pc(instruction_address),
+  .fetched_instruction(instruction_data)
 );
 
-pipeline_stage stage2 (
-    .clk(CLOCK_50),
-    .rst(KEY[0]),
-    .valid_input(valid_output_stage1),
-    .valid_output(valid_output_stage2),
-    .data_input(data_output_stage1),
-    .data_output(data_output_stage2),
-    .stall_input(stall_input_stage2),
-    .stall_output(stall_output_stage2)
-);
-
-pipeline_stage stage3 (
-    .clk(CLOCK_50),
-    .rst(KEY[0]),
-    .valid_input(valid_output_stage2),
-    .valid_output(valid_output_stage3),
-    .data_input(data_output_stage2),
-    .data_output(data_output_stage3),
-    .stall_input(stall_input_stage3),
-    .stall_output(stall_output_stage3)
+memory mem(
+  .clk(CLOCK_50),
+  .we(1'b0),
+  .addr(instruction_address),
+  .wdata(32'b0),
+  .rdata(instruction_data)
 );
 
 function [6:0] digit_to_7seg;
@@ -76,13 +59,11 @@ endfunction
 always_ff @(posedge CLOCK_50 or negedge KEY[0]) begin
     if (!KEY[0]) begin
         counter <= 0;
-        pipeline_data <= 0;
         valid_input <= 0;
     end else begin
         counter <= counter + 1;
         if (counter == 50_000_000) begin
             counter <= 0;
-            pipeline_data <= pipeline_data + 1;
             valid_input <= 1;
         end else begin
             valid_input <= 0;
@@ -93,8 +74,8 @@ end
 always_ff @(posedge CLOCK_50 or negedge KEY[0]) begin
   if (!KEY[0]) begin
     LEDR <= 8'b00000000;
-  end else if (valid_output_stage3) begin
-    LEDR <= data_output_stage3[7:0];
+  end else if (if_valid_output) begin
+    LEDR <= if_data_output[7:0];
   end
 end
 
