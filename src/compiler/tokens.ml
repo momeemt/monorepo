@@ -18,8 +18,6 @@ type token =
   | VerticalBar  (** The '|' operator *)
   | Dot  (** The '.' operator *)
   | Comma  (** The ',' operator *)
-  | True  (** The `true` keyword *)
-  | False  (** The `false` keyword *)
   | Function  (** The `fun` keyword *)
   | Recursive  (** The `rec` keyword *)
   | Let  (** The `let` keyword *)
@@ -32,6 +30,7 @@ type token =
   | Int of int
   | Float of float
   | String of string
+  | Bool of bool
   | Identifier of string
   | EOF
   | Invalid
@@ -43,6 +42,7 @@ let equal_token t1 t2 =
   | Int n1, Int n2 -> n1 = n2
   | Float f1, Float f2 -> f1 = f2
   | String s1, String s2 -> s1 = s2
+  | Bool b1, Bool b2 -> b1 = b2
   | Plus, Plus -> true
   | Hyphen, Hyphen -> true
   | Asterisk, Asterisk -> true
@@ -62,8 +62,6 @@ let equal_token t1 t2 =
   | LeftBracket, LeftBracket -> true
   | RightBracket, RightBracket -> true
   | VerticalBar, VerticalBar -> true
-  | True, True -> true
-  | False, False -> true
   | Function, Function -> true
   | Recursive, Recursive -> true
   | Let, Let -> true

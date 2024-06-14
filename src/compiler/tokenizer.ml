@@ -4,8 +4,8 @@ let tokenize input =
   let length = String.length input in
   let keywords =
     [
-      ("true", True);
-      ("false", False);
+      ("true", Bool true);
+      ("false", Bool false);
       ("fun", Function);
       ("rec", Recursive);
       ("let", Let);
