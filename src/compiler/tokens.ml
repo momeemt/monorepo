@@ -8,6 +8,7 @@ type token =
   | Greater  (** The '>' operator *)
   | NotEqual  (** The '<>' operator *)
   | SemiColon  (** The ';' operator *)
+  | Colon  (** The ':' operator *)
   | DoubleColon  (** The '::' operator *)
   | LeftParen  (** The '(' operator *)
   | RightParen  (** The ')' operator *)
@@ -15,6 +16,8 @@ type token =
   | RightBracket  (** The ']' operator *)
   | Arrow  (** The '->' operator *)
   | VerticalBar  (** The '|' operator *)
+  | Dot (** The '.' operator *)
+  | Comma (** The ',' operator *)
   | True  (** The `true` keyword *)
   | False  (** The `false` keyword *)
   | Function  (** The `fun` keyword *)
@@ -31,3 +34,4 @@ type token =
   | String of string
   | Identifier of string
   | EOF
+  | Invalid
