@@ -29,14 +29,16 @@
               ocamlPackages.alcotest
               ocamlPackages.findlib
               ocamlformat
+              wabt
+              wasmtime
             ]
             ++ lib.optional stdenv.isDarwin [
               frameworks.Security
               frameworks.CoreFoundation
               frameworks.CoreServices
             ];
-            shellHook = ''
-              eval $(opam env)
+          shellHook = ''
+            eval $(opam env)
           '';
         };
       }
