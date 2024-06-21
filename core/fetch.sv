@@ -1,4 +1,4 @@
-module instruction_fetch(
+module fetch(
   input logic clk,
   input logic rst,
 

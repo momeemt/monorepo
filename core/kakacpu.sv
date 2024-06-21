@@ -18,7 +18,7 @@ logic [31:0] branch_dest_address;
 logic [31:0] instruction_address;
 logic [31:0] instruction_data;
 
-instruction_fetch fetch (
+fetch fetch (
   .clk(CLOCK_50),
   .rst(KEY[0]),
   .valid_input(valid_input),
