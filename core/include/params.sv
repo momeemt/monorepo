@@ -1,0 +1,4 @@
+parameter OPERAND_WIDTH = 32;
+parameter REGISTER_DESCRIPTOR_WIDTH = 4;
+parameter REGISTER_SIZE = 16;
+
