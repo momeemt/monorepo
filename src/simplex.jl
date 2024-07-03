@@ -1,22 +1,22 @@
 @enum Comparison le eq ge
 
 struct Constraint
-    left::Dict{String,Int}
-    right::Int
+    left::Dict{String,Float64}
+    right::Float64
     cmp::Comparison
 end
 
 struct LP
     is_maximization::Bool
-    objective_function::Dict{String,Int}
+    objective_function::Dict{String,Float64}
     constraints::Vector{Constraint}
     variable_constraints::Vector{Constraint}
     variables::Vector{String}
 end
 
 struct DictExpr
-    constant::Int
-    nonbasic_vars::Dict{String,Int}
+    constant::Float64
+    nonbasic_vars::Dict{String,Float64}
 end
 
 struct Dictionary
@@ -151,14 +151,62 @@ function to_dictionary(lp::LP)::Dictionary
     nonbasic_variables = deepcopy(lp.variables)
     basic_vars_expr = Vector{DictExpr}()
 
+    all_vars = Set(lp.variables)
+
     for (i, constraint) in enumerate(lp.constraints)
         basic_var = "x$(i + length(nonbasic_variables))"
         push!(basic_variables, basic_var)
-        push!(basic_vars_expr, DictExpr(constraint.right, constraint.left))
+        
+        complete_left = Dict{String, Float64}()
+        for var in all_vars
+            complete_left[var] = get(constraint.left, var, 0)
+        end
+        
+        push!(basic_vars_expr, DictExpr(constraint.right, complete_left))
     end
 
-    obj_expr = DictExpr(0, lp.objective_function)
+    complete_objective = Dict{String, Float64}()
+    for var in all_vars
+        complete_objective[var] = get(lp.objective_function, var, 0)
+    end
+
+    obj_expr = DictExpr(0.0, complete_objective)
     return Dictionary(basic_variables, nonbasic_variables, obj_expr, basic_vars_expr)
+end
+
+function simplex(dict::Dictionary)::Dict{String, Float64}
+    function executable(dict::Dictionary)::Bool
+        return !all(i -> (i <= 0), values(dict.objective_function.nonbasic_vars))
+    end
+
+    function select_row(dict::Dictionary)::String
+        for (name, val) in dict.objective_function.nonbasic_vars
+            if val > 0
+                return name
+            end
+        end
+        return ""
+    end
+
+    function is_unbounded(dict::Dictionary, name::String)::Bool
+        result = true
+        for basic_var in dict.basic_vars_expr
+            result = result && get(basic_var.nonbasic_vars, name, 0.0) <= 0
+        end
+        return result
+    end
+
+    current_dict = deepcopy(dict)
+    while executable(current_dict)
+        entering = select_row(current_dict)
+        if is_unbounded(current_dict, entering)
+            println("Unbounded")
+            break
+        end
+        # 辞書を交換する
+        break
+    end
+    return Dict(var => current_dict.objective_function.nonbasic_vars[var] for var in current_dict.nonbasic_variables)
 end
 
 lp = LP(
@@ -193,4 +241,4 @@ lp2 = LP(
     ["x1", "x2", "x3"],
 )
 
-println(to_dictionary(lp2))
+println(simplex(to_dictionary(lp2)))
