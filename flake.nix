@@ -24,16 +24,25 @@
         };
         toolchain = pkgs.rust-bin.stable.latest.default;
         buildInputsForBuild = with pkgs;
-          [
-            openssl
-            openssl.dev
-          ]
-          ++ pkgs.lib.optional pkgs.stdenv.isDarwin [
+          pkgs.lib.optional pkgs.stdenv.isDarwin [
             darwin.Security
             darwin.apple_sdk.frameworks.SystemConfiguration
           ];
         nativeBuildInputsForBuild = with pkgs; [pkg-config];
-        generatedBuild = pkgs.callPackage ./Cargo.nix {};
+        customBuildRustCrateForPkgs = pkgs:
+          pkgs.buildRustCrate.override {
+            defaultCrateOverrides =
+              pkgs.defaultCrateOverrides
+              // {
+                negima = attrs: {
+                  buildInputs = buildInputsForBuild;
+                  nativeBuildInputs = nativeBuildInputsForBuild;
+                };
+              };
+          };
+        generatedBuild = pkgs.callPackage ./Cargo.nix {
+          buildRustCrateForPkgs = customBuildRustCrateForPkgs;
+        };
       in rec {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs;
