@@ -8,9 +8,15 @@ logic [31:0] counter;
 logic [31:0] pipeline_data;
 logic valid_input;
 logic if_valid_output;
+logic de_valid_output;
 logic [31:0] if_data_output;
+logic [31:0] de_rs1_data;
+logic [31:0] de_rs2_data;
+logic [31:0] de_immidiate_data;
+logic [3:0] de_inst_type;
 logic stall_input;
-logic stall_output;
+logic if_stall_output;
+logic de_stall_output;
 
 logic branch_input;
 logic [31:0] branch_dest_address;
@@ -27,6 +33,7 @@ fetch fetch (
   .branch_input(branch_input),
   .branch_dest_address(branch_dest_address),
   .stall_input(stall_input),
+  .stall_output(if_stall_output),
   .pc(instruction_address),
   .fetched_instruction(instruction_data)
 );
@@ -37,6 +44,21 @@ memory mem(
   .addr(instruction_address),
   .wdata(32'b0),
   .rdata(instruction_data)
+);
+
+decode decode (
+  .clk(CLOCK_50),
+  .rst(KEY[0]),
+  .valid_input(if_valid_output),
+  .valid_output(de_valid_output),
+  .stall_input(if_stall_output),
+  .stall_output(de_stall_output),
+  .reg_file(),
+  .instruction(instruction_data),
+  .rs1_data(de_rs1_data),
+  .rs2_data(de_rs2_data),
+  .immidiate_data(de_immidiate_data),
+  .inst_type(de_inst_type)
 );
 
 function [6:0] digit_to_7seg;
