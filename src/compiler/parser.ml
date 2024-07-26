@@ -5,7 +5,15 @@ open Result
 let rec parse tokens =
   match parse_expr tokens with
   | ast, [] | ast, [ EOF ] -> ast
-  | _ -> error "Unexpected tokens remaining"
+  | ast, rest -> (
+      match ast with
+      | Ok ast ->
+          Printf.printf "Failed to parse: %s\n" (string_of_tokens rest);
+          Printf.printf "Ast: %s\n" (string_of_ast ast);
+          error "Failed to parse"
+      | Error err ->
+          Printf.printf "%s\n" err;
+          error err)
 
 and parse_expr tokens =
   match parse_let_expr tokens with
@@ -19,7 +27,10 @@ and parse_expr tokens =
           | _ -> (
               match parse_match_expr tokens with
               | Ok ast, rest -> (ok ast, rest)
-              | _, rest -> (error "Failed to parse in `parse_expr`", rest))))
+              | _ -> (
+                  match parse_equal_expr tokens with
+                  | Ok ast, rest -> (ok ast, rest)
+                  | _, rest -> (error "Failed to parse expr", rest)))))
 
 and parse_let_expr tokens =
   match tokens with

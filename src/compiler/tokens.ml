@@ -73,3 +73,48 @@ let equal_token t1 t2 =
   | With, With -> true
   | Invalid, Invalid -> true
   | _ -> false
+
+let string_of_token token =
+  match token with
+  | Plus -> "Plus"
+  | Hyphen -> "Hyphen"
+  | Asterisk -> "Asterisk"
+  | Slash -> "Slash"
+  | Equal -> "Equal"
+  | Less -> "Less"
+  | Greater -> "Greater"
+  | NotEqual -> "NotEqual"
+  | SemiColon -> "SemiColon"
+  | Colon -> "Colon"
+  | DoubleColon -> "DoubleColon"
+  | LeftParen -> "LeftParen"
+  | RightParen -> "RightParen"
+  | LeftBracket -> "LeftBracket"
+  | RightBracket -> "RightBracket"
+  | Arrow -> "Arrow"
+  | VerticalBar -> "VerticalBar"
+  | Dot -> "Dot"
+  | Comma -> "Comma"
+  | Function -> "Function"
+  | Recursive -> "Recursive"
+  | Let -> "Let"
+  | In -> "In"
+  | If -> "If"
+  | Then -> "Then"
+  | Else -> "Else"
+  | Match -> "Match"
+  | With -> "With"
+  | Int n -> "Int " ^ string_of_int n
+  | Float f -> "Float " ^ string_of_float f
+  | String s -> "String " ^ s
+  | Bool b -> "Bool " ^ string_of_bool b
+  | Identifier i -> "Identifier " ^ i
+  | EOF -> "EOF"
+  | Invalid -> "Invalid"
+
+let string_of_tokens tokens =
+  List.fold_left
+    (fun acc token -> acc ^ string_of_token token ^ " ")
+    ""
+    tokens
+
