@@ -3,6 +3,7 @@ type ast =
   | FloatLit of float
   | StringLit of string
   | BoolLit of bool
+  | Ident of string
   | If of ast * ast * ast
   | Let of string * ast * ast
   | LetRec of string * string * ast * ast

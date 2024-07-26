@@ -5,7 +5,7 @@ if_expr    ::= "if" expr "then" expr "else" expr
 fun_expr   ::= "fun" identifier "->" expr
 match_expr ::= "match" expr "with" match_case_list
 match_case_list ::= match_case | match_case_list "|" match_case
-match_case ::= pattern "->" expr
+match_case ::= expr "->" expr
 
 equal_expr ::= add_sub_expr | equal_expr "=" add_sub_expr | equal_expr "<>" add_sub_expr
 

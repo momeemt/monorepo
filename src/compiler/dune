@@ -1,4 +1,5 @@
 (library
  (name compiler)
  (public_name wascaml.compiler)
- (modules ast codegen parser tokenizer tokens))
+ (modules ast codegen parser tokenizer tokens)
+ (libraries runtime))
