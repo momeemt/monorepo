@@ -15,15 +15,17 @@ package opcode_type;
   } opcode_t;
 
   typedef enum {
+    bk_invalid,
     bk_beq,
     bk_bne,
     bk_blt,
     bk_bge,
     bk_bltu,
-    bk_bgru
+    bk_bgeu
   } branch_kind_t;
 
   typedef enum {
+    lk_invalid,
     lk_lb,
     lk_lh,
     lk_lw,
@@ -32,6 +34,7 @@ package opcode_type;
   } load_kind_t;
 
   typedef enum {
+    sk_invalid,
     sk_sb,
     sk_sh,
     sk_sw
@@ -65,11 +68,13 @@ package opcode_type;
   } reg_arith_kind_t;
 
   typedef enum {
+    fk_invalid,
     fk_fence,
     fk_fence_i
   } fence_kind_t;
 
   typedef enum {
+    sk_invalid,
     sk_ecall,
     sk_ebreak,
     sk_csrrw,
