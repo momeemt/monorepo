@@ -15,6 +15,29 @@ package opcode_type;
   } opcode_t;
 
   typedef enum {
+    bk_beq,
+    bk_bne,
+    bk_blt,
+    bk_bge,
+    bk_bltu,
+    bk_bgru
+  } branch_kind_t;
+
+  typedef enum {
+    lk_lb,
+    lk_lh,
+    lk_lw,
+    lk_lbu,
+    lk_lhu
+  } load_kind_t;
+
+  typedef enum {
+    sk_sb,
+    sk_sh,
+    sk_sw
+  } store_kind_t;
+
+  typedef enum {
     iak_invalid,
     iak_addi,
     iak_slti,
@@ -40,6 +63,22 @@ package opcode_type;
     rak_or,
     rak_and
   } reg_arith_kind_t;
+
+  typedef enum {
+    fk_fence,
+    fk_fence_i
+  } fence_kind_t;
+
+  typedef enum {
+    sk_ecall,
+    sk_ebreak,
+    sk_csrrw,
+    sk_csrrs,
+    sk_csrrc,
+    sk_csrrwi,
+    sk_csrrsi,
+    sk_csrrci
+  } system_kind_t;
 
   typedef enum {
     LUI,
