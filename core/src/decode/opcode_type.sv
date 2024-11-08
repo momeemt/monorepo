@@ -15,6 +15,19 @@ package opcode_type;
   } opcode_t;
 
   typedef enum {
+    iak_invalid,
+    iak_addi,
+    iak_slti,
+    iak_sltiu,
+    iak_xori,
+    iak_ori,
+    iak_andi,
+    iak_slli,
+    iak_srli,
+    iak_srai
+  } imm_arith_kind_t;
+
+  typedef enum {
     rak_invalid,
     rak_add,
     rak_sub,
@@ -27,5 +40,5 @@ package opcode_type;
     rak_or,
     rak_and
   } reg_arith_kind_t;
-endpackage;
+endpackage
 
