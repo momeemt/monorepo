@@ -81,7 +81,6 @@ module r_type_tb;
     assert (kind == rak_srl)
     else display_error("Testcase SRL failed", funct3, funct7, kind);
 
-    $finish;
     // SRA
     #10 funct3 = 3'b101;
     #10 funct7 = 7'b0100000;
