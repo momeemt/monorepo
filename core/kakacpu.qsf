@@ -1,6 +1,6 @@
 set_global_assignment -name FAMILY "Cyclone IV E"
 set_global_assignment -name DEVICE EP4CE115F29C7
-set_global_assignment -name TOP_LEVEL_ENTITY kakacpu
+set_global_assignment -name TOP_LEVEL_ENTITY top
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 20.1.1
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "13:58:28  MAY 30, 2024"
 set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
@@ -20,7 +20,33 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name VERILOG_SHOW_LMF_MAPPING_MESSAGES OFF
 set_global_assignment -name VERILOG_MACRO "hello=<None>"
-set_global_assignment -name SYSTEMVERILOG_FILE kakacpu.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/top.sv
+
+set_global_assignment -name VERILOG_FILE "src/top.sv"
+
+#============================================================
+# DECODER
+#============================================================
+set_global_assignment -name VERILOG_FILE "src/decode/decode.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_branch.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_fence.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_imm_arith.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_load.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_opcode.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_reg_arith.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_store.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/decode_system.sv"
+set_global_assignment -name VERILOG_FILE "src/decode/instr_type.sv"
+
+#============================================================
+# REGISTER FILE
+#============================================================
+set_global_assignment -name VERILOG_FILE "src/register_file/register_params.sv"
+set_global_assignment -name VERILOG_FILE "src/register_file/register_cell.sv"
+set_global_assignment -name VERILOG_FILE "src/register_file/global_register.sv"
+
+set_global_assignment -name VERILOG_FILE "src/fetch.sv"
+set_global_assignment -name VERILOG_FILE "src/memory.sv"
 
 #============================================================
 # CLOCK
