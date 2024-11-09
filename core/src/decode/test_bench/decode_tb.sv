@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-import opcode_type::*;
+import instr_type::*;
 
 module decode_tb;
   logic clk;
@@ -26,5 +26,11 @@ module decode_tb;
     #10
     assert (instr_kind == LUI)
     else display_error("Testcase LUI failed", instruction, instr_kind);
+
+    // AUIPC
+    #10 instruction = 31'b00001111000011110000000000010111;
+    #10
+    assert (instr_kind == AUIPC)
+    else display_error("Testcase AUIPC failed", instruction, instr_kind);
   end
 endmodule

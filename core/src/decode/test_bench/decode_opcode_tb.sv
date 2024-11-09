@@ -1,19 +1,20 @@
 `timescale 1ns / 1ps
 
-import opcode_type::*;
+import instr_type::*;
 
 function automatic void display_error(input string testcase_name, input logic [6:0] opcode,
                                       input opcode_t opcode_type);
-  $error("[decode::opcode] %s failed\nopcode: %b | kind: %p", testcase_name, opcode, opcode_type);
+  $error("[decode::decode_opcode] %s failed\nopcode: %b | kind: %p", testcase_name, opcode,
+         opcode_type);
 endfunction
 
-module opcode_tb;
+module decode_opcode_tb;
   logic clk;
   logic rst;
   logic [6:0] opcode;
   opcode_t opcode_type;
 
-  opcode uut (
+  decode_opcode uut (
       .clk(clk),
       .rst(rst),
       .opcode(opcode),

@@ -18,7 +18,7 @@ module decode (
   fence_kind_t fence_kind;
   system_kind_t system_kind;
 
-  logic [4:0] rs1, rs2, rd;
+  logic [4:0] rs1, rs2, rd; // an address for a register file
   logic [6:0] funct7, opcode;
   logic [ 2:0] funct3;
   logic [10:0] ecall_ebreak_sel;

@@ -1,21 +1,21 @@
 `timescale 1ns / 1ps
 
-import opcode_type::*;
+import instr_type::*;
 
 function automatic void display_error(input string testcase_name, input logic [2:0] funct3,
                                       input logic [6:0] funct7, input imm_arith_kind_t kind);
-  $error("[decode::imm_arith_type] %s failed\nfunct3: %b | funct7: %b | kind: %p", testcase_name,
+  $error("[decode::decode_imm_arith] %s failed\nfunct3: %b | funct7: %b | kind: %p", testcase_name,
          funct3, funct7, kind);
 endfunction
 
-module imm_arith_type_tb;
+module decode_imm_arith_tb;
   logic clk;
   logic rst;
   logic [2:0] funct3;
   logic [6:0] funct7;
   imm_arith_kind_t kind;
 
-  imm_arith_type uut (
+  decode_imm_arith uut (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
@@ -46,12 +46,12 @@ module imm_arith_type_tb;
     assert (kind == iak_slli)
     else display_error("Testcase SLLI failed", funct3, funct7, kind);
 
-    // SLLI (invalid)
+    // Invalid
     #10 funct3 = 3'b001;
     #10 funct7 = 7'b0101010;
     #10
     assert (kind == iak_invalid)
-    else display_error("Testcase SLLI (invalid) failed", funct3, funct7, kind);
+    else display_error("Testcase Invalid failed", funct3, funct7, kind);
 
     // SLTI
     #10 funct3 = 3'b010;
@@ -88,12 +88,12 @@ module imm_arith_type_tb;
     assert (kind == iak_srai)
     else display_error("Testcase SRAI failed", funct3, funct7, kind);
 
-    // SRLI, SRAI (invalid)
+    // Invalid
     #10 funct3 = 3'b101;
     #10 funct7 = 7'b0101010;
     #10
     assert (kind == iak_invalid)
-    else display_error("Testcase SRLI, SRAI (invalid) failed", funct3, funct7, kind);
+    else display_error("Testcase Invalid failed", funct3, funct7, kind);
 
     // ORI
     #10 funct3 = 3'b110;

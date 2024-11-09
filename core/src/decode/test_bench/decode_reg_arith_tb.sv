@@ -1,21 +1,21 @@
 `timescale 1ns / 1ps
 
-import opcode_type::*;
+import instr_type::*;
 
 function automatic void display_error(input string testcase_name, input logic [2:0] funct3,
                                       input logic [6:0] funct7, input reg_arith_kind_t kind);
-  $error("decode::r_type - %s failed\nfunct3: %b | funct7: %b\nkind: %p", testcase_name, funct3,
-         funct7, kind);
+  $error("decode::decode_reg_arith - %s failed\nfunct3: %b | funct7: %b\nkind: %p", testcase_name,
+         funct3, funct7, kind);
 endfunction
 
-module r_type_tb;
+module decode_reg_arith_tb;
   logic clk;
   logic rst;
   logic [2:0] funct3;
   logic [6:0] funct7;
   reg_arith_kind_t kind;
 
-  r_type uut (
+  decode_reg_arith uut (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
