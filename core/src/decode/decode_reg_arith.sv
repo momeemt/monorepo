@@ -1,8 +1,8 @@
-import opcode_type::*;
+import instr_type::*;
 
-// The `r_type` module receives three bits funct3 and seven bits funct7.
+// The `decode_reg_arith` module receives three bits funct3 and seven bits funct7.
 // It outputs an instr kind, but it can only process RV32I instructions.
-module r_type (
+module decode_reg_arith (
     input logic clk,
     input logic rst,
     input logic [2:0] funct3,

@@ -1,4 +1,4 @@
-package opcode_type;
+package instr_type;
   typedef enum {
     invalid,
     lui,
@@ -74,15 +74,15 @@ package opcode_type;
   } fence_kind_t;
 
   typedef enum {
-    sk_invalid,
-    sk_ecall,
-    sk_ebreak,
-    sk_csrrw,
-    sk_csrrs,
-    sk_csrrc,
-    sk_csrrwi,
-    sk_csrrsi,
-    sk_csrrci
+    sysk_invalid,
+    sysk_ecall,
+    sysk_ebreak,
+    sysk_csrrw,
+    sysk_csrrs,
+    sysk_csrrc,
+    sysk_csrrwi,
+    sysk_csrrsi,
+    sysk_csrrci
   } system_kind_t;
 
   typedef enum {

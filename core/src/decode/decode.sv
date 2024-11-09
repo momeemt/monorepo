@@ -1,4 +1,4 @@
-import opcode_type::*;
+import instr_type::*;
 
 module decode (
     input logic clk,
@@ -20,18 +20,38 @@ module decode (
 
   logic [4:0] rs1, rs2, rd;
   logic [6:0] funct7, opcode;
-  logic [2:0] funct3;
+  logic [ 2:0] funct3;
+  logic [10:0] ecall_ebreak_sel;
 
-  // decode opcode
-  opcode opcode (
+  decode_opcode decode_opcode (
       .clk(clk),
       .rst(rst),
       .opcode(opcode),
       .opcode_type(opcode_type)
   );
 
-  // decode reg_arith instrs
-  r_type r_type (
+  decode_branch decode_branch (
+      .clk(clk),
+      .rst(rst),
+      .funct3(funct3),
+      .kind(branch_kind)
+  );
+
+  decode_load decode_load (
+      .clk(clk),
+      .rst(rst),
+      .funct3(funct3),
+      .kind(load_kind)
+  );
+
+  decode_store decode_store (
+      .clk(clk),
+      .rst(rst),
+      .funct3(funct3),
+      .kind(store_kind)
+  );
+
+  decode_reg_arith decode_reg_arith (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
@@ -39,13 +59,27 @@ module decode (
       .kind(reg_arith_kind)
   );
 
-  // decode imm_arith instrs
-  imm_arith_type imm_arith_type (
+  decode_imm_arith decode_imm_arith (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .funct7(funct7),
       .kind(imm_arith_kind)
+  );
+
+  decode_fence decode_fence (
+      .clk(clk),
+      .rst(rst),
+      .funct3(funct3),
+      .kind(fence_kind)
+  );
+
+  decode_system decode_system (
+      .clk(clk),
+      .rst(rst),
+      .funct3(funct3),
+      .ecall_ebreak_sel(ecall_ebreak_sel),
+      .kind(system_kind)
   );
 
   always @(posedge clk or negedge rst) begin
@@ -55,6 +89,7 @@ module decode (
     rs1 = instruction[19:15];
     rs2 = instruction[24:20];
     funct7 = instruction[31:25];
+    ecall_ebreak_sel = instruction[31:20];
 
     case (opcode_type)
       lui: instr_kind <= LUI;
@@ -128,15 +163,15 @@ module decode (
       end
       system_type: begin
         case (system_kind)
-          sk_ecall:  instr_kind <= ECALL;
-          sk_ebreak: instr_kind <= EBREAK;
-          sk_csrrw:  instr_kind <= CSRRW;
-          sk_csrrs:  instr_kind <= CSRRS;
-          sk_csrrc:  instr_kind <= CSRRC;
-          sk_csrrwi: instr_kind <= CSRRWI;
-          sk_csrrsi: instr_kind <= CSRRSI;
-          sk_csrrci: instr_kind <= CSRRCI;
-          default:   ;
+          sysk_ecall: instr_kind <= ECALL;
+          sysk_ebreak: instr_kind <= EBREAK;
+          sysk_csrrw: instr_kind <= CSRRW;
+          sysk_csrrs: instr_kind <= CSRRS;
+          sysk_csrrc: instr_kind <= CSRRC;
+          sysk_csrrwi: instr_kind <= CSRRWI;
+          sysk_csrrsi: instr_kind <= CSRRSI;
+          sysk_csrrci: instr_kind <= CSRRCI;
+          default: ;
         endcase
       end
       default: ;

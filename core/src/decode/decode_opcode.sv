@@ -1,8 +1,8 @@
-import opcode_type::*;
+import instr_type::*;
 
-// The `opcode` module receives 6bits opcode and outputs an opcode kind.
+// The `decode_opcode` module receives 6bits opcode and outputs an opcode kind.
 // It can only process RV32I instructions.
-module opcode (
+module decode_opcode (
     input logic clk,
     input logic rst,
     input logic [6:0] opcode,
