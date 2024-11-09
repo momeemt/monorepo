@@ -23,35 +23,35 @@ module decode (
   logic [ 2:0] funct3;
   logic [10:0] ecall_ebreak_sel;
 
-  decode_opcode decode_opcode (
+  decode_opcode decode_opcode_inst (
       .clk(clk),
       .rst(rst),
       .opcode(opcode),
       .opcode_type(opcode_type)
   );
 
-  decode_branch decode_branch (
+  decode_branch decode_branch_inst (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .kind(branch_kind)
   );
 
-  decode_load decode_load (
+  decode_load decode_load_inst (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .kind(load_kind)
   );
 
-  decode_store decode_store (
+  decode_store decode_store_inst (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .kind(store_kind)
   );
 
-  decode_reg_arith decode_reg_arith (
+  decode_reg_arith decode_reg_arith_inst (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
@@ -59,7 +59,7 @@ module decode (
       .kind(reg_arith_kind)
   );
 
-  decode_imm_arith decode_imm_arith (
+  decode_imm_arith decode_imm_arith_inst (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
@@ -67,14 +67,14 @@ module decode (
       .kind(imm_arith_kind)
   );
 
-  decode_fence decode_fence (
+  decode_fence decode_fence_inst (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .kind(fence_kind)
   );
 
-  decode_system decode_system (
+  decode_system decode_system_inst (
       .clk(clk),
       .rst(rst),
       .funct3(funct3),
@@ -82,7 +82,10 @@ module decode (
       .kind(system_kind)
   );
 
-  always @(posedge clk or negedge rst) begin
+  always @(negedge rst) begin
+  end
+
+  always @(posedge clk) begin
     opcode = instruction[6:0];
     rd = instruction[11:7];
     funct3 = instruction[14:12];

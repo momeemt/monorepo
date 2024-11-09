@@ -8,13 +8,11 @@ module decode_load (
     input logic [2:0] funct3,
     output load_kind_t kind
 );
-  always @(posedge rst) begin
-    kind <= lk_invalid;
-  end
-
   always @(posedge clk or negedge rst) begin
+    if (~rst) begin
     kind <= lk_invalid;
-
+  end else begin
+    kind <= lk_invalid;
     case (funct3)
       3'b000:  kind <= lk_lb;
       3'b001:  kind <= lk_lh;
@@ -24,4 +22,5 @@ module decode_load (
       default: ;
     endcase
   end
+end
 endmodule

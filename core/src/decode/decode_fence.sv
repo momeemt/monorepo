@@ -8,17 +8,16 @@ module decode_fence (
     input logic [2:0] funct3,
     output fence_kind_t kind
 );
-  always @(posedge rst) begin
-    kind <= fk_invalid;
-  end
-
   always @(posedge clk or negedge rst) begin
-    kind <= fk_invalid;
-
-    case (funct3)
-      3'b000:  kind <= fk_fence;
-      3'b001:  kind <= fk_fence_i;
-      default: ;
-    endcase
+    if (~rst) begin
+      kind <= fk_invalid;
+    end else begin
+      kind <= fk_invalid;
+      case (funct3)
+        3'b000:  kind <= fk_fence;
+        3'b001:  kind <= fk_fence_i;
+        default: ;
+      endcase
+    end
   end
 endmodule

@@ -8,18 +8,17 @@ module decode_store (
     input logic [2:0] funct3,
     output store_kind_t kind
 );
-  always @(posedge rst) begin
-    kind <= sk_invalid;
-  end
-
   always @(posedge clk or negedge rst) begin
-    kind <= sk_invalid;
-
-    case (funct3)
-      3'b000:  kind <= sk_sb;
-      3'b010:  kind <= sk_sh;
-      3'b011:  kind <= sk_sw;
-      default: ;
-    endcase
+    if (~rst) begin
+      kind <= sk_invalid;
+    end else begin
+      kind <= sk_invalid;
+      case (funct3)
+        3'b000:  kind <= sk_sb;
+        3'b010:  kind <= sk_sh;
+        3'b011:  kind <= sk_sw;
+        default: ;
+      endcase
+    end
   end
 endmodule
