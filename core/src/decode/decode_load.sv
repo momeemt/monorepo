@@ -10,17 +10,17 @@ module decode_load (
 );
   always @(posedge clk or negedge rst) begin
     if (~rst) begin
-    kind <= lk_invalid;
-  end else begin
-    kind <= lk_invalid;
-    case (funct3)
-      3'b000:  kind <= lk_lb;
-      3'b001:  kind <= lk_lh;
-      3'b010:  kind <= lk_lw;
-      3'b100:  kind <= lk_lbu;
-      3'b101:  kind <= lk_lhu;
-      default: ;
-    endcase
+      kind <= lk_invalid;
+    end else begin
+      kind <= lk_invalid;
+      case (funct3)
+        3'b000:  kind <= lk_lb;
+        3'b001:  kind <= lk_lh;
+        3'b010:  kind <= lk_lw;
+        3'b100:  kind <= lk_lbu;
+        3'b101:  kind <= lk_lhu;
+        default: ;
+      endcase
+    end
   end
-end
 endmodule
