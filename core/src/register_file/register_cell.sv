@@ -15,13 +15,11 @@ module register_cell (
   assign data_output = register_cell;
   assign write_reserve_output = write_reserve_bit;
 
-  always_ff @(negedge rst) begin
-    write_reserve_bit <= 1'b0;
-    register_cell <= {OPERAND_WIDTH{1'b0}};
-  end
-
-  always_ff @(posedge clk) begin
-    if (write_reserve_input) begin
+  always_ff @(posedge clk or negedge rst) begin
+    if (~rst) begin
+      write_reserve_bit <= 1'b0;
+      register_cell <= {OPERAND_WIDTH{1'b0}};
+    end else if (write_reserve_input) begin
       write_reserve_bit <= 1'b1;
     end else if (write_back_input) begin
       write_reserve_bit <= 1'b0;

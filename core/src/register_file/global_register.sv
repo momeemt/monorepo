@@ -40,7 +40,9 @@ module global_register (
 
   always_ff @(negedge rst) begin
     write_reserved_vector <= '0;
-    foreach (register_data[i]) register_data[i] <= '0;
+    for (int i = 0; i < REGISTER_SIZE; i++) begin
+        register_data[i] <= '0;
+    end
   end
 
   generate
