@@ -5,9 +5,9 @@ module decode (
     input logic rst,
     input logic [31:0] instruction,
     output instr_kind_t instr_kind,
-    output logic [31:0] rs1_data,
-    output logic [31:0] rs2_data,
-    output logic [31:0] immidiate_data
+    output logic [REGISTER_DESCRIPTOR_WIDTH-1:0] rs1_addr,
+    output logic [REGISTER_DESCRIPTOR_WIDTH-1:0] rs2_addr,
+    output logic [OPERAND_WIDTH-1:0] immidiate_data
 );
   opcode_t opcode_type;
   branch_kind_t branch_kind;
@@ -18,10 +18,13 @@ module decode (
   fence_kind_t fence_kind;
   system_kind_t system_kind;
 
-  logic [4:0] rs1, rs2, rd; // an address for a register file
+  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] rs1, rs2, rd; // an address for a register file
   logic [6:0] funct7, opcode;
   logic [ 2:0] funct3;
   logic [10:0] ecall_ebreak_sel;
+
+  assign rs1_addr = rs1;
+  assign rs2_addr = rs2;
 
   decode_opcode decode_opcode_inst (
       .clk(clk),
@@ -82,9 +85,6 @@ module decode (
       .kind(system_kind)
   );
 
-  always @(negedge rst) begin
-  end
-
   always @(posedge clk) begin
     opcode = instruction[6:0];
     rd = instruction[11:7];
@@ -93,6 +93,7 @@ module decode (
     rs2 = instruction[24:20];
     funct7 = instruction[31:25];
     ecall_ebreak_sel = instruction[31:20];
+    immidiate_data = 32'b0;
 
     case (opcode_type)
       lui: instr_kind <= LUI;
@@ -109,6 +110,7 @@ module decode (
           bk_bgeu: instr_kind <= BGEU;
           default: ;
         endcase
+        immidiate_data <= {{21{instruction[31]}}, instruction[7], instruction[11:8], instruction[30:26]};
       end
       load_type: begin
         case (load_kind)
@@ -119,6 +121,7 @@ module decode (
           lk_lhu:  instr_kind <= LHU;
           default: ;
         endcase
+        immidiate_data <= {{20{instruction[31]}}, instruction[31:20]};
       end
       store_type: begin
         case (store_kind)
@@ -127,6 +130,7 @@ module decode (
           sk_sw:   instr_kind <= SW;
           default: ;
         endcase
+        immidiate_data <= {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
       end
       imm_arith_type: begin
         case (imm_arith_kind)
@@ -141,6 +145,7 @@ module decode (
           iak_srai:  instr_kind <= SRAI;
           default:   ;
         endcase
+        immidiate_data <= {{20{instruction[31]}}, instruction[31:20]};
       end
       reg_arith_type: begin
         case (reg_arith_kind)
