@@ -6,3 +6,6 @@
 /*.qws
 *.bak
 .qsys_edit
+.envrc
+transcript
+work
