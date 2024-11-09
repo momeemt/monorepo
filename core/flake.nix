@@ -14,12 +14,11 @@
         pkgs = import nixpkgs {inherit system;};
       in {
         devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs;
-            [
-              nil
-              alejandra
-              verible
-            ];
+          buildInputs = with pkgs; [
+            nil
+            alejandra
+            verible
+          ];
         };
       }
     );
