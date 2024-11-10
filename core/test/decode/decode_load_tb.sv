@@ -3,7 +3,7 @@
 import instr_type::*;
 
 function automatic void display_error(input string testcase_name, input logic [2:0] funct3, input load_kind_t kind);
-  $error("[decode::decode_load] %s failed\nfunct3: %b | kind: %p"m testcase_name, funct3, kind);
+  $error("[decode::decode_load] %s failed\nfunct3: %b | kind: %p", testcase_name, funct3, kind);
 endfunction
 
 module decode_load_tb;
@@ -13,7 +13,6 @@ logic [2:0] funct3;
 load_kind_t kind;
 
 decode_load uut (
-  .clk(clk),
   .rst(rst),
   .funct3(funct3),
   .kind(kind)
@@ -64,7 +63,7 @@ decode_load uut (
     else display_error("Testcase LHU failed", funct3, kind);
 
     // Invalid
-    #10 funct3 = 3'110;
+    #10 funct3 = 3'b110;
     #10
     assert (kind == lk_invalid)
     else display_error("Testcase Invalid failed", funct3, kind);
@@ -74,5 +73,7 @@ decode_load uut (
     #10
     assert (kind == lk_invalid)
     else display_error("Testcase Invalid failed", funct3, kind);
+
+    $finish;
   end
 endmodule

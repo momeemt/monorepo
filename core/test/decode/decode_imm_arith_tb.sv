@@ -16,7 +16,6 @@ module decode_imm_arith_tb;
   imm_arith_kind_t kind;
 
   decode_imm_arith uut (
-      .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .funct7(funct7),

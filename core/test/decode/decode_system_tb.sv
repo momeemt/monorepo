@@ -20,7 +20,6 @@ module decode_system_tb;
   system_kind_t kind;
 
   decode_system uut (
-      .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .rd(rd),
@@ -86,7 +85,7 @@ module decode_system_tb;
     else display_error("Testcase CSRRC failed", funct3, rd, rs1, ecall_ebreak_sel, kind);
 
     // Invalid
-    #10 funct3 = 3'b100
+    #10 funct3 = 3'b100;
     #10
     assert (kind == sysk_invalid)
     else display_error("Testcase Invalid failed", funct3, rd, rs1, ecall_ebreak_sel, kind);
@@ -108,5 +107,7 @@ module decode_system_tb;
     #10
     assert (kind == sysk_csrrci)
     else display_error("Testcase CSRRCI failed", funct3, rd, rs1, ecall_ebreak_sel, kind);
+
+    $finish;
   end
 endmodule

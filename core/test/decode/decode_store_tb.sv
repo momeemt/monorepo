@@ -14,7 +14,6 @@ module decode_store_tb;
   store_kind_t kind;
 
   decode_store uut (
-      .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .kind(kind)
@@ -53,11 +52,13 @@ module decode_store_tb;
     else display_error("Testcase SW failed", funct3, kind);
 
     // Invalid
-    for (funct3 = 3'b100; funct3 <= 3'b111; funct3++) begin
+    for (funct3 = 3'b100; funct3 >= 3'b100 && funct3 <= 3'b111; funct3++) begin
       #10;
       #10
       assert (kind == sk_invalid)
       else display_error("Testcase Invalid failed", funct3, kind);
     end
+
+    $finish;
   end
 endmodule

@@ -16,7 +16,6 @@ module decode_reg_arith_tb;
   reg_arith_kind_t kind;
 
   decode_reg_arith uut (
-      .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .funct7(funct7),

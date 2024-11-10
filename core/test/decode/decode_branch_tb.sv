@@ -14,7 +14,6 @@ module decode_branch_tb;
   branch_kind_t kind;
 
   decode_branch uut (
-      .clk(clk),
       .rst(rst),
       .funct3(funct3),
       .kind(kind)
@@ -75,5 +74,7 @@ module decode_branch_tb;
     #10
     assert (kind == bk_bgeu)
     else display_error("Testcase BGEU failed", funct3, kind);
+
+    $finish;
   end
 endmodule

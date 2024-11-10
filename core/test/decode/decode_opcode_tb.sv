@@ -15,7 +15,6 @@ module decode_opcode_tb;
   opcode_t opcode_type;
 
   decode_opcode uut (
-      .clk(clk),
       .rst(rst),
       .opcode(opcode),
       .opcode_type(opcode_type)
