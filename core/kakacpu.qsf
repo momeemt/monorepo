@@ -25,6 +25,12 @@ set_global_assignment -name SYSTEMVERILOG_FILE src/top.sv
 set_global_assignment -name VERILOG_FILE "src/top.sv"
 
 #============================================================
+# PACKAGES
+#============================================================
+set_global_assignment -name VERILOG_FILE "packages/instr_type.sv"
+set_global_assignment -name VERILOG_FILE "packages/register_file_params.sv"
+
+#============================================================
 # DECODER
 #============================================================
 set_global_assignment -name VERILOG_FILE "src/decode/decode.sv"
@@ -36,12 +42,10 @@ set_global_assignment -name VERILOG_FILE "src/decode/decode_opcode.sv"
 set_global_assignment -name VERILOG_FILE "src/decode/decode_reg_arith.sv"
 set_global_assignment -name VERILOG_FILE "src/decode/decode_store.sv"
 set_global_assignment -name VERILOG_FILE "src/decode/decode_system.sv"
-set_global_assignment -name VERILOG_FILE "src/decode/instr_type.sv"
 
 #============================================================
 # REGISTER FILE
 #============================================================
-set_global_assignment -name VERILOG_FILE "src/register_file/register_params.sv"
 set_global_assignment -name VERILOG_FILE "src/register_file/register_cell.sv"
 set_global_assignment -name VERILOG_FILE "src/register_file/global_register.sv"
 
