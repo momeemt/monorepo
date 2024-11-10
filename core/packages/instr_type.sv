@@ -86,6 +86,7 @@ package instr_type;
   } system_kind_t;
 
   typedef enum {
+    Invalid,
     LUI,
     AUIPC,
     JAL,
