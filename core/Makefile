@@ -1,3 +1,12 @@
+SRCS_DIR := src
+TEST_DIR := test
+PACKAGES_DIR := packages
+
+SRCS := $(wildcard $(SRCS_DIR)/**/*.sv)
+PACKAGE_FILES := $(shell find $(PACKAGES_DIR) -name "*.sv")
+PACKAGE_FLAGS := $(addprefix -L ,$(PACKAGES_DIR))
+TESTS := $(shell find $(TEST_DIR) -name "*.sv")
+
 .PHONY: build
 build:
 	quartus_sh --flow compile kakacpu
@@ -7,23 +16,20 @@ run: build
 	quartus_pgm -m jtag -o "p;output_files/kakacpu.sof"
 
 .PHONY: test
-test:
-	vlog src/decode/opcode_type.sv src/decode/opcode.sv test/decode/opcode_tb.sv
-	vlog src/decode/opcode_type.sv src/decode/r_type.sv test/decode/r_type_tb.sv
-	vlog src/decode/opcode_type.sv src/decode/imm_arith_type.sv test/decode/imm_arith_type_tb.sv
-	vsim -c opcode_tb -do "run -all; quit"
-	vsim -c r_type_tb -do "run -all; quit"
-	vsim -c imm_arith_type_tb -do "run -all; quit"
+test: $(TESTS)
 
-.PHONY: test_register_file
-test_register_file:
-	vlog src/register_file/register_params.sv \
-			 src/register_file/register_cell.sv \
-			 test/register_file/register_cell_tb.sv
-	vsim -c register_cell_tb -do "run -all; quit"
-	
-	vlog src/register_file/register_params.sv \
-			 src/register_file/register_cell.sv \
-			 src/register_file/global_register.sv \
-			 test/register_file/global_register_tb.sv
-	vsim -c global_register_tb -do "run -all; quit"
+$(TEST_DIR)/%.sv: compile_packages compile_srcs
+	vlog $@
+	vsim -c work.$(basename $(@F)) -do "run -all; quit"
+
+.PHONY: compile_packages
+compile_packages: $(PACKAGE_FILES)
+	vlog $(PACKAGE_FILES)
+
+.PHONY: compile_srcs
+compile_srcs: $(SRCS)
+	vlog $(SRCS)
+
+.PHONY: clean
+clean:
+	rm -rf work transcript
