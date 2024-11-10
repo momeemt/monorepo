@@ -1,4 +1,4 @@
-import register_params::*;
+import register_file_params::*;
 
 function automatic logic [REGISTER_SIZE-1:0] decode(input logic [REGISTER_DESCRIPTOR_WIDTH-1:0] in);
   logic [REGISTER_SIZE-1:0] result = 'b0;

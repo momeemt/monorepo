@@ -1,4 +1,4 @@
-import register_params::*;
+import register_file_params::*;
 
 module register_cell (
     input logic clk,
