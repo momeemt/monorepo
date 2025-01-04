@@ -1,0 +1,13 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  core_test:
+    runs-on: ubuntu-24.04
+    steps:
+      - use: actions/checkout@v4
+      - use: cachix/install-nix-action@v30
+      - run: nix profile install "nixpkgs#quartus-prime-lite"
+      - run: make test
+        working-directory: core
+
