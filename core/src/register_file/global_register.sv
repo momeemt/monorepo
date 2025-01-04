@@ -17,7 +17,8 @@ module global_register (
     output logic reserved_output,
     input logic write_back_input,
     input logic [REGISTER_DESCRIPTOR_WIDTH-1:0] write_back_register_input,
-    input logic [OPERAND_WIDTH-1:0] result_input
+    input logic [OPERAND_WIDTH-1:0] result_input,
+    output logic [OPERAND_WIDTH-1:0] debug_first_register
 );
   logic [REGISTER_SIZE-1:0] write_reserve_vector;
   logic [REGISTER_SIZE-1:0] write_reserved_vector;
@@ -38,12 +39,7 @@ module global_register (
       write_back_register_input
   ) & {REGISTER_SIZE{write_back_input}};
 
-  always_ff @(negedge rst) begin
-    write_reserved_vector <= '0;
-    for (int i = 0; i < REGISTER_SIZE; i++) begin
-        register_data[i] <= '0;
-    end
-  end
+  assign debug_first_register = register_data[1];
 
   generate
     genvar index;

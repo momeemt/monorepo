@@ -2,8 +2,13 @@ import instr_type::*;
 import register_file_params::*;
 
 module decode (
+    input logic clk,
     input logic rst,
+    input logic valid_input,
+    input logic stall_input,
     input logic [31:0] instruction,
+    output logic valid_output,
+    output logic stall_output,
     output instr_kind_t instr_kind,
     output logic [REGISTER_DESCRIPTOR_WIDTH-1:0] rs1_addr,
     output logic [REGISTER_DESCRIPTOR_WIDTH-1:0] rs2_addr,
