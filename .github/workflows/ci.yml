@@ -8,9 +8,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v30
       - name: Install quartus-prime-lite
-        run: |
-          export NIXPKGS_ALLOW_UNFREE=1
-          nix profile install "nixpkgs#quartus-prime-lite"
+        run: nix profile install --impure "nixpkgs#quartus-prime-lite"
       - name: Test core
         run: make test
         working-directory: core
