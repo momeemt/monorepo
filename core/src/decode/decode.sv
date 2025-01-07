@@ -7,6 +7,7 @@ module decode (
     input logic valid_input,
     input logic stall_input,
     input logic [31:0] instruction,
+    input logic pc_input,
     output logic valid_output,
     output logic stall_output,
     output instr_kind_t instr_kind,
@@ -19,7 +20,8 @@ module decode (
     output logic [10:0] csr,
     output logic [4:0] zimm,
     output logic [OPERAND_WIDTH-1:0] immediate_data,
-    output logic write_reserve
+    output logic write_reserve,
+    output logic pc_output
 );
   opcode_t opcode_type;
   branch_kind_t branch_kind;
@@ -35,9 +37,10 @@ module decode (
   logic [ 2:0] funct3;
   logic [10:0] ecall_ebreak_sel;
 
-  assign rs1_addr = rs1;
-  assign rs2_addr = rs2;
-  assign rd_addr  = rd;
+  assign rs1_addr  = rs1;
+  assign rs2_addr  = rs2;
+  assign rd_addr   = rd;
+  assign pc_output = pc_input;
 
   decode_opcode decode_opcode_inst (
       .rst(rst),
@@ -117,29 +120,29 @@ module decode (
     immediate_data = 32'b0;
 
     case (opcode_type)
-      lui: begin
+      op_lui: begin
         instr_kind = LUI;
         write_reserve = 1;
         immediate_data = {12'b0, instruction[31:12]};
       end
-      auipc: begin
+      op_auipc: begin
         instr_kind = AUIPC;
         write_reserve = 1;
         immediate_data = {12'b0, instruction[31:12]};
       end
-      jal: begin
+      op_jal: begin
         instr_kind = JAL;
         write_reserve = 1;
         immediate_data = {
           12'b0, instruction[31], instruction[21:12], instruction[22], instruction[30:23]
         };
       end
-      jalr: begin
+      op_jalr: begin
         instr_kind = JALR;
         write_reserve = 1;
         immediate_data = {20'b0, instruction[31:20]};
       end
-      branch_type: begin
+      op_branch_type: begin
         case (branch_kind)
           bk_beq:  instr_kind = BEQ;
           bk_bne:  instr_kind = BNE;
@@ -158,7 +161,7 @@ module decode (
         };
         write_reserve = 0;
       end
-      load_type: begin
+      op_load_type: begin
         case (load_kind)
           lk_lb:   instr_kind = LB;
           lk_lh:   instr_kind = LH;
@@ -170,7 +173,7 @@ module decode (
         immediate_data = {{20{instruction[31]}}, instruction[31:20]};
         write_reserve  = 1;
       end
-      store_type: begin
+      op_store_type: begin
         case (store_kind)
           sk_sb:   instr_kind = SB;
           sk_sh:   instr_kind = SH;
@@ -180,7 +183,7 @@ module decode (
         immediate_data = {{20{instruction[31]}}, instruction[31:25], instruction[11:7]};
         write_reserve  = 0;
       end
-      imm_arith_type: begin
+      op_imm_arith_type: begin
         case (imm_arith_kind)
           iak_addi:  instr_kind = ADDI;
           iak_slti:  instr_kind = SLTI;
@@ -196,7 +199,7 @@ module decode (
         immediate_data = {{20{instruction[31]}}, instruction[31:20]};
         write_reserve  = 1;
       end
-      reg_arith_type: begin
+      op_reg_arith_type: begin
         case (reg_arith_kind)
           rak_add:  instr_kind = ADD;
           rak_sub:  instr_kind = SUB;
@@ -212,7 +215,7 @@ module decode (
         endcase
         write_reserve = 1;
       end
-      fence_type: begin
+      op_fence_type: begin
         case (fence_kind)
           fk_fence: instr_kind = FENCE;
           fk_fence_i: instr_kind = FENCE_I;
@@ -220,7 +223,7 @@ module decode (
         endcase
         write_reserve = 0;
       end
-      system_type: begin
+      op_system_type: begin
         write_reserve = 1;
         case (system_kind)
           sysk_ecall: begin

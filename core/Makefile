@@ -22,6 +22,10 @@ $(TEST_DIR)/%.sv: compile_packages compile_srcs
 	vlog $@
 	vsim -c work.$(basename $(@F)) -do "run -all; quit"
 
+test_execution: compile_packages compile_srcs
+	vlog test/execution/execution_tb.sv
+	vsim -c work.execution_tb -do "run -all; quit"
+
 .PHONY: compile_packages
 compile_packages: $(PACKAGE_FILES)
 	vlog $(PACKAGE_FILES)

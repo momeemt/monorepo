@@ -1,17 +1,17 @@
 package instr_type;
   typedef enum {
-    invalid,
-    lui,
-    auipc,
-    jal,
-    jalr,
-    branch_type,
-    load_type,
-    store_type,
-    imm_arith_type,
-    reg_arith_type,
-    fence_type,
-    system_type
+    op_invalid,
+    op_lui,
+    op_auipc,
+    op_jal,
+    op_jalr,
+    op_branch_type,
+    op_load_type,
+    op_store_type,
+    op_imm_arith_type,
+    op_reg_arith_type,
+    op_fence_type,
+    op_system_type
   } opcode_t;
 
   typedef enum {

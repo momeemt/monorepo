@@ -188,7 +188,7 @@ module execution_tb;
     end
   endtask
 
-  always #5 clk = ~clk;
+  always #10 clk = ~clk;
 
   initial begin
     clk = 0;
@@ -204,7 +204,7 @@ module execution_tb;
     #10 rst = 1;
 
     // LUI
-    #5 instr_kind_input = LUI;
+    #10 instr_kind_input = LUI;
     immediate_data = 'hDEADBE00;
     expect_valid_output = 1;
     expect_stall_output = 0;
@@ -213,7 +213,7 @@ module execution_tb;
     expect_read_memory = 0;
     expect_write_memory = 0;
     expect_branch = 0;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -226,7 +226,7 @@ module execution_tb;
     else display_error("Testcase LUI failed");
 
     // AUIPC
-    #5 instr_kind_input = AUIPC;
+    #10 instr_kind_input = AUIPC;
     immediate_data = 'hDEADBE00;
     pc = 'h000000EF;
     expect_valid_output = 1;
@@ -236,7 +236,7 @@ module execution_tb;
     expect_read_memory = 0;
     expect_write_memory = 0;
     expect_branch = 0;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -249,7 +249,7 @@ module execution_tb;
     else display_error("Testcase AUIPC failed");
 
     // JAL
-    #5 instr_kind_input = JAL;
+    #10 instr_kind_input = JAL;
     immediate_data = 'h00000008;
     pc = 'h00000000;
     expect_valid_output = 1;
@@ -260,7 +260,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'h00000008;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -274,7 +274,7 @@ module execution_tb;
     else display_error("Testcase JAL failed");
 
     // JALR
-    #5 instr_kind_input = JALR;
+    #10 instr_kind_input = JALR;
     immediate_data = 'h8;
     rs1_data = 'hC8;
     pc = 'h0;
@@ -286,7 +286,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hD0;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -300,7 +300,7 @@ module execution_tb;
     else display_error("Testcase JALR failed");
 
     // BEQ (rs1_data == rs2_data)
-    #5 instr_kind_input = BEQ;
+    #10 instr_kind_input = BEQ;
     rs1_data = 'h12345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -312,7 +312,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -325,7 +325,7 @@ module execution_tb;
     else display_error("Testcase BEQ (rs1_data == rs2_data) failed");
 
     // BEQ (rs1_data != rs2_data)
-    #5 instr_kind_input = BEQ;
+    #10 instr_kind_input = BEQ;
     rs1_data = 'h12345678;
     rs2_data = 'h567890AB;
     immediate_data = 'h8;
@@ -337,7 +337,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -350,7 +350,7 @@ module execution_tb;
     else display_error("Testcase BEQ (rs1_data != rs2_data) failed");
 
     // BNE (rs1_data != rs2_data)
-    #5 instr_kind_input = BNE;
+    #10 instr_kind_input = BNE;
     rs1_data = 'h12345678;
     rs2_data = 'h567890AB;
     immediate_data = 'h8;
@@ -362,7 +362,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -375,7 +375,7 @@ module execution_tb;
     else display_error("Testcase BNE (rs1_data != rs2_data) failed");
 
     // BNE (rs1_data == rs2_data)
-    #5 instr_kind_input = BNE;
+    #10 instr_kind_input = BNE;
     rs1_data = 'h12345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -387,7 +387,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -400,7 +400,7 @@ module execution_tb;
     else display_error("Testcase BNE (rs1_data == rs2_data) failed");
 
     // BLT (rs1_data < rs2_data)
-    #5 instr_kind_input = BLT;
+    #10 instr_kind_input = BLT;
     rs1_data = 'h12345678;
     rs2_data = 'h12345679;
     immediate_data = 'h8;
@@ -412,7 +412,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -425,7 +425,7 @@ module execution_tb;
     else display_error("Testcase BLT (rs1_data < rs2_data) failed");
 
     // BLT (rs1_data == rs2_data)
-    #5 instr_kind_input = BLT;
+    #10 instr_kind_input = BLT;
     rs1_data = 'h12345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -437,7 +437,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -450,7 +450,7 @@ module execution_tb;
     else display_error("Testcase BLT (rs1_data == rs2_data) failed");
 
     // BLT (rs1_data > rs2_data)
-    #5 instr_kind_input = BLT;
+    #10 instr_kind_input = BLT;
     rs1_data = 'h12345678;
     rs2_data = 'hF2345678;
     immediate_data = 'h8;
@@ -462,7 +462,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -475,7 +475,7 @@ module execution_tb;
     else display_error("Testcase BLT (rs1_data > rs2_data) failed");
 
     // BGE (rs1_data > rs2_data)
-    #5 instr_kind_input = BGE;
+    #10 instr_kind_input = BGE;
     rs1_data = 'h12345679;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -487,7 +487,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -500,7 +500,7 @@ module execution_tb;
     else display_error("Testcase BGE (rs1_data > rs2_data) failed");
 
     // BGE (rs1_data == rs2_data)
-    #5 instr_kind_input = BGE;
+    #10 instr_kind_input = BGE;
     rs1_data = 'h12345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -512,7 +512,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -525,7 +525,7 @@ module execution_tb;
     else display_error("Testcase BGE (rs1_data == rs2_data) failed");
 
     // BGE (rs1_data < rs2_data)
-    #5 instr_kind_input = BGE;
+    #10 instr_kind_input = BGE;
     rs1_data = 'hF2345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -537,7 +537,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -550,7 +550,7 @@ module execution_tb;
     else display_error("Testcase BGE (rs1_data < rs2_data) failed");
 
     // BLTU (rs1_data < rs2_data)
-    #5 instr_kind_input = BLTU;
+    #10 instr_kind_input = BLTU;
     rs1_data = 'h12345678;
     rs2_data = 'h12345679;
     immediate_data = 'h8;
@@ -562,7 +562,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -575,7 +575,7 @@ module execution_tb;
     else display_error("Testcase BLTU (rs1_data < rs2_data) failed");
 
     // BLTU (rs1_data == rs2_data)
-    #5 instr_kind_input = BLTU;
+    #10 instr_kind_input = BLTU;
     rs1_data = 'h12345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -587,7 +587,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -600,7 +600,7 @@ module execution_tb;
     else display_error("Testcase BLTU (rs1_data == rs2_data) failed");
 
     // BLTU (rs1_data > rs2_data)
-    #5 instr_kind_input = BLTU;
+    #10 instr_kind_input = BLTU;
     rs1_data = 'hF2345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -612,7 +612,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -625,7 +625,7 @@ module execution_tb;
     else display_error("Testcase BLTU (rs1_data > rs2_data) failed");
 
     // BGEU (rs1_data > rs2_data)
-    #5 instr_kind_input = BGEU;
+    #10 instr_kind_input = BGEU;
     rs1_data = 'h12345679;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -637,7 +637,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -650,7 +650,7 @@ module execution_tb;
     else display_error("Testcase BGEU (rs1_data > rs2_data) failed");
 
     // BGEU (rs1_data == rs2_data)
-    #5 instr_kind_input = BGEU;
+    #10 instr_kind_input = BGEU;
     rs1_data = 'h12345678;
     rs2_data = 'h12345678;
     immediate_data = 'h8;
@@ -662,7 +662,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1238;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -675,7 +675,7 @@ module execution_tb;
     else display_error("Testcase BGEU (rs1_data == rs2_data) failed");
 
     // BGEU (rs1_data < rs2_data)
-    #5 instr_kind_input = BGEU;
+    #10 instr_kind_input = BGEU;
     rs1_data = 'h12345678;
     rs2_data = 'hF2345678;
     immediate_data = 'h8;
@@ -687,7 +687,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 1;
     expect_branch_dest_address = 'hABCD1234;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -700,7 +700,7 @@ module execution_tb;
     else display_error("Testcase BGEU (rs1_data < rs2_data) failed");
 
     // LB
-    #5 instr_kind_input = LB;
+    #10 instr_kind_input = LB;
     rs1_data = 'h11111111;
     immediate_data = 'h22222222;
     expect_valid_output = 1;
@@ -711,7 +711,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_read_memory_address = 'h33333333;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -724,7 +724,7 @@ module execution_tb;
     else display_error("Testcase LB failed");
 
     // LH
-    #5 instr_kind_input = LH;
+    #10 instr_kind_input = LH;
     rs1_data = 'h11112222;
     immediate_data = 'h33334444;
     expect_valid_output = 1;
@@ -735,7 +735,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_read_memory_address = 'h44446666;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -748,7 +748,7 @@ module execution_tb;
     else display_error("Testcase LH failed");
 
     // LW
-    #5 instr_kind_input = LW;
+    #10 instr_kind_input = LW;
     rs1_data = 'hAAAAAAAA;
     immediate_data = 'h11111111;
     expect_valid_output = 1;
@@ -759,7 +759,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_read_memory_address = 'hBBBBBBBB;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -772,7 +772,7 @@ module execution_tb;
     else display_error("Testcase LW failed");
 
     // LBU
-    #5 instr_kind_input = LBU;
+    #10 instr_kind_input = LBU;
     rs1_data = 'h55555555;
     immediate_data = 'h66666666;
     expect_valid_output = 1;
@@ -783,7 +783,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_read_memory_address = 'hBBBBBBBB;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -796,7 +796,7 @@ module execution_tb;
     else display_error("Testcase LBU failed");
 
     // LHU
-    #5 instr_kind_input = LHU;
+    #10 instr_kind_input = LHU;
     rs1_data = 'h99999999;
     immediate_data = 'h33333333;
     expect_valid_output = 1;
@@ -807,7 +807,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_read_memory_address = 'hCCCCCCCC;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -820,7 +820,7 @@ module execution_tb;
     else display_error("Testcase LHU failed");
 
     // SB
-    #5 instr_kind_input = SB;
+    #10 instr_kind_input = SB;
     rs1_data = 'h11111111;
     rs2_data = 'h22222222;
     immediate_data = 'h33333333;
@@ -832,7 +832,7 @@ module execution_tb;
     expect_branch = 0;
     expect_write_memory_address = 'h44444444;
     expect_new_memory_value = 'h22222222;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -846,7 +846,7 @@ module execution_tb;
     else display_error("Testcase SB failed");
 
     // SH
-    #5 instr_kind_input = SH;
+    #10 instr_kind_input = SH;
     rs1_data = 'h44444444;
     rs2_data = 'h55555555;
     immediate_data = 'h66666666;
@@ -858,7 +858,7 @@ module execution_tb;
     expect_branch = 0;
     expect_write_memory_address = 'hAAAAAAAA;
     expect_new_memory_value = 'h55555555;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -872,7 +872,7 @@ module execution_tb;
     else display_error("Testcase SH failed");
 
     // SW
-    #5 instr_kind_input = SW;
+    #10 instr_kind_input = SW;
     rs1_data = 'h77777777;
     rs2_data = 'h99999999;
     immediate_data = 'h88888888;
@@ -884,7 +884,7 @@ module execution_tb;
     expect_branch = 0;
     expect_write_memory_address = 'hFFFFFFFF;
     expect_new_memory_value = 'h99999999;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -898,7 +898,7 @@ module execution_tb;
     else display_error("Testcase SW failed");
 
     // ADDI
-    #5 instr_kind_input = ADDI;
+    #10 instr_kind_input = ADDI;
     rs1_data = 'h12345678;
     immediate_data = 'h87654321;
     expect_valid_output = 1;
@@ -908,7 +908,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h99999999;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -921,7 +921,7 @@ module execution_tb;
     else display_error("Testcase ADDI failed");
 
     // SLTI (rs1_data < immediate_data)
-    #5 instr_kind_input = SLTI;
+    #10 instr_kind_input = SLTI;
     rs1_data = 'h12345678;
     immediate_data = 'h23456789;
     expect_valid_output = 1;
@@ -931,7 +931,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'b1;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -944,7 +944,7 @@ module execution_tb;
     else display_error("Testcase SLTI (rs1_data < immediate_data) failed");
 
     // SLTI (rs1_data == immediate_data)
-    #5 instr_kind_input = SLTI;
+    #10 instr_kind_input = SLTI;
     rs1_data = 'h12345678;
     immediate_data = 'h12345678;
     expect_valid_output = 1;
@@ -954,7 +954,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'b0;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -967,7 +967,7 @@ module execution_tb;
     else display_error("Testcase SLTI (rs1_data == immediate_data) failed");
 
     // SLTI (rs1_data > immediate_data)
-    #5 instr_kind_input = SLTI;
+    #10 instr_kind_input = SLTI;
     rs1_data = 'h12345678;
     immediate_data = 'h87654321;
     expect_valid_output = 1;
@@ -977,7 +977,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'b0;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -990,7 +990,7 @@ module execution_tb;
     else display_error("Testcase SLTI (rs1_data > immediate_data) failed");
 
     // SLTIU (rs1_data < immediate_data)
-    #5 instr_kind_input = SLTIU;
+    #10 instr_kind_input = SLTIU;
     rs1_data = 'h12345678;
     immediate_data = 'h87654321;
     expect_valid_output = 1;
@@ -1000,7 +1000,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'b1;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1013,7 +1013,7 @@ module execution_tb;
     else display_error("Testcase SLTIU (rs1_data < immediate_data) failed");
 
     // SLTIU (rs1_data == immediate_data)
-    #5 instr_kind_input = SLTIU;
+    #10 instr_kind_input = SLTIU;
     rs1_data = 'h12345678;
     immediate_data = 'h12345678;
     expect_valid_output = 1;
@@ -1023,7 +1023,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'b0;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1036,7 +1036,7 @@ module execution_tb;
     else display_error("Testcase SLTIU (rs1_data == immediate_data) failed");
 
     // SLTIU (rs1_data > immediate_data)
-    #5 instr_kind_input = SLTIU;
+    #10 instr_kind_input = SLTIU;
     rs1_data = 'h87654321;
     immediate_data = 'h12345678;
     expect_valid_output = 1;
@@ -1046,7 +1046,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'b0;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1059,7 +1059,7 @@ module execution_tb;
     else display_error("Testcase SLTIU (rs1_data > immediate_data) failed");
 
     // XORI
-    #5 instr_kind_input = XORI;
+    #10 instr_kind_input = XORI;
     rs1_data = 'h12345678;
     immediate_data = 'h87654321;
     expect_valid_output = 1;
@@ -1069,7 +1069,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h95511559;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1082,7 +1082,7 @@ module execution_tb;
     else display_error("Testcase XORI failed");
 
     // ORI
-    #5 instr_kind_input = ORI;
+    #10 instr_kind_input = ORI;
     rs1_data = 'h12345678;
     immediate_data = 'h87654321;
     expect_valid_output = 1;
@@ -1092,7 +1092,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h97755779;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1105,7 +1105,7 @@ module execution_tb;
     else display_error("Testcase ORI failed");
 
     // ANDI
-    #5 instr_kind_input = ANDI;
+    #10 instr_kind_input = ANDI;
     rs1_data = 'h12345678;
     immediate_data = 'h87654321;
     expect_valid_output = 1;
@@ -1115,7 +1115,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h02244220;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1128,7 +1128,7 @@ module execution_tb;
     else display_error("Testcase ANDI failed");
 
     // SLLI
-    #5 instr_kind_input = SLLI;
+    #10 instr_kind_input = SLLI;
     rs1_data = 'h00000002;
     shamt = 'h00000003;
     expect_valid_output = 1;
@@ -1138,7 +1138,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000010;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1151,7 +1151,7 @@ module execution_tb;
     else display_error("Testcase SLLI failed");
 
     // SRLI
-    #5 instr_kind_input = SRLI;
+    #10 instr_kind_input = SRLI;
     rs1_data = 'h00000100;
     shamt = 'h00000005;
     expect_valid_output = 1;
@@ -1161,7 +1161,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000008;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1174,7 +1174,7 @@ module execution_tb;
     else display_error("Testcase SRLI failed");
 
     // SRAI
-    #5 instr_kind_input = SRAI;
+    #10 instr_kind_input = SRAI;
     rs1_data = 'h80000100;
     shamt = 'h00000005;
     expect_valid_output = 1;
@@ -1184,7 +1184,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'hFC000008;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1197,7 +1197,7 @@ module execution_tb;
     else display_error("Testcase SRAI failed");
 
     // ADD
-    #5 instr_kind_input = ADD;
+    #10 instr_kind_input = ADD;
     rs1_data = 'h11111111;
     rs2_data = 'h22222222;
     expect_valid_output = 1;
@@ -1207,7 +1207,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h33333333;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1220,7 +1220,7 @@ module execution_tb;
     else display_error("Testcase ADD failed");
 
     // SUB
-    #5 instr_kind_input = SUB;
+    #10 instr_kind_input = SUB;
     rs1_data = 'hAAAAAAAA;
     rs2_data = 'h66666666;
     expect_valid_output = 1;
@@ -1230,7 +1230,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h44444444;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1243,7 +1243,7 @@ module execution_tb;
     else display_error("Testcase SUB failed");
 
     // SLL
-    #5 instr_kind_input = SLL;
+    #10 instr_kind_input = SLL;
     rs1_data = 'h00001111;
     rs2_data = 'h00000010;
     expect_valid_output = 1;
@@ -1253,7 +1253,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h11110000;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1266,7 +1266,7 @@ module execution_tb;
     else display_error("Testcase SLL failed");
 
     // SLL
-    #5 instr_kind_input = SLL;
+    #10 instr_kind_input = SLL;
     rs1_data = 'h00001111;
     rs2_data = 'hFFFFFF10;
     expect_valid_output = 1;
@@ -1276,7 +1276,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h11110000;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1289,7 +1289,7 @@ module execution_tb;
     else display_error("Testcase SLL failed");
 
     // SLT (rs1_data < rs2_data)
-    #5 instr_kind_input = SLT;
+    #10 instr_kind_input = SLT;
     rs1_data = 'h00000001;
     rs2_data = 'h0FFFFFFF;
     expect_valid_output = 1;
@@ -1299,7 +1299,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000001;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1312,7 +1312,7 @@ module execution_tb;
     else display_error("Testcase SLT (rs1_data < rs2_data) failed");
 
     // SLT (rs1_data == rs2_data)
-    #5 instr_kind_input = SLT;
+    #10 instr_kind_input = SLT;
     rs1_data = 'h55555555;
     rs2_data = 'h55555555;
     expect_valid_output = 1;
@@ -1322,7 +1322,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000000;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1335,7 +1335,7 @@ module execution_tb;
     else display_error("Testcase SLT (rs1_data == rs2_data) failed");
 
     // SLT (rs1_data > rs2_data)
-    #5 instr_kind_input = SLT;
+    #10 instr_kind_input = SLT;
     rs1_data = 'h05555555;
     rs2_data = 'hF5555555;
     expect_valid_output = 1;
@@ -1345,7 +1345,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000000;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1358,7 +1358,7 @@ module execution_tb;
     else display_error("Testcase SLT (rs1_data > rs2_data) failed");
 
     // SLTU (rs1_data < rs2_data)
-    #5 instr_kind_input = SLTU;
+    #10 instr_kind_input = SLTU;
     rs1_data = 'h00000001;
     rs2_data = 'hFFFFFFFF;
     expect_valid_output = 1;
@@ -1368,7 +1368,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000001;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1381,7 +1381,7 @@ module execution_tb;
     else display_error("Testcase SLTU (rs1_data < rs2_data) failed");
 
     // SLTU (rs1_data == rs2_data)
-    #5 instr_kind_input = SLTU;
+    #10 instr_kind_input = SLTU;
     rs1_data = 'h55555555;
     rs2_data = 'h55555555;
     expect_valid_output = 1;
@@ -1391,7 +1391,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000000;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1404,7 +1404,7 @@ module execution_tb;
     else display_error("Testcase SLTU (rs1_data == rs2_data) failed");
 
     // SLTU (rs1_data > rs2_data)
-    #5 instr_kind_input = SLTU;
+    #10 instr_kind_input = SLTU;
     rs1_data = 'hFFFFFFFF;
     rs2_data = 'h11111111;
     expect_valid_output = 1;
@@ -1414,7 +1414,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000000;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1427,7 +1427,7 @@ module execution_tb;
     else display_error("Testcase SLTU (rs1_data > rs2_data) failed");
 
     // XOR
-    #5 instr_kind_input = XOR;
+    #10 instr_kind_input = XOR;
     rs1_data = 'hF0F0F0F0;
     rs2_data = 'h0F0F0F0F;
     expect_valid_output = 1;
@@ -1437,7 +1437,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'hFFFFFFFF;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1450,7 +1450,7 @@ module execution_tb;
     else display_error("Testcase XOR failed");
 
     // SRL
-    #5 instr_kind_input = SRL;
+    #10 instr_kind_input = SRL;
     rs1_data = 'h00010000;
     rs2_data = 'h00000010;
     expect_valid_output = 1;
@@ -1460,7 +1460,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000001;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1473,7 +1473,7 @@ module execution_tb;
     else display_error("Testcase SRL failed");
 
     // SRL
-    #5 instr_kind_input = SRL;
+    #10 instr_kind_input = SRL;
     rs1_data = 'h00010000;
     rs2_data = 'hFFFFFF10;
     expect_valid_output = 1;
@@ -1483,7 +1483,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000001;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1496,7 +1496,7 @@ module execution_tb;
     else display_error("Testcase SRL failed");
 
     // SRA
-    #5 instr_kind_input = SRA;
+    #10 instr_kind_input = SRA;
     rs1_data = 'hF0010000;
     rs2_data = 'h00000010;
     expect_valid_output = 1;
@@ -1505,8 +1505,8 @@ module execution_tb;
     expect_read_memory = 0;
     expect_write_memory = 0;
     expect_branch = 0;
-    expect_new_register_value = 'hFFFF8001;
-    #5
+    expect_new_register_value = 'hFFFFF001;
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1518,8 +1518,8 @@ module execution_tb;
     )
     else display_error("Testcase SRA failed");
 
-    // SRL
-    #5 instr_kind_input = SRA;
+    // SRA
+    #10 instr_kind_input = SRA;
     rs1_data = 'hF0010000;
     rs2_data = 'hFFFFFF10;
     expect_valid_output = 1;
@@ -1528,8 +1528,8 @@ module execution_tb;
     expect_read_memory = 0;
     expect_write_memory = 0;
     expect_branch = 0;
-    expect_new_register_value = 'hFFFF8001;
-    #5
+    expect_new_register_value = 'hFFFFF001;
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1542,7 +1542,7 @@ module execution_tb;
     else display_error("Testcase SRA failed");
 
     // OR
-    #5 instr_kind_input = OR;
+    #10 instr_kind_input = OR;
     rs1_data = 'hF0F0F0F0;
     rs2_data = 'h8F8F8F8F;
     expect_valid_output = 1;
@@ -1552,7 +1552,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'hFFFFFFFF;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output
@@ -1565,7 +1565,7 @@ module execution_tb;
     else display_error("Testcase 0R failed");
 
     // AND
-    #5 instr_kind_input = AND;
+    #10 instr_kind_input = AND;
     rs1_data = 'hA5A5A5A5;
     rs2_data = 'h5A5A5A5A;
     expect_valid_output = 1;
@@ -1575,7 +1575,7 @@ module execution_tb;
     expect_write_memory = 0;
     expect_branch = 0;
     expect_new_register_value = 'h00000000;
-    #5
+    #10
     assert (
       valid_output == expect_valid_output
       && stall_output == expect_stall_output

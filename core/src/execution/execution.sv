@@ -180,7 +180,7 @@ module execution (
       end
       SRA: begin
         write_register = 1;
-        new_register_value = $signed(singed_rs1_data >> (rs2_data & 5'b11111));
+        new_register_value = $signed(signed_rs1_data >>> (rs2_data & 5'b11111));
       end
       OR: begin
         write_register = 1;

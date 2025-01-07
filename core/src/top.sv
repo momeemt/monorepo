@@ -1,156 +1,187 @@
 module top (
     input logic CLOCK_50,
-    input logic [3:0] KEY,
-    output logic [7:0] LEDR,
-    output logic [6:0] HEX0,
-    output logic [6:0] HEX1,
-    output logic [6:0] HEX2,
-    output logic [6:0] HEX3
+    input logic [3:0] KEY
 );
   assign clk = CLOCK_50;
   assign rst = KEY[0];
 
-  logic fetch_valid_input;
+  // valid
   logic fetch_valid_output;
-  logic fetch_stall_input;
-  logic fetch_stall_output;
-  logic branch;
-  logic [31:0] branch_dest_address;
-  logic [31:0] pc;
+  logic instruction_memory_valid_output;
+  logic decode_valid_output;
+  logic execution_valid_output;
+  logic data_memory_valid_output;
 
-  fetch fetch_inst (
+  // stall
+  logic write_back_stall_output;
+  logic data_memory_stall_output;
+  logic execution_stall_output;
+  logic decode_stall_output;
+  logic instruction_memory_stall_output;
+
+  // pc
+  logic [OPERAND_WIDTH-1:0] fetch_pc;
+  logic [OPERAND_WIDTH-1:0] instruction_memory_pc;
+  logic [OPERAND_WIDTH-1:0] decode_pc;
+
+  // instr_kind
+  instr_kind_t decode_instr_kind;
+  instr_kind_t execution_instr_kind;
+  instr_kind_t data_memory_instr_kind;
+
+  // rd
+  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] decode_rd_addr;
+  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] execution_rd_addr;
+  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] data_memory_rd_addr;
+
+  logic branch;
+  logic [OPERAND_WIDTH-1:0] branch_dest_address;
+  logic [OPERAND_WIDTH-1:0] instruction_data;
+  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] decode_rs1_addr;
+  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] decode_rs2_addr;
+  logic [4:0] decode_shamt;
+  logic [3:0] decode_pred;
+  logic [3:0] decode_succ;
+  logic [10:0] decode_csr;
+  logic [4:0] decode_zimm;
+  logic [OPERAND_WIDTH-1:0] decode_immediate_data;
+  logic decode_write_reserve;
+  logic [OPERAND_WIDTH-1:0] reg_file_rs1_data;
+  logic [OPERAND_WIDTH-1:0] reg_file_rs2_data;
+  logic reg_file_reserved;
+  logic [OPERAND_WIDTH-1:0] execution_new_register_value;
+  logic [OPERAND_WIDTH-1:0] execution_read_memory_address;
+  logic [OPERAND_WIDTH-1:0] execution_write_memory_address;
+  logic [OPERAND_WIDTH-1:0] execution_new_memory_value;
+  logic execution_write_register;
+  logic execution_read_memory;
+  logic execution_write_memory;
+  logic execution_branch;
+  logic [OPERAND_WIDTH-1:0] execution_branch_dest_address;
+  logic [OPERAND_WIDTH-1:0] data_memory_new_register_value;
+  logic data_memory_write_register;
+
+  fetch fetch (
       .clk(clk),
       .rst(rst),
-      .valid_input(fetch_valid_input),
       .branch_input(branch),
       .branch_dest_address(branch_dest_address),
-      .stall_input(fetch_stall_input),
+      .stall_input(instruction_memory_stall_output),
       .valid_output(fetch_valid_output),
-      .stall_output(fetch_stall_output),
-      .pc(pc)
+      .pc(fetch_pc)
   );
 
-  memory mem (
+  // read next instruction pointed to by the program counter (pc)
+  // write data calculated by the execution stage
+  memory memory (
       .clk(clk),
       .rst(rst),
-      .addr(instruction_address),
-      .write_enable(0),
-      .write_data(0),
-      .read_data(instruction_data)
+      // instruction memory stage
+      .instruction_memory_valid_input(fetch_valid_output),
+      .instruction_memory_stall_input(decode_stall_output),
+      .pc_input(fetch_pc),
+      .instruction_memory_valid_output(instruction_memory_valid_output),
+      .instruction_memory_stall_output(instruction_memory_stall_output),
+      .pc_output(instruction_memory_pc),
+      .instruction_data(instruction_data),
+      // data memory stage
+      .data_memory_valid_input(execution_valid_output),
+      .data_memory_stall_input(write_back_stall_output),
+      .read_data_enable(execution_read_memory),
+      .read_data_address(execution_read_memory_address),
+      .write_data_enable(execution_write_memory),
+      .write_data(execution_write_memory_address),
+      .new_register_value_input(execution_new_register_value),
+      .rd_addr_input(execution_rd_addr),
+      .write_register_input(execution_write_register),
+      .instr_kind_input(execution_instr_kind),
+      .data_memory_valid_output(data_memory_valid_output),
+      .data_memory_stall_output(data_memory_stall_output),
+      .read_data(data_memory_new_register_value),
+      .rd_addr_output(data_memory_rd_addr),
+      .write_register_output(data_memory_write_register),
+      .instr_kind_output(data_memory_instr_kind)
   );
 
-  logic decode_valid_output;
-  logic decode_stall_output;
-  instr_kind_t instr_kind;
-  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] rs1_addr;
-  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] rs2_addr;
-  logic [REGISTER_DESCRIPTOR_WIDTH-1:0] decoder_rd_addr;
-  logic [3:0] pred;
-  logic [3:0] succ;
-  logic [10:0] csr;
-  logic [4:0] zimm;
-  logic [OPERAND_WIDTH-1:0] immediate_data;
-  logic write_reserve;
-
-  decode decode_inst (
+  decode decode (
       .clk(clk),
       .rst(rst),
-      .valid_input(fetch_valid_output),
-      .stall_input(fetch_stall_output),
+      .valid_input(instruction_memory_valid_output),
+      .stall_input(execution_stall_output),
       .instruction(instruction_data),
       .valid_output(decode_valid_output),
       .stall_output(decode_stall_output),
-      .instr_kind(instr_kind),
-      .rs1_addr(rs1_addr),
-      .rs2_addr(rs2_addr),
-      .rd_addr(rd_addr),
-      .pred(pred),
-      .succ(succ),
-      .csr(csr),
-      .zimm(zimm),
-      .immediate_data(immediate_data),
-      .write_reserve(write_reserve)
+      .instr_kind(decode_instr_kind),
+      .rs1_addr(decode_rs1_addr),
+      .rs2_addr(decode_rs2_addr),
+      .rd_addr(deocde_rd_addr),
+      .pred(decode_pred),
+      .succ(decode_succ),
+      .csr(decode_csr),
+      .zimm(decode_zimm),
+      .immediate_data(decode_immediate_data),
+      .write_reserve(decode_write_reserve)
   );
-
-  logic [OPERAND_WIDTH-1:0] rs1_data;
-  logic [OPERAND_WIDTH-1:0] rs2_data;
-  logic reserved_output;
-  logic write_register;
-  logic [OPERAND_WIDTH-1:0] result_input;
-
-  logic [OPERAND_WIDTH-1:0] first_register;
 
   global_register reg_file (
       .clk(clk),
       .rst(rst),
-      .write_reserve_input(write_reserve),
-      .register_operand0_input(rs1_addr),
-      .register_operand1_input(rs2_addr_or_shamt),
-      .register_operand0_output(rs1_data),
-      .register_operand1_output(rs2_data),
-      .reserved_output(reserved_output),
-      .write_back_input(write_register),
-      .write_back_register_input(rd_addr_from_execution), // 今はdecoderの出力を直接渡しているが、クロックを跨いで描き変わる可能性があるのでexeにも渡して変数を分ける
-      .result_input(result_input),
-      .debug_first_register(first_register)
+      .write_reserve_input(decode_write_reserve),
+      .register_operand0_input(decode_rs1_addr),
+      .register_operand1_input(decode_rs2_addr),
+      .register_operand0_output(reg_file_rs1_data),
+      .register_operand1_output(reg_file_rs2_data),
+      .reserved_output(reg_file_reserved),
+      .write_back_input(write_back_register_input),
+      .write_back_register_input(),
+      .result_input()
   );
 
-  logic write_memory;
-  logic execution_valid_output;
-  logic execution_stall_output;
-  execution execution_inst (
+  execution execution (
       .clk(clk),
       .rst(rst),
       .valid_input(decode_valid_output),
-      .stall_input(decode_stall_output),
-      .instr_kind(instr_kind),
-      .rs1_data(rs1_data),
-      .rs2_data(rs2_data),
-      .immediate_data(immediate_data),
-      .pc(pc),
+      .stall_input(write_back_stall_output),
+      .instr_kind_input(decode_instr_kind),
+      .rs1_data(reg_file_rs1_data),
+      .rs2_data(reg_file_rs2_data),
+      .rd_addr_input(decode_rd_addr),
+      .shamt(decode_shamt),
+      .pred(decode_pred),
+      .succ(decode_succ),
+      .csr(decode_csr),
+      .zimm(decode_zimm),
+      .immediate_data(decode_immediate_data),
+      .pc(),  // fetchから流す
       .valid_output(execution_valid_output),
       .stall_output(execution_stall_output),
-      .result(result_input),
-      .write_register(write_register),
-      .write_memory(write_memory),
-      .branch(branch),
-      .branch_dest_address(branch_dest_address)
+      .instr_kind_output(execution_instr_kind),
+      .new_register_value(execution_new_register_value),
+      .read_memory_address(execution_read_memory_address),
+      .write_memory_address(execution_write_memory_address),
+      .new_memory_value(execution_new_memory_value),
+      .rd_addr_output(execution_rd_addr),
+      .write_register(execution_write_register),
+      .read_memory(execution_read_memory),
+      .write_memory(execution_write_memory),
+      .branch(execution_branch),
+      .branch_dest_address(execution_branch_dest_address)
   );
 
-  write_back write_back_inst (
+  write_back write_back (
       .clk(clk),
       .rst(rst),
-      .valid_input(execution_valid_output),
-      .stall_input(execution_stall_output)
+      .valid_input(data_memory_valid_output),
+      .instr_kind(data_memory_instr_kind),
+      .write_register(data_memory_write_register),
+      .new_register_value(data_memory_new_register_value),
+      .rd_addr(data_memory_rd_addr),
+      .stall_output(write_back_stall_output)
   );
 
-  integer counter;
   always_ff @(posedge clk or negedge rst) begin
     if (~rst) begin
-      counter <= 0;
-      fetch_valid_input <= 0;
-    end else begin
-      counter <= counter + 1;
-      if (counter == 50_000_000) begin
-        counter <= 0;
-        fetch_valid_input <= 1;
-      end else begin
-        fetch_valid_input <= 0;
-      end
     end
   end
 
-  logic [6:0] hex_output [4];
-  four_digits_segments four_digits_segments_inst (
-      .clk(clk),
-      .rst(rst),
-      .enable(fetch_valid_input),
-      .value(first_register[3:0]),
-      .HEX(hex_output),
-  );
-  assign HEX0 = hex_output[0];
-  assign HEX1 = hex_output[1];
-  assign HEX2 = hex_output[2];
-  assign HEX3 = hex_output[3];
 endmodule
-
