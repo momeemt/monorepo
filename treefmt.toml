@@ -1,8 +1,0 @@
-[formatter.alejandra]
-command = "alejandra"
-includes = ["*.nix"]
-
-[formatter.satysfi-formatter]
-command = "satysfi-fmt"
-options = ["-w"]
-includes = ["*.saty"]

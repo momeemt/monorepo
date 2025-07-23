@@ -1,0 +1,7 @@
+@require: class-slydifi/theme/plain
+
+document '<
+  +frame{\SLyDIFi; のテスト}<
+    +p{Hello, \SLyDIFi;!}
+  >
+>

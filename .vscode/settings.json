@@ -1,29 +1,6 @@
 {
-    "nix.enableLanguageServer": true,
-    "nix.serverPath": "nil",
-    "nixEnvSelector.suggestion": false,
-    "nixEnvSelector.nixFile": "${workspaceRoot}/shell.nix",
+    "satysfi-workshop.executable": "satysfi",
     "satysfi-workshop.languageServer.enabled": true,
-    "satysfi-workshop.mathPreview.when": "onHover",
-    "customLocalFormatters.formatters": [
-		{
-			"command": "treefmt -q --stdin ${file}",
-			"languages": [
-				"nix",
-                "satysfi"
-			]
-		}
-	],
-	"[satysfi]": {
-		"editor.defaultFormatter": "jkillian.custom-local-formatters",
-        "editor.formatOnPaste": true,
-        "editor.formatOnSave": true,
-        "editor.formatOnType": false
-	},
-	"[nix]": {
-		"editor.defaultFormatter": "jkillian.custom-local-formatters",
-        "editor.formatOnPaste": true,
-        "editor.formatOnSave": true,
-        "editor.formatOnType": false
-	},
+    "satysfi-workshop.build.when": "onSave",
+    "satysfi-workshop.mathPreview.when": "onHover"
 }
