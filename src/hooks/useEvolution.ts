@@ -13,6 +13,8 @@ import {
 } from '../lib/evolution';
 import { saveState, loadState, clearState } from '../lib/storage';
 import { getRandomSentences, resetSentenceHistory } from '../lib/sentences';
+import { calculateWeightedScore } from '../lib/japaneseBigrams';
+import type { TypingTestResult } from '../components/TypingTest';
 
 // レイアウトから任意文字を取得
 function getOptionalCharsFromLayout(layout: KeyboardLayout): string[] {
@@ -27,10 +29,13 @@ function getOptionalCharsFromLayout(layout: KeyboardLayout): string[] {
   return chars;
 }
 
-// テスト結果
+// テスト結果（拡張版）
 export interface TestResult {
   layoutId: string;
   timeMs: number;
+  intervals: number[];      // 文字間の入力間隔
+  inputText: string;        // 入力されたテキスト
+  bigramScore: number;      // バイグラム重み付きスコア
 }
 
 export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
@@ -71,12 +76,21 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
   }, [state.population.length]);
 
   // テスト結果を記録
-  const recordTestResult = useCallback((timeMs: number) => {
+  const recordTestResult = useCallback((result: TypingTestResult) => {
     const currentLayout = state.population[currentTestIndex];
+
+    // バイグラム重み付きスコアを計算
+    const bigramResult = calculateWeightedScore(result.inputText, result.intervals);
 
     setTestResults((prev) => [
       ...prev,
-      { layoutId: currentLayout.id, timeMs },
+      {
+        layoutId: currentLayout.id,
+        timeMs: result.timeMs,
+        intervals: result.intervals,
+        inputText: result.inputText,
+        bigramScore: bigramResult.totalScore,
+      },
     ]);
 
     // 次のキーボードへ
@@ -118,6 +132,10 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
       const maxTime = Math.max(...times);
       const timeRange = maxTime - minTime;
 
+      // バイグラムスコアの統計
+      const bigramScores = normalResults.map((r) => r.bigramScore);
+      const maxBigramScore = Math.max(...bigramScores, 1);
+
       // 時間でソートしてランキングを作成
       const sortedResults = [...normalResults].sort((a, b) => a.timeMs - b.timeMs);
       const rankMap = new Map<string, number>();
@@ -134,9 +152,10 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
           return { ...layout, fitness: 0 };
         }
 
-        // 速度重視のフィットネス計算:
+        // === 速度重視のフィットネス計算 ===
         // 1. 時間差を強調（指数関数的に速いものを優遇）
         // 2. ランキングベースのボーナス
+        // 3. バイグラム重み付きスコア（頻出パターンの入力速度）
 
         // 正規化された速度スコア（0-1、速い=1）
         const normalizedSpeed = timeRange > 0
@@ -144,18 +163,23 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
           : 0.5;
 
         // 指数関数で差を強調（速いものをより高く評価）
-        // exp(2x) - 1 を使用して 0-6.4 の範囲に
         const exponentialScore = Math.exp(2 * normalizedSpeed) - 1;
 
         // ランキングボーナス（1位: +3, 2位: +2, 3位: +1, 4位以降: +0）
         const rank = rankMap.get(result.layoutId) || normalResults.length;
         const rankBonus = Math.max(0, 4 - rank);
 
-        // 最終スコア: 指数スコア + ランキングボーナス（1-10の範囲に正規化）
-        // exponentialScore は 0-6.4, rankBonus は 0-3
-        // 合計 0-9.4 を 1-10 に正規化
-        const rawFitness = exponentialScore + rankBonus;
-        const fitness = 1 + (rawFitness / 9.4) * 9;
+        // バイグラムスコア（頻出パターンを速く入力できるほど高評価）
+        // 0-3の範囲に正規化
+        const normalizedBigramScore = (result.bigramScore / maxBigramScore) * 3;
+
+        // 最終スコア計算:
+        // - 速度の指数スコア（0-6.4）: 40%
+        // - ランキングボーナス（0-3）: 30%
+        // - バイグラムスコア（0-3）: 30%
+        // 合計 0-12.4 を 1-10 に正規化
+        const rawFitness = exponentialScore + rankBonus + normalizedBigramScore;
+        const fitness = 1 + (rawFitness / 12.4) * 9;
 
         return { ...layout, fitness };
       });

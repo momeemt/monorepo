@@ -1,12 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { KeyboardLayout } from '../types/keyboard';
 import { FlickKeyboard } from './FlickKeyboard';
 import { getLayoutStats, SPECIAL_KEYS, DAKUTEN_MAP, HANDAKUTEN_MAP, SMALL_MAP } from '../types/keyboard';
 
+// テスト結果のデータ
+export interface TypingTestResult {
+  timeMs: number;           // 総時間
+  intervals: number[];      // 文字間の入力間隔（ms）
+  inputText: string;        // 入力されたテキスト
+}
+
 interface TypingTestProps {
   layout: KeyboardLayout;
   targetSentence: string;
-  onComplete: (timeMs: number) => void;
+  onComplete: (result: TypingTestResult) => void;
   layoutIndex: number;
   totalLayouts: number;
 }
@@ -22,6 +29,9 @@ export function TypingTest({
   const [startTime, setStartTime] = useState<number | null>(null);
   const [isComplete, setIsComplete] = useState(false);
 
+  // 各文字入力のタイムスタンプを記録
+  const timestampsRef = useRef<number[]>([]);
+
   const stats = getLayoutStats(layout);
 
   // 入力リセット（新しいレイアウト/文章時）
@@ -29,16 +39,22 @@ export function TypingTest({
     setInput('');
     setStartTime(null);
     setIsComplete(false);
+    timestampsRef.current = [];
   }, [layout.id, targetSentence]);
 
   // 文字入力
   const handleInput = useCallback((char: string) => {
     if (isComplete) return;
 
+    const now = Date.now();
+
     // 最初の入力で計測開始
     if (startTime === null) {
-      setStartTime(Date.now());
+      setStartTime(now);
     }
+
+    // タイムスタンプを記録
+    timestampsRef.current.push(now);
 
     let newInput = input;
 
@@ -79,10 +95,21 @@ export function TypingTest({
 
     // 完了チェック
     if (newInput === targetSentence) {
-      const endTime = Date.now();
-      const elapsed = endTime - (startTime ?? endTime);
+      const elapsed = now - (startTime ?? now);
+
+      // 入力間隔を計算
+      const timestamps = timestampsRef.current;
+      const intervals: number[] = [];
+      for (let i = 1; i < timestamps.length; i++) {
+        intervals.push(timestamps[i] - timestamps[i - 1]);
+      }
+
       setIsComplete(true);
-      onComplete(elapsed);
+      onComplete({
+        timeMs: elapsed,
+        intervals,
+        inputText: newInput,
+      });
     }
   }, [input, startTime, targetSentence, onComplete, isComplete]);
 
@@ -97,8 +124,12 @@ export function TypingTest({
     if (isComplete) return;
     setIsComplete(true);
     // 最低スコア（非常に長い時間として扱う）
-    onComplete(999999);
-  }, [isComplete, onComplete]);
+    onComplete({
+      timeMs: 999999,
+      intervals: [],
+      inputText: input,
+    });
+  }, [isComplete, onComplete, input]);
 
   // 入力文字の正誤を判定
   const renderTargetSentence = () => {
