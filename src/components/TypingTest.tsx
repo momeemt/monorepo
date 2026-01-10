@@ -92,6 +92,14 @@ export function TypingTest({
     setInput(prev => prev.slice(0, -1));
   }, [isComplete]);
 
+  // スキップ（入力できない場合）
+  const handleSkip = useCallback(() => {
+    if (isComplete) return;
+    setIsComplete(true);
+    // 最低スコア（非常に長い時間として扱う）
+    onComplete(999999);
+  }, [isComplete, onComplete]);
+
   // 入力文字の正誤を判定
   const renderTargetSentence = () => {
     return targetSentence.split('').map((char, index) => {
@@ -154,7 +162,19 @@ export function TypingTest({
       {/* ヒント */}
       <div className="text-xs text-gray-400 dark:text-gray-500 text-center max-w-xs">
         キーをタップで中央の文字、スワイプで周囲の文字を入力
+        <br />
+        ゛=濁点、゜=半濁点、小=小文字変換
       </div>
+
+      {/* スキップボタン */}
+      {!isComplete && (
+        <button
+          onClick={handleSkip}
+          className="mt-2 px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 underline"
+        >
+          入力できない場合はスキップ
+        </button>
+      )}
     </div>
   );
 }

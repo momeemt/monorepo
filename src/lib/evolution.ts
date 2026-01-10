@@ -33,12 +33,34 @@ function randomFlickDirections(count: number): OptionalFlickDirection[] {
   return shuffled.slice(0, count);
 }
 
-// ランダムな座標を生成（0-1の範囲）
-function randomPosition(): { x: number; y: number } {
-  return {
-    x: Math.random(),
-    y: Math.random(),
-  };
+// グリッドベースの座標を生成（重ならないように）
+function generateGridPositions(keyCount: number): { x: number; y: number }[] {
+  // キー数に応じてグリッドサイズを計算
+  const cols = Math.ceil(Math.sqrt(keyCount * 1.2)); // 少し横長に
+  const rows = Math.ceil(keyCount / cols);
+
+  const positions: { x: number; y: number }[] = [];
+
+  for (let i = 0; i < keyCount; i++) {
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+
+    // グリッド内での位置（0-1に正規化）+ 少しランダム性を追加
+    const baseX = col / Math.max(1, cols - 1);
+    const baseY = row / Math.max(1, rows - 1);
+
+    // グリッド内で少しランダムにずらす（重ならない範囲で）
+    const jitterX = (Math.random() - 0.5) * 0.5 / cols;
+    const jitterY = (Math.random() - 0.5) * 0.5 / rows;
+
+    positions.push({
+      x: Math.max(0, Math.min(1, baseX + jitterX)),
+      y: Math.max(0, Math.min(1, baseY + jitterY)),
+    });
+  }
+
+  // 位置をシャッフル（見た目のランダム性を高める）
+  return shuffle(positions);
 }
 
 // ランダムに任意文字を選択（0〜全部）
@@ -62,6 +84,20 @@ export function createRandomLayout(config: EvolutionConfig, generation: number):
   const chars = shuffle([...REQUIRED_CHARS, ...optionalSelected]);
   let charIndex = 0;
 
+  // まずキーの数を計算
+  const tempKeys: { center: string; flickCount: number }[] = [];
+  let tempCharIndex = 0;
+  while (tempCharIndex < chars.length) {
+    const remainingChars = chars.length - tempCharIndex;
+    const maxPossibleFlicks = Math.min(maxFlicksPerKey, remainingChars - 1);
+    const flickCount = randInt(minFlicksPerKey, Math.max(minFlicksPerKey, maxPossibleFlicks));
+    tempKeys.push({ center: chars[tempCharIndex], flickCount });
+    tempCharIndex += 1 + flickCount;
+  }
+
+  // 重ならない座標を生成
+  const positions = generateGridPositions(tempKeys.length);
+
   const keys: KeyConfig[] = [];
 
   // 全文字を使い切るまでキーを作成
@@ -84,8 +120,8 @@ export function createRandomLayout(config: EvolutionConfig, generation: number):
       }
     }
 
-    // ランダムな座標を割り当て
-    const pos = randomPosition();
+    // 重ならない座標を割り当て
+    const pos = positions[keys.length] || { x: Math.random(), y: Math.random() };
     keys.push({ center, flicks, x: pos.x, y: pos.y });
   }
 
@@ -144,8 +180,27 @@ export function crossover(
 
   // 必須文字 + 継承した任意文字
   const shuffledChars = shuffle([...REQUIRED_CHARS, ...inheritedOptional]);
-  let charIndex = 0;
 
+  // まずキーの数を計算
+  let tempCharIndex = 0;
+  let keyCount = 0;
+  while (tempCharIndex < shuffledChars.length) {
+    const remainingChars = shuffledChars.length - tempCharIndex;
+    const parentKey = parent1.keys[keyCount % parent1.keys.length];
+    const baseFlickCount = Object.keys(parentKey.flicks).length;
+    const maxPossibleFlicks = Math.min(config.maxFlicksPerKey, remainingChars - 1);
+    const flickCount = Math.max(
+      config.minFlicksPerKey,
+      Math.min(maxPossibleFlicks, baseFlickCount + randInt(-1, 1))
+    );
+    tempCharIndex += 1 + flickCount;
+    keyCount++;
+  }
+
+  // 重ならない座標を生成
+  const positions = generateGridPositions(keyCount);
+
+  let charIndex = 0;
   const keys: KeyConfig[] = [];
 
   // 全文字を使い切るまでキーを作成
@@ -176,22 +231,9 @@ export function crossover(
       }
     }
 
-    // 座標は親から継承（ブレンドまたは選択）
-    let x: number, y: number;
-    if (Math.random() < 0.5) {
-      // 両親の座標をブレンド
-      const p1Key = parent1.keys[parentKeyIdx % parent1.keys.length];
-      const p2Key = parent2.keys[parentKeyIdx % parent2.keys.length];
-      const t = Math.random();
-      x = p1Key.x * t + p2Key.x * (1 - t);
-      y = p1Key.y * t + p2Key.y * (1 - t);
-    } else {
-      // 親から継承
-      x = parentKey.x;
-      y = parentKey.y;
-    }
-
-    keys.push({ center, flicks, x, y });
+    // 重ならない座標を使用
+    const pos = positions[keys.length] || { x: Math.random(), y: Math.random() };
+    keys.push({ center, flicks, x: pos.x, y: pos.y });
   }
 
   return {

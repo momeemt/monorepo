@@ -11,12 +11,23 @@ interface KeyboardViewProps {
   showStats?: boolean;
 }
 
-// サイズごとのコンテナとキーサイズ
+// サイズごとのキーサイズとパディング
 const sizeConfig = {
-  sm: { containerWidth: 200, containerHeight: 250, keySize: 56, padding: 8 },
-  md: { containerWidth: 240, containerHeight: 300, keySize: 72, padding: 10 },
-  lg: { containerWidth: 280, containerHeight: 350, keySize: 88, padding: 12 },
+  sm: { keySize: 40, padding: 6, gap: 2 },
+  md: { keySize: 48, padding: 8, gap: 3 },
+  lg: { keySize: 56, padding: 10, gap: 4 },
 };
+
+// キー数に応じてコンテナサイズを計算
+function calculateContainerSize(keyCount: number, keySize: number, padding: number, gap: number): { width: number; height: number } {
+  const cols = Math.ceil(Math.sqrt(keyCount * 1.2));
+  const rows = Math.ceil(keyCount / cols);
+
+  const width = cols * (keySize + gap) + padding * 2;
+  const height = rows * (keySize + gap) + padding * 2;
+
+  return { width, height };
+}
 
 export function KeyboardView({
   layout,
@@ -29,16 +40,22 @@ export function KeyboardView({
   const stats = getLayoutStats(layout);
   const config = sizeConfig[size];
 
+  // コンテナサイズを動的に計算
+  const containerSize = useMemo(
+    () => calculateContainerSize(keys.length, config.keySize, config.padding, config.gap),
+    [keys.length, config]
+  );
+
   // キーの座標を計算
   const keyPositions = useMemo(() => {
-    const effectiveWidth = config.containerWidth - config.keySize - config.padding * 2;
-    const effectiveHeight = config.containerHeight - config.keySize - config.padding * 2;
+    const effectiveWidth = containerSize.width - config.keySize - config.padding * 2;
+    const effectiveHeight = containerSize.height - config.keySize - config.padding * 2;
 
     return keys.map(key => ({
       left: config.padding + key.x * effectiveWidth,
       top: config.padding + key.y * effectiveHeight,
     }));
-  }, [keys, config]);
+  }, [keys, containerSize, config]);
 
   return (
     <div
@@ -55,8 +72,8 @@ export function KeyboardView({
       <div
         className="relative"
         style={{
-          width: config.containerWidth,
-          height: config.containerHeight,
+          width: containerSize.width,
+          height: containerSize.height,
         }}
       >
         {keys.map((key, index) => (
