@@ -45,10 +45,26 @@ function migrateState(state: Partial<EvolutionState>): EvolutionState {
       maxFlicksPerKey: 4,
       cols: 3,
     },
-    history: (state.history || []).map(h => ({
-      ...h,
-      bestLayout: migrateLayout(h.bestLayout),
-    })),
+    history: (state.history || []).map(h => {
+      const bestLayout = migrateLayout(h.bestLayout);
+      return {
+        generation: h.generation ?? 0,
+        bestLayout,
+        averageFitness: h.averageFitness ?? 0,
+        timestamp: h.timestamp ?? Date.now(),
+        // 新しいフィールドにデフォルト値を設定
+        allFitness: h.allFitness ?? [h.averageFitness ?? 0],
+        minFitness: h.minFitness ?? 0,
+        maxFitness: h.maxFitness ?? (bestLayout.fitness ?? 0),
+        keyCountStats: h.keyCountStats ?? {
+          min: bestLayout.keys.length,
+          max: bestLayout.keys.length,
+          avg: bestLayout.keys.length,
+        },
+        optionalCharsInBest: h.optionalCharsInBest ?? [],
+        eliteSurvived: h.eliteSurvived ?? true,
+      };
+    }),
   };
 }
 

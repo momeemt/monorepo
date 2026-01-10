@@ -3,7 +3,9 @@ import type {
   EvolutionState,
   EvolutionConfig,
   GenerationHistory,
+  KeyboardLayout,
 } from '../types/keyboard';
+import { OPTIONAL_CHARS } from '../types/keyboard';
 import {
   createInitialPopulation,
   evolveNextGeneration,
@@ -11,6 +13,19 @@ import {
 } from '../lib/evolution';
 import { saveState, loadState, clearState } from '../lib/storage';
 import { getRandomSentences, resetSentenceHistory } from '../lib/sentences';
+
+// レイアウトから任意文字を取得
+function getOptionalCharsFromLayout(layout: KeyboardLayout): string[] {
+  const optionalSet = new Set(OPTIONAL_CHARS as readonly string[]);
+  const chars: string[] = [];
+  for (const key of layout.keys) {
+    if (optionalSet.has(key.center)) chars.push(key.center);
+    for (const char of Object.values(key.flicks)) {
+      if (char && optionalSet.has(char)) chars.push(char);
+    }
+  }
+  return chars;
+}
 
 // テスト結果
 export interface TestResult {
@@ -104,18 +119,44 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
       });
 
       // 履歴を更新
-      const bestLayout = [...evaluatedPopulation].sort(
+      const sortedPopulation = [...evaluatedPopulation].sort(
         (a, b) => (b.fitness ?? 0) - (a.fitness ?? 0)
-      )[0];
-      const avgFitness =
-        evaluatedPopulation.reduce((sum, l) => sum + (l.fitness ?? 0), 0) /
-        evaluatedPopulation.length;
+      );
+      const bestLayout = sortedPopulation[0];
+      const allFitness = evaluatedPopulation.map(l => l.fitness ?? 0);
+      const avgFitness = allFitness.reduce((sum, f) => sum + f, 0) / allFitness.length;
+      const minFitness = Math.min(...allFitness);
+      const maxFitness = Math.max(...allFitness);
+
+      // キー数統計
+      const keyCounts = evaluatedPopulation.map(l => l.keys.length);
+      const keyCountStats = {
+        min: Math.min(...keyCounts),
+        max: Math.max(...keyCounts),
+        avg: keyCounts.reduce((sum, c) => sum + c, 0) / keyCounts.length,
+      };
+
+      // 最良個体の任意文字
+      const optionalCharsInBest = getOptionalCharsFromLayout(bestLayout);
+
+      // エリートが生存したか（前世代のベストが今世代にも残っているか）
+      const prevBest = prev.history.length > 0 ? prev.history[prev.history.length - 1].bestLayout : null;
+      const eliteSurvived = prevBest ? sortedPopulation.some(l =>
+        l.keys.length === prevBest.keys.length &&
+        l.keys[0]?.center === prevBest.keys[0]?.center
+      ) : true;
 
       const historyEntry: GenerationHistory = {
         generation: prev.generation,
         bestLayout,
         averageFitness: avgFitness,
         timestamp: Date.now(),
+        allFitness,
+        minFitness,
+        maxFitness,
+        keyCountStats,
+        optionalCharsInBest,
+        eliteSurvived,
       };
 
       // 次世代を生成

@@ -164,12 +164,23 @@ export interface EvolutionState {
   history: GenerationHistory[];
 }
 
-// 世代履歴
+// 世代履歴（詳細分析用）
 export interface GenerationHistory {
   generation: number;
   bestLayout: KeyboardLayout;
   averageFitness: number;
   timestamp: number;
+  // 詳細分析データ
+  allFitness: number[];           // 全個体のフィットネス
+  minFitness: number;             // 最低フィットネス
+  maxFitness: number;             // 最高フィットネス
+  keyCountStats: {                // キー数統計
+    min: number;
+    max: number;
+    avg: number;
+  };
+  optionalCharsInBest: string[];  // 最良個体の任意文字
+  eliteSurvived: boolean;         // エリートが生存したか
 }
 
 // キーボードの統計情報

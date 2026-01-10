@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useEvolution } from './hooks/useEvolution';
 import { KeyboardView } from './components/KeyboardView';
 import { TypingTest } from './components/TypingTest';
+import { EvolutionAnalysis } from './components/EvolutionAnalysis';
 import { exportState, importState } from './lib/storage';
 import { getLayoutStats } from './types/keyboard';
 
@@ -186,25 +187,11 @@ function App() {
           </>
         )}
 
-        {/* 世代履歴 */}
+        {/* 進化分析 */}
         {state.history.length > 0 && !isTesting && (
           <div className="mt-12">
-            <h2 className="text-xl font-semibold mb-4">進化の履歴</h2>
-            <div className="overflow-x-auto">
-              <div className="flex gap-4 pb-4">
-                {state.history.slice(-5).map((entry) => (
-                  <div
-                    key={entry.generation}
-                    className="flex-shrink-0 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm"
-                  >
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                      第{entry.generation}世代
-                    </div>
-                    <KeyboardView layout={entry.bestLayout} size="sm" showStats />
-                  </div>
-                ))}
-              </div>
-            </div>
+            <h2 className="text-xl font-semibold mb-4">進化の履歴と分析</h2>
+            <EvolutionAnalysis history={state.history} />
           </div>
         )}
       </div>
