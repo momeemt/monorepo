@@ -82,12 +82,21 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
     if (testResults.length === 0) return;
 
     setState((prev) => {
-      // 時間が短い = より良い = 高いフィットネス
-      const maxTime = Math.max(...testResults.map((r) => r.timeMs));
+      // スキップ（999999ms）を除外して最大時間を計算
+      const SKIP_TIME = 999999;
+      const normalResults = testResults.filter((r) => r.timeMs < SKIP_TIME);
+      const maxTime = normalResults.length > 0
+        ? Math.max(...normalResults.map((r) => r.timeMs))
+        : 10000; // 全員スキップした場合のデフォルト
 
       const evaluatedPopulation = prev.population.map((layout) => {
         const result = testResults.find((r) => r.layoutId === layout.id);
-        if (!result) return { ...layout, fitness: 1 };
+        if (!result) return { ...layout, fitness: 0 };
+
+        // スキップした場合は最低スコア（0）
+        if (result.timeMs >= SKIP_TIME) {
+          return { ...layout, fitness: 0 };
+        }
 
         // 時間を反転してフィットネスに（速い = 高スコア）
         const fitness = 1 + (9 * (maxTime - result.timeMs)) / maxTime;
