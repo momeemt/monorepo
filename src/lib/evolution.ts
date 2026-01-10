@@ -4,10 +4,7 @@ import type {
   EvolutionConfig,
   FlickDirection,
 } from '../types/keyboard';
-import { OPTIONAL_FLICK_DIRECTIONS, ALL_HIRAGANA_CHARS, SPECIAL_KEYS } from '../types/keyboard';
-
-// 全文字 + 特殊キー（変換キー）
-const ALL_CHARS = [...ALL_HIRAGANA_CHARS, SPECIAL_KEYS.DAKUTEN, SPECIAL_KEYS.HANDAKUTEN, SPECIAL_KEYS.SMALL];
+import { OPTIONAL_FLICK_DIRECTIONS, REQUIRED_CHARS, OPTIONAL_CHARS } from '../types/keyboard';
 
 // ユニークIDを生成
 function generateId(): string {
@@ -44,12 +41,25 @@ function randomPosition(): { x: number; y: number } {
   };
 }
 
-// ランダムなキーボード配置を生成（全文字+特殊キーを必ず使用）
+// ランダムに任意文字を選択（0〜全部）
+function selectOptionalChars(): string[] {
+  const selected: string[] = [];
+  for (const char of OPTIONAL_CHARS) {
+    // 30%の確率で任意文字を追加
+    if (Math.random() < 0.3) {
+      selected.push(char);
+    }
+  }
+  return selected;
+}
+
+// ランダムなキーボード配置を生成（必須文字は必ず、任意文字はランダムに）
 export function createRandomLayout(config: EvolutionConfig, generation: number): KeyboardLayout {
   const { minFlicksPerKey, maxFlicksPerKey, cols } = config;
 
-  // 使用する文字をシャッフル（全ひらがな80文字 + 特殊キー3つ = 83文字）
-  const chars = shuffle([...ALL_CHARS]);
+  // 必須文字（基本46 + 変換キー3 = 49）+ ランダムな任意文字
+  const optionalSelected = selectOptionalChars();
+  const chars = shuffle([...REQUIRED_CHARS, ...optionalSelected]);
   let charIndex = 0;
 
   const keys: KeyConfig[] = [];
@@ -110,15 +120,30 @@ function getAllChars(layout: KeyboardLayout): string[] {
   return chars;
 }
 
-// 交叉（構造も考慮した交叉、全文字+特殊キーを保証）
+// レイアウトから任意文字を抽出
+function getOptionalCharsFromLayout(layout: KeyboardLayout): string[] {
+  const allChars = getAllChars(layout);
+  const optionalSet = new Set(OPTIONAL_CHARS as readonly string[]);
+  return allChars.filter(c => optionalSet.has(c));
+}
+
+// 交叉（構造も考慮した交叉、必須文字を保証、任意文字は親から継承）
 export function crossover(
   parent1: KeyboardLayout,
   parent2: KeyboardLayout,
   config: EvolutionConfig,
   generation: number
 ): KeyboardLayout {
-  // 全文字を必ず使用
-  const shuffledChars = shuffle([...ALL_CHARS]);
+  // 両親の任意文字を収集し、ランダムに選択
+  const p1Optional = getOptionalCharsFromLayout(parent1);
+  const p2Optional = getOptionalCharsFromLayout(parent2);
+  const combinedOptional = [...new Set([...p1Optional, ...p2Optional])];
+
+  // 両親の任意文字からランダムに継承（50%の確率で各文字を継承）
+  const inheritedOptional = combinedOptional.filter(() => Math.random() < 0.5);
+
+  // 必須文字 + 継承した任意文字
+  const shuffledChars = shuffle([...REQUIRED_CHARS, ...inheritedOptional]);
   let charIndex = 0;
 
   const keys: KeyConfig[] = [];
@@ -177,73 +202,76 @@ export function crossover(
   };
 }
 
-// 突然変異（座標の変異を含む、全文字保証）
+// 突然変異（座標の変異、任意文字の追加/削除を含む、必須文字は保証）
 export function mutate(layout: KeyboardLayout, config: EvolutionConfig): KeyboardLayout {
   const { mutationRate } = config;
 
-  // キーをコピー（座標も含む）
-  let newKeys: KeyConfig[] = layout.keys.map(k => ({
-    center: k.center,
-    flicks: { ...k.flicks },
-    x: k.x,
-    y: k.y,
-  }));
+  // 現在の文字を収集
+  const currentChars = getAllChars(layout);
+  const optionalSet = new Set(OPTIONAL_CHARS as readonly string[]);
 
-  // 座標の変異
-  for (let i = 0; i < newKeys.length; i++) {
+  // 現在の任意文字を抽出
+  const currentOptional = currentChars.filter(c => optionalSet.has(c));
+
+  // 任意文字の追加/削除（突然変異）
+  let newOptional = [...currentOptional];
+
+  // 任意文字の追加（持っていないものから）
+  if (Math.random() < mutationRate * 0.5) {
+    const notOwned = OPTIONAL_CHARS.filter(c => !currentOptional.includes(c));
+    if (notOwned.length > 0) {
+      const toAdd = notOwned[Math.floor(Math.random() * notOwned.length)];
+      newOptional.push(toAdd);
+    }
+  }
+
+  // 任意文字の削除
+  if (Math.random() < mutationRate * 0.5 && newOptional.length > 0) {
+    const removeIdx = Math.floor(Math.random() * newOptional.length);
+    newOptional.splice(removeIdx, 1);
+  }
+
+  // 必須文字が全て含まれていることを確認し、再構築
+  const allChars = shuffle([...REQUIRED_CHARS, ...newOptional]);
+  let charIndex = 0;
+
+  // キーの座標を保持するためのマップ
+  const oldPositions = layout.keys.map(k => ({ x: k.x, y: k.y }));
+
+  let newKeys: KeyConfig[] = [];
+
+  // 全文字を使い切るまでキーを作成
+  while (charIndex < allChars.length) {
+    const remainingChars = allChars.length - charIndex;
+    const avgCharsPerKey = Math.ceil(remainingChars / Math.max(1, Math.ceil(REQUIRED_CHARS.length / 5) - newKeys.length));
+    const flickCount = Math.min(config.maxFlicksPerKey, Math.max(0, avgCharsPerKey - 1));
+    const flickDirs = randomFlickDirections(flickCount);
+
+    const center = allChars[charIndex++];
+    const flicks: Partial<Record<Exclude<FlickDirection, 'center'>, string>> = {};
+    for (const dir of flickDirs) {
+      if (charIndex < allChars.length) {
+        flicks[dir] = allChars[charIndex++];
+      }
+    }
+
+    // 座標は既存のキーから継承するか、ランダム
+    const oldPos = oldPositions[newKeys.length % oldPositions.length];
+    let x = oldPos?.x ?? Math.random();
+    let y = oldPos?.y ?? Math.random();
+
+    // 座標の変異
     if (Math.random() < mutationRate) {
-      // 座標を少しずらす（正規分布的な変動）
       const dx = (Math.random() - 0.5) * 0.3;
       const dy = (Math.random() - 0.5) * 0.3;
-      newKeys[i].x = Math.max(0, Math.min(1, newKeys[i].x + dx));
-      newKeys[i].y = Math.max(0, Math.min(1, newKeys[i].y + dy));
-    }
-  }
-
-  // キーの分割・統合（フリック構造の変更）
-  // 全文字を保証するため、分割・統合後に文字を再配分
-  if (Math.random() < mutationRate * 0.3) {
-    // 全文字を集めて再配分
-    const allChars = getAllChars({ ...layout, keys: newKeys });
-    const shuffledChars = shuffle(allChars);
-    let charIndex = 0;
-
-    // 新しいキー構造を作成（キー数は現在と同じか±1）
-    const newKeyCount = Math.max(
-      Math.ceil(ALL_CHARS.length / 5), // 最低でも全文字が収まるキー数
-      newKeys.length + randInt(-1, 1)
-    );
-
-    const rebuiltKeys: KeyConfig[] = [];
-    while (charIndex < shuffledChars.length) {
-      const remainingChars = shuffledChars.length - charIndex;
-      const remainingKeys = Math.max(1, newKeyCount - rebuiltKeys.length);
-      const avgCharsPerKey = Math.ceil(remainingChars / remainingKeys);
-      const flickCount = Math.min(config.maxFlicksPerKey, Math.max(0, avgCharsPerKey - 1));
-      const flickDirs = randomFlickDirections(flickCount);
-
-      const center = shuffledChars[charIndex++];
-      const flicks: Partial<Record<Exclude<FlickDirection, 'center'>, string>> = {};
-      for (const dir of flickDirs) {
-        if (charIndex < shuffledChars.length) {
-          flicks[dir] = shuffledChars[charIndex++];
-        }
-      }
-
-      // 座標は既存のキーから継承するか、ランダム
-      const existingKey = newKeys[rebuiltKeys.length % newKeys.length];
-      rebuiltKeys.push({
-        center,
-        flicks,
-        x: existingKey?.x ?? Math.random(),
-        y: existingKey?.y ?? Math.random(),
-      });
+      x = Math.max(0, Math.min(1, x + dx));
+      y = Math.max(0, Math.min(1, y + dy));
     }
 
-    newKeys = rebuiltKeys;
+    newKeys.push({ center, flicks, x, y });
   }
 
-  // 文字のスワップ
+  // 文字のスワップ（位置の入れ替え）
   const positions: { keyIdx: number; type: 'center' | FlickDirection }[] = [];
   for (let i = 0; i < newKeys.length; i++) {
     positions.push({ keyIdx: i, type: 'center' });

@@ -92,6 +92,23 @@ export const SPECIAL_KEYS = {
 
 export type SpecialKey = typeof SPECIAL_KEYS[keyof typeof SPECIAL_KEYS];
 
+// 必須文字セット（基本46文字 + 変換キー3つ = 49文字）
+// これがあれば全ての入力が可能
+export const REQUIRED_CHARS = [
+  ...HIRAGANA_CHARS,
+  SPECIAL_KEYS.DAKUTEN,
+  SPECIAL_KEYS.HANDAKUTEN,
+  SPECIAL_KEYS.SMALL,
+] as const;
+
+// 任意文字セット（濁点・半濁点・小文字の個別キー）
+// 変換キーがあるので、これらは任意
+export const OPTIONAL_CHARS = [
+  ...DAKUTEN_CHARS,
+  ...HANDAKUTEN_CHARS,
+  ...SMALL_CHARS,
+] as const;
+
 // 濁点変換マップ
 export const DAKUTEN_MAP: Record<string, string> = {
   'か': 'が', 'き': 'ぎ', 'く': 'ぐ', 'け': 'げ', 'こ': 'ご',
