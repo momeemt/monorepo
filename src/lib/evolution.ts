@@ -33,34 +33,26 @@ function randomFlickDirections(count: number): OptionalFlickDirection[] {
   return shuffled.slice(0, count);
 }
 
-// グリッドベースの座標を生成（重ならないように）
+// グリッドベースの座標を生成（完全に重ならないように）
 function generateGridPositions(keyCount: number): { x: number; y: number }[] {
   // キー数に応じてグリッドサイズを計算
   const cols = Math.ceil(Math.sqrt(keyCount * 1.2)); // 少し横長に
   const rows = Math.ceil(keyCount / cols);
 
-  const positions: { x: number; y: number }[] = [];
-
-  for (let i = 0; i < keyCount; i++) {
-    const row = Math.floor(i / cols);
-    const col = i % cols;
-
-    // グリッド内での位置（0-1に正規化）+ 少しランダム性を追加
-    const baseX = col / Math.max(1, cols - 1);
-    const baseY = row / Math.max(1, rows - 1);
-
-    // グリッド内で少しランダムにずらす（重ならない範囲で）
-    const jitterX = (Math.random() - 0.5) * 0.5 / cols;
-    const jitterY = (Math.random() - 0.5) * 0.5 / rows;
-
-    positions.push({
-      x: Math.max(0, Math.min(1, baseX + jitterX)),
-      y: Math.max(0, Math.min(1, baseY + jitterY)),
-    });
+  // グリッドの全セルを生成
+  const allCells: { x: number; y: number }[] = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      // 各セルの中心座標（0-1に正規化、端のマージンを考慮）
+      const x = cols === 1 ? 0.5 : col / (cols - 1);
+      const y = rows === 1 ? 0.5 : row / (rows - 1);
+      allCells.push({ x, y });
+    }
   }
 
-  // 位置をシャッフル（見た目のランダム性を高める）
-  return shuffle(positions);
+  // セルをシャッフルして必要な数だけ取得
+  const shuffledCells = shuffle(allCells);
+  return shuffledCells.slice(0, keyCount);
 }
 
 // ランダムに任意文字を選択（0〜全部）

@@ -10,18 +10,18 @@ interface FlickKeyboardProps {
 }
 
 const KEY_SIZE = 64; // w-16 h-16 = 64px
-const PADDING = 16;
-const GAP = 4; // キー間の最小間隔
+const PADDING = 8;
+const CELL_SIZE = KEY_SIZE + 8; // キーサイズ + マージン
 
-// キー数に応じてコンテナサイズを計算
-function calculateContainerSize(keyCount: number): { width: number; height: number } {
+// キー数に応じてグリッドサイズとコンテナサイズを計算
+function calculateGridInfo(keyCount: number): { cols: number; rows: number; width: number; height: number } {
   const cols = Math.ceil(Math.sqrt(keyCount * 1.2));
   const rows = Math.ceil(keyCount / cols);
 
-  const width = cols * (KEY_SIZE + GAP) + PADDING * 2;
-  const height = rows * (KEY_SIZE + GAP) + PADDING * 2;
+  const width = cols * CELL_SIZE + PADDING * 2;
+  const height = rows * CELL_SIZE + PADDING * 2;
 
-  return { width, height };
+  return { cols, rows, width, height };
 }
 
 export function FlickKeyboard({ layout, onInput, onBackspace, disabled }: FlickKeyboardProps) {
@@ -31,27 +31,31 @@ export function FlickKeyboard({ layout, onInput, onBackspace, disabled }: FlickK
     onInput(char);
   }, [onInput]);
 
-  // コンテナサイズを動的に計算
-  const containerSize = useMemo(() => calculateContainerSize(keys.length), [keys.length]);
+  // グリッド情報を計算
+  const gridInfo = useMemo(() => calculateGridInfo(keys.length), [keys.length]);
 
-  // キーの座標を計算（重なりを考慮してスケール調整）
+  // キーの座標を計算（グリッドセルの中心に配置）
   const keyPositions = useMemo(() => {
-    const effectiveWidth = containerSize.width - KEY_SIZE - PADDING * 2;
-    const effectiveHeight = containerSize.height - KEY_SIZE - PADDING * 2;
+    return keys.map(key => {
+      // 正規化座標（0-1）からグリッドセルのインデックスを計算
+      const col = Math.round(key.x * (gridInfo.cols - 1));
+      const row = Math.round(key.y * (gridInfo.rows - 1));
 
-    return keys.map(key => ({
-      left: PADDING + key.x * effectiveWidth,
-      top: PADDING + key.y * effectiveHeight,
-    }));
-  }, [keys, containerSize]);
+      // セルの中心座標
+      const left = PADDING + col * CELL_SIZE + (CELL_SIZE - KEY_SIZE) / 2;
+      const top = PADDING + row * CELL_SIZE + (CELL_SIZE - KEY_SIZE) / 2;
+
+      return { left, top };
+    });
+  }, [keys, gridInfo]);
 
   return (
     <div className="inline-block p-4 bg-gray-200 dark:bg-gray-800 rounded-2xl">
       <div
         className="relative"
         style={{
-          width: containerSize.width,
-          height: containerSize.height,
+          width: gridInfo.width,
+          height: gridInfo.height,
         }}
       >
         {keys.map((key, index) => (

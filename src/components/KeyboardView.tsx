@@ -13,20 +13,20 @@ interface KeyboardViewProps {
 
 // サイズごとのキーサイズとパディング
 const sizeConfig = {
-  sm: { keySize: 40, padding: 6, gap: 2 },
-  md: { keySize: 48, padding: 8, gap: 3 },
-  lg: { keySize: 56, padding: 10, gap: 4 },
+  sm: { keySize: 40, cellSize: 46, padding: 4 },
+  md: { keySize: 48, cellSize: 54, padding: 6 },
+  lg: { keySize: 56, cellSize: 64, padding: 8 },
 };
 
-// キー数に応じてコンテナサイズを計算
-function calculateContainerSize(keyCount: number, keySize: number, padding: number, gap: number): { width: number; height: number } {
+// キー数に応じてグリッドサイズとコンテナサイズを計算
+function calculateGridInfo(keyCount: number, cellSize: number, padding: number): { cols: number; rows: number; width: number; height: number } {
   const cols = Math.ceil(Math.sqrt(keyCount * 1.2));
   const rows = Math.ceil(keyCount / cols);
 
-  const width = cols * (keySize + gap) + padding * 2;
-  const height = rows * (keySize + gap) + padding * 2;
+  const width = cols * cellSize + padding * 2;
+  const height = rows * cellSize + padding * 2;
 
-  return { width, height };
+  return { cols, rows, width, height };
 }
 
 export function KeyboardView({
@@ -40,22 +40,26 @@ export function KeyboardView({
   const stats = getLayoutStats(layout);
   const config = sizeConfig[size];
 
-  // コンテナサイズを動的に計算
-  const containerSize = useMemo(
-    () => calculateContainerSize(keys.length, config.keySize, config.padding, config.gap),
+  // グリッド情報を計算
+  const gridInfo = useMemo(
+    () => calculateGridInfo(keys.length, config.cellSize, config.padding),
     [keys.length, config]
   );
 
-  // キーの座標を計算
+  // キーの座標を計算（グリッドセルの中心に配置）
   const keyPositions = useMemo(() => {
-    const effectiveWidth = containerSize.width - config.keySize - config.padding * 2;
-    const effectiveHeight = containerSize.height - config.keySize - config.padding * 2;
+    return keys.map(key => {
+      // 正規化座標（0-1）からグリッドセルのインデックスを計算
+      const col = Math.round(key.x * (gridInfo.cols - 1));
+      const row = Math.round(key.y * (gridInfo.rows - 1));
 
-    return keys.map(key => ({
-      left: config.padding + key.x * effectiveWidth,
-      top: config.padding + key.y * effectiveHeight,
-    }));
-  }, [keys, containerSize, config]);
+      // セルの中心座標
+      const left = config.padding + col * config.cellSize + (config.cellSize - config.keySize) / 2;
+      const top = config.padding + row * config.cellSize + (config.cellSize - config.keySize) / 2;
+
+      return { left, top };
+    });
+  }, [keys, gridInfo, config]);
 
   return (
     <div
@@ -72,8 +76,8 @@ export function KeyboardView({
       <div
         className="relative"
         style={{
-          width: containerSize.width,
-          height: containerSize.height,
+          width: gridInfo.width,
+          height: gridInfo.height,
         }}
       >
         {keys.map((key, index) => (
