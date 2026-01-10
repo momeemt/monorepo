@@ -352,8 +352,8 @@ export function mutate(layout: KeyboardLayout, config: EvolutionConfig): Keyboar
   };
 }
 
-// トーナメント選択
-export function tournamentSelect(population: KeyboardLayout[], tournamentSize: number = 2): KeyboardLayout {
+// トーナメント選択（サイズを大きくすると選択圧が強くなる）
+export function tournamentSelect(population: KeyboardLayout[], tournamentSize: number = 3): KeyboardLayout {
   let best: KeyboardLayout | null = null;
 
   for (let i = 0; i < tournamentSize; i++) {
@@ -435,6 +435,6 @@ export const DEFAULT_CONFIG: EvolutionConfig = {
   minKeys: 8,
   maxKeys: 12,
   minFlicksPerKey: 0,
-  maxFlicksPerKey: 4,
+  maxFlicksPerKey: 8,
   cols: 3,
 };

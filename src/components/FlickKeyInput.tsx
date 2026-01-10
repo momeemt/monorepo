@@ -14,7 +14,7 @@ export function FlickKeyInput({ keyConfig, onInput, disabled }: FlickKeyInputPro
   const [activeDirection, setActiveDirection] = useState<FlickDirection | null>(null);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
-  // 方向を判定
+  // 方向を判定（8方向対応）
   const getDirection = (dx: number, dy: number): FlickDirection => {
     const distance = Math.sqrt(dx * dx + dy * dy);
 
@@ -22,17 +22,25 @@ export function FlickKeyInput({ keyConfig, onInput, disabled }: FlickKeyInputPro
       return 'center';
     }
 
-    // 角度から方向を判定
+    // 角度から方向を判定（8方向、各45度）
     const angle = Math.atan2(dy, dx) * (180 / Math.PI);
 
-    if (angle >= -45 && angle < 45) {
+    if (angle >= -22.5 && angle < 22.5) {
       return 'right';
-    } else if (angle >= 45 && angle < 135) {
+    } else if (angle >= 22.5 && angle < 67.5) {
+      return 'downRight';
+    } else if (angle >= 67.5 && angle < 112.5) {
       return 'down';
-    } else if (angle >= -135 && angle < -45) {
+    } else if (angle >= 112.5 && angle < 157.5) {
+      return 'downLeft';
+    } else if (angle >= 157.5 || angle < -157.5) {
+      return 'left';
+    } else if (angle >= -157.5 && angle < -112.5) {
+      return 'upLeft';
+    } else if (angle >= -112.5 && angle < -67.5) {
       return 'up';
     } else {
-      return 'left';
+      return 'upRight';
     }
   };
 
@@ -120,6 +128,19 @@ export function FlickKeyInput({ keyConfig, onInput, disabled }: FlickKeyInputPro
         </span>
       )}
 
+      {/* 右上 */}
+      {flicks.upRight && (
+        <span
+          className={`
+            absolute top-0.5 right-0.5
+            text-[10px] transition-all
+            ${activeDirection === 'upRight' ? 'text-blue-600 dark:text-blue-400 scale-125 font-bold' : 'text-gray-400 dark:text-gray-500'}
+          `}
+        >
+          {flicks.upRight}
+        </span>
+      )}
+
       {/* 右 */}
       {flicks.right && (
         <span
@@ -130,6 +151,19 @@ export function FlickKeyInput({ keyConfig, onInput, disabled }: FlickKeyInputPro
           `}
         >
           {flicks.right}
+        </span>
+      )}
+
+      {/* 右下 */}
+      {flicks.downRight && (
+        <span
+          className={`
+            absolute bottom-0.5 right-0.5
+            text-[10px] transition-all
+            ${activeDirection === 'downRight' ? 'text-blue-600 dark:text-blue-400 scale-125 font-bold' : 'text-gray-400 dark:text-gray-500'}
+          `}
+        >
+          {flicks.downRight}
         </span>
       )}
 
@@ -146,6 +180,19 @@ export function FlickKeyInput({ keyConfig, onInput, disabled }: FlickKeyInputPro
         </span>
       )}
 
+      {/* 左下 */}
+      {flicks.downLeft && (
+        <span
+          className={`
+            absolute bottom-0.5 left-0.5
+            text-[10px] transition-all
+            ${activeDirection === 'downLeft' ? 'text-blue-600 dark:text-blue-400 scale-125 font-bold' : 'text-gray-400 dark:text-gray-500'}
+          `}
+        >
+          {flicks.downLeft}
+        </span>
+      )}
+
       {/* 左 */}
       {flicks.left && (
         <span
@@ -156,6 +203,19 @@ export function FlickKeyInput({ keyConfig, onInput, disabled }: FlickKeyInputPro
           `}
         >
           {flicks.left}
+        </span>
+      )}
+
+      {/* 左上 */}
+      {flicks.upLeft && (
+        <span
+          className={`
+            absolute top-0.5 left-0.5
+            text-[10px] transition-all
+            ${activeDirection === 'upLeft' ? 'text-blue-600 dark:text-blue-400 scale-125 font-bold' : 'text-gray-400 dark:text-gray-500'}
+          `}
+        >
+          {flicks.upLeft}
         </span>
       )}
 

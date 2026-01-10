@@ -45,12 +45,30 @@ export function FlickKey({ keyConfig, size = 'md' }: FlickKeyProps) {
         </span>
       )}
 
+      {/* 右上 */}
+      {flicks.upRight && (
+        <span
+          className={`absolute top-0.5 right-0.5 ${fontSizeClasses[size]} text-gray-400 dark:text-gray-500`}
+        >
+          {flicks.upRight}
+        </span>
+      )}
+
       {/* 右 */}
       {flicks.right && (
         <span
           className={`absolute right-0.5 top-1/2 -translate-y-1/2 ${fontSizeClasses[size]} text-gray-500 dark:text-gray-400`}
         >
           {flicks.right}
+        </span>
+      )}
+
+      {/* 右下 */}
+      {flicks.downRight && (
+        <span
+          className={`absolute bottom-0.5 right-0.5 ${fontSizeClasses[size]} text-gray-400 dark:text-gray-500`}
+        >
+          {flicks.downRight}
         </span>
       )}
 
@@ -63,12 +81,30 @@ export function FlickKey({ keyConfig, size = 'md' }: FlickKeyProps) {
         </span>
       )}
 
+      {/* 左下 */}
+      {flicks.downLeft && (
+        <span
+          className={`absolute bottom-0.5 left-0.5 ${fontSizeClasses[size]} text-gray-400 dark:text-gray-500`}
+        >
+          {flicks.downLeft}
+        </span>
+      )}
+
       {/* 左 */}
       {flicks.left && (
         <span
           className={`absolute left-0.5 top-1/2 -translate-y-1/2 ${fontSizeClasses[size]} text-gray-500 dark:text-gray-400`}
         >
           {flicks.left}
+        </span>
+      )}
+
+      {/* 左上 */}
+      {flicks.upLeft && (
+        <span
+          className={`absolute top-0.5 left-0.5 ${fontSizeClasses[size]} text-gray-400 dark:text-gray-500`}
+        >
+          {flicks.upLeft}
         </span>
       )}
 

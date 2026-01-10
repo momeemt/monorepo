@@ -42,7 +42,7 @@ function migrateState(state: Partial<EvolutionState>): EvolutionState {
       minKeys: 8,
       maxKeys: 12,
       minFlicksPerKey: 0,
-      maxFlicksPerKey: 4,
+      maxFlicksPerKey: 8,
       cols: 3,
     },
     history: (state.history || []).map(h => {

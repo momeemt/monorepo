@@ -1,12 +1,12 @@
-// フリック方向
-export type FlickDirection = 'center' | 'up' | 'right' | 'down' | 'left';
+// フリック方向（8方向対応）
+export type FlickDirection = 'center' | 'up' | 'upRight' | 'right' | 'downRight' | 'down' | 'downLeft' | 'left' | 'upLeft';
 
-// フリック方向の順序（中央は常にあり、それ以外は0〜4個）
-export const FLICK_DIRECTIONS: FlickDirection[] = ['center', 'up', 'right', 'down', 'left'];
-export const OPTIONAL_FLICK_DIRECTIONS: FlickDirection[] = ['up', 'right', 'down', 'left'];
+// フリック方向の順序（中央は常にあり、それ以外は0〜8個）
+export const FLICK_DIRECTIONS: FlickDirection[] = ['center', 'up', 'upRight', 'right', 'downRight', 'down', 'downLeft', 'left', 'upLeft'];
+export const OPTIONAL_FLICK_DIRECTIONS: FlickDirection[] = ['up', 'upRight', 'right', 'downRight', 'down', 'downLeft', 'left', 'upLeft'];
 
 // キー1つの定義
-// フリック数は0〜4（中央は常にあり + 上下左右のうち0〜4個）
+// フリック数は0〜8（中央は常にあり + 8方向のうち0〜8個）
 export interface KeyConfig {
   // 中央の文字（必須）
   center: string;
@@ -152,7 +152,7 @@ export interface EvolutionConfig {
   minKeys: number;             // 最小キー数
   maxKeys: number;             // 最大キー数
   minFlicksPerKey: number;     // キーあたり最小フリック数（0〜4）
-  maxFlicksPerKey: number;     // キーあたり最大フリック数（0〜4）
+  maxFlicksPerKey: number;     // キーあたり最大フリック数（0〜8）
   cols: number;                // 表示列数
 }
 

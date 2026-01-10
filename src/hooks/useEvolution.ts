@@ -97,12 +97,33 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
     if (testResults.length === 0) return;
 
     setState((prev) => {
-      // スキップ（999999ms）を除外して最大時間を計算
+      // スキップ（999999ms）を除外して統計を計算
       const SKIP_TIME = 999999;
       const normalResults = testResults.filter((r) => r.timeMs < SKIP_TIME);
-      const maxTime = normalResults.length > 0
-        ? Math.max(...normalResults.map((r) => r.timeMs))
-        : 10000; // 全員スキップした場合のデフォルト
+
+      if (normalResults.length === 0) {
+        // 全員スキップした場合は全員同じ低スコア
+        const evaluatedPopulation = prev.population.map((layout) => ({
+          ...layout,
+          fitness: 0,
+        }));
+        return {
+          ...prev,
+          population: evaluatedPopulation,
+        };
+      }
+
+      const times = normalResults.map((r) => r.timeMs);
+      const minTime = Math.min(...times);
+      const maxTime = Math.max(...times);
+      const timeRange = maxTime - minTime;
+
+      // 時間でソートしてランキングを作成
+      const sortedResults = [...normalResults].sort((a, b) => a.timeMs - b.timeMs);
+      const rankMap = new Map<string, number>();
+      sortedResults.forEach((r, idx) => {
+        rankMap.set(r.layoutId, idx + 1);
+      });
 
       const evaluatedPopulation = prev.population.map((layout) => {
         const result = testResults.find((r) => r.layoutId === layout.id);
@@ -113,8 +134,29 @@ export function useEvolution(customConfig?: Partial<EvolutionConfig>) {
           return { ...layout, fitness: 0 };
         }
 
-        // 時間を反転してフィットネスに（速い = 高スコア）
-        const fitness = 1 + (9 * (maxTime - result.timeMs)) / maxTime;
+        // 速度重視のフィットネス計算:
+        // 1. 時間差を強調（指数関数的に速いものを優遇）
+        // 2. ランキングベースのボーナス
+
+        // 正規化された速度スコア（0-1、速い=1）
+        const normalizedSpeed = timeRange > 0
+          ? (maxTime - result.timeMs) / timeRange
+          : 0.5;
+
+        // 指数関数で差を強調（速いものをより高く評価）
+        // exp(2x) - 1 を使用して 0-6.4 の範囲に
+        const exponentialScore = Math.exp(2 * normalizedSpeed) - 1;
+
+        // ランキングボーナス（1位: +3, 2位: +2, 3位: +1, 4位以降: +0）
+        const rank = rankMap.get(result.layoutId) || normalResults.length;
+        const rankBonus = Math.max(0, 4 - rank);
+
+        // 最終スコア: 指数スコア + ランキングボーナス（1-10の範囲に正規化）
+        // exponentialScore は 0-6.4, rankBonus は 0-3
+        // 合計 0-9.4 を 1-10 に正規化
+        const rawFitness = exponentialScore + rankBonus;
+        const fitness = 1 + (rawFitness / 9.4) * 9;
+
         return { ...layout, fitness };
       });
 
