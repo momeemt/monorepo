@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { KeyboardLayout } from '../types/keyboard';
 import { FlickKeyboard } from './FlickKeyboard';
-import { getLayoutStats } from '../types/keyboard';
+import { getLayoutStats, SPECIAL_KEYS, DAKUTEN_MAP, HANDAKUTEN_MAP, SMALL_MAP } from '../types/keyboard';
 
 interface TypingTestProps {
   layout: KeyboardLayout;
@@ -40,7 +40,41 @@ export function TypingTest({
       setStartTime(Date.now());
     }
 
-    const newInput = input + char;
+    let newInput = input;
+
+    // 特殊キー（変換キー）の処理
+    if (char === SPECIAL_KEYS.DAKUTEN) {
+      // 濁点変換：最後の文字を濁点付きに変換
+      if (input.length > 0) {
+        const lastChar = input[input.length - 1];
+        const converted = DAKUTEN_MAP[lastChar];
+        if (converted) {
+          newInput = input.slice(0, -1) + converted;
+        }
+      }
+    } else if (char === SPECIAL_KEYS.HANDAKUTEN) {
+      // 半濁点変換：最後の文字を半濁点付きに変換
+      if (input.length > 0) {
+        const lastChar = input[input.length - 1];
+        const converted = HANDAKUTEN_MAP[lastChar];
+        if (converted) {
+          newInput = input.slice(0, -1) + converted;
+        }
+      }
+    } else if (char === SPECIAL_KEYS.SMALL) {
+      // 小文字変換：最後の文字を小文字に変換
+      if (input.length > 0) {
+        const lastChar = input[input.length - 1];
+        const converted = SMALL_MAP[lastChar];
+        if (converted) {
+          newInput = input.slice(0, -1) + converted;
+        }
+      }
+    } else {
+      // 通常の文字入力
+      newInput = input + char;
+    }
+
     setInput(newInput);
 
     // 完了チェック

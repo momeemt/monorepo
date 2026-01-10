@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { KeyboardLayout } from '../types/keyboard';
 import { getLayoutStats } from '../types/keyboard';
 import { FlickKey } from './FlickKey';
@@ -10,6 +11,13 @@ interface KeyboardViewProps {
   showStats?: boolean;
 }
 
+// サイズごとのコンテナとキーサイズ
+const sizeConfig = {
+  sm: { containerWidth: 200, containerHeight: 250, keySize: 56, padding: 8 },
+  md: { containerWidth: 240, containerHeight: 300, keySize: 72, padding: 10 },
+  lg: { containerWidth: 280, containerHeight: 350, keySize: 88, padding: 12 },
+};
+
 export function KeyboardView({
   layout,
   selected,
@@ -17,14 +25,20 @@ export function KeyboardView({
   size = 'md',
   showStats = false,
 }: KeyboardViewProps) {
-  const { keys, cols } = layout;
+  const { keys } = layout;
   const stats = getLayoutStats(layout);
+  const config = sizeConfig[size];
 
-  const gapClasses = {
-    sm: 'gap-1',
-    md: 'gap-1.5',
-    lg: 'gap-2',
-  };
+  // キーの座標を計算
+  const keyPositions = useMemo(() => {
+    const effectiveWidth = config.containerWidth - config.keySize - config.padding * 2;
+    const effectiveHeight = config.containerHeight - config.keySize - config.padding * 2;
+
+    return keys.map(key => ({
+      left: config.padding + key.x * effectiveWidth,
+      top: config.padding + key.y * effectiveHeight,
+    }));
+  }, [keys, config]);
 
   return (
     <div
@@ -39,13 +53,23 @@ export function KeyboardView({
       `}
     >
       <div
-        className={`grid ${gapClasses[size]}`}
+        className="relative"
         style={{
-          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+          width: config.containerWidth,
+          height: config.containerHeight,
         }}
       >
         {keys.map((key, index) => (
-          <FlickKey key={index} keyConfig={key} size={size} />
+          <div
+            key={index}
+            className="absolute"
+            style={{
+              left: keyPositions[index].left,
+              top: keyPositions[index].top,
+            }}
+          >
+            <FlickKey keyConfig={key} size={size} />
+          </div>
         ))}
       </div>
 
