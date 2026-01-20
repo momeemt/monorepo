@@ -1,0 +1,185 @@
+@media screen and (max-width:1023px) and (min-width:426px) {
+  .common {
+
+    @mixin make_follow_button {
+      position: absolute;
+      right: 4.5vw;
+      top: 17vw;
+
+      // RESET CSS BEGIN
+
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      padding: 0;
+      appearance: none;
+
+      // RESET CSS END
+
+      font-size: 1.4vw;
+    }
+
+    &_userInfo {
+      width: 90%;
+      height: 80vw;
+      margin: 10px auto;
+      position: relative;
+      background-color: white;
+
+      &_header {
+        display: block;
+        width: 100%;
+      }
+
+      &_icon {
+        object-fit: cover;
+        position: absolute;
+        border: 2px solid white;
+        border-radius: 50%;
+        display: block;
+        width: 8vw;
+        top: 10.5vw;
+        left: 5vw;
+      }
+
+      &_wrapper {
+
+        padding-left: 2vw;
+        &_followButton input[type="submit"] {
+          @include make_follow_button
+          border-radius: 30px;
+          border: #2E4577 1px solid;
+          color: #2E4577;
+          padding: 0.5vw 2vw;
+          font-weight: bold;
+        }
+
+        &_unfollowButton input[type="submit"] {
+          @include make_follow_button
+          background-color: #2E4577;
+          border-radius: 30px;
+          padding: 0.5vw 2vw;
+          color: white;
+        }
+
+        &_basicSection {
+          padding-top: 8vw;
+          &_userName {
+            font-size: 3vw;
+            font-weight: bold;
+          }
+
+          &_userID {
+            font-size: 1.6vh;
+          }
+
+          &_isMyAccount {
+            display: inline-block;
+            font-size: 1.5vh;
+            background: linear-gradient(transparent 50%, yellow 50%);
+          }
+        }
+
+        &_authorityBadge {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color:white;
+
+          width: 75%;
+          margin: 1vw auto 0;
+          padding: 0.4vw 0;
+          border-radius: 30px;
+          font-size: 1.5vw;
+
+          i {
+            font-size: 1vw;
+            padding-right: 1vw;
+          }
+        }
+
+        &_authorityAdmins {
+          background-color: red;
+        }
+
+        &_authorityOperator {
+          background-color: green;
+        }
+
+        &_authorityTrustUser {
+          background-color: deepskyblue;
+        }
+
+        &_authorityDeveloper {
+          background-color: darkorange;
+        }
+
+        &_authorityContributor {
+          background-color: gold;
+        }
+
+        &_dataSection {
+          padding-top: 0.5vw;
+          padding-bottom: 1vw;
+          display: flex;
+
+          &_profile {
+            font-size: 1.6vw;
+            font-weight: lighter;
+            margin: 0 1vw;
+            margin-top: 1vw;
+          }
+
+          &_group {
+            padding: 0 2vw;
+            display: flex;
+            &_name {
+              font-size: 1.5vw;
+              font-weight: lighter;
+              margin-right: 2vw;
+            }
+            &_data {
+              color: #007bbb;
+              font-weight: 900;
+              font-size: 1.5vw;
+            }
+          }
+        }
+
+        &_trafficSection {
+          margin-top: 2vw;
+          padding-bottom: 2vw;
+          &_bar {
+            display: flex;
+            align-items: center;
+            margin-top: 1vw;
+            margin-left: 1.6vw;
+
+            a {
+              font-size: 1.8vw;
+              color: blue;
+
+              &:visited {
+                color: blue;
+              }
+            }
+
+            i {
+              font-size: 1.8vw;
+              color: gray;
+              padding-right: 1vw;
+            }
+
+            p {
+              font-size: 1.8vw;
+            }
+          }
+        }
+      }
+
+    }
+
+
+  }
+}

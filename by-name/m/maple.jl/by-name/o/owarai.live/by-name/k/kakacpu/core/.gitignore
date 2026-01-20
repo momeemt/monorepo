@@ -1,0 +1,11 @@
+/db/
+/incremental_db/
+/output_files/
+/simulation/
+/c5_pin_model_dump.txt
+/*.qws
+*.bak
+.qsys_edit
+.envrc
+transcript
+work

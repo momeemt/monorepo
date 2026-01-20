@@ -1,0 +1,103 @@
+section.common_timeLine
+  - if @notifications.empty?
+    .common_timeLine_noneInformation
+      .common_timeLine_noneInformation_box
+        p.common_timeLine_noneInformation_box-title Miftonでの活動を始めましょう！
+        hr
+        .common_timeLine_noneInformation_box-detail
+          p まずは、Bectorのグローバルタイムラインを覗いてみましょう。
+          p そのあと、おすすめユーザーをフォローしたり、友達をMiftonに誘ってみましょう！
+          p ユーザーをフォローすると、ホームで近況や活動を見ることができます。
+
+      .common_timeLine_noneInformation_descript
+        .common_timeLine_noneInformation_descript-title
+          i.fas.fa-hand-peace
+          p Miftonで出来るコト
+        ul
+          li Minecraftプレイヤーと繋がり、情報や思い出を共有できます
+          li Bectorで、今まで関わりのなかった人と友達になりましょう！
+        = link_to "投稿してみる？", bector_index_url, class: "common_timeLine_noneInformation_descript_able"
+
+      .common_timeLine_noneInformation_descript
+        .common_timeLine_noneInformation_descript-title
+          i.fas.fa-tools
+          p Miftonで出来るようになるコト
+        ul
+          li Minecraftの技術を競い合う大会開催サービス！
+          li ワールドやアドオンをアップロードして、手軽に共有！
+          li 技術記事を書いて、情報共有！
+          li 困った時に質問したり、知っている技術を教えてあげる質問プラットフォーム！
+        = link_to "開発状況をみてみる", "#", class: "common_timeLine_noneInformation_descript_able"
+
+      .common_timeLine_noneInformation_descript
+        .common_timeLine_noneInformation_descript-title
+          p Miftonを使おう！
+        p Miftonは、クラフターによって開発・運営されています！
+        p 使ってくれる人が増えれば増えるほど、Miftonは進化します
+        p= "現在のユーザー数 🎉  #{User.count}人"
+        p= link_to "https://twitter.com/MomeeMt", class: "common_timeLine_noneInformation_descript_twitter" do
+          i.fab.fa-twitter
+          = "開発者のTwitter"
+        p= link_to "/users/momiyama", class: "common_timeLine_noneInformation_descript_mifton" do
+          i.fas.fa-eye
+          = "開発者のMiftonアカウント"
+
+  - else
+      .common_timeLine_top
+      - @notifications.each do |notification|
+        .common_timeLine_container
+          - user = User.find(notification.from_user)
+
+          - if notification.kind == "reaction"
+            - post = Micropost.find(notification.target)
+            - reactions = Reaction.where(reactioned_id: post.id, user_id: user.id)
+            .common_timeLine_container_reactionSection
+              .common_timeLine_container_reactionSection_reaction
+
+                - reactions.each do |re|
+                  - case re.reactioned_type
+                  - when "good" then
+                    i.fas.fa-thumbs-up
+                  - when "cry" then
+                    i.fas.fa-sad-tear
+                  - else
+                    i class="fas fa-#{re.reactioned_type}"
+              .common_timeLine_container_reactionSection_descript
+                .common_timeLine_container_reactionSection_descript_head
+                  =link_to "/users/#{user.user_id}" do
+                    - if user.icon.attached?
+                      = image_tag user.icon
+                    - else
+                      = image_tag "/user_images/default_icon.png"
+                  p= "#{user.name}さんがあなたの投稿にリアクションしました。"
+                  p.common_timeLine_container_reactionSection_descript_head-date= date_display(notification.created_at)
+                .common_timeLine_container_reactionSection_descript_content
+                  p= post.content
+          - elsif notification.kind == "follow"
+            .common_timeLine_container_followSection
+              .common_timeLine_container_followSection_mark
+                i.fas.fa-user-plus
+              .common_timeLine_container_followSection_descript
+                =link_to "/users/#{user.user_id}" do
+                  - if user.icon.attached?
+                    = image_tag user.icon
+                  - else
+                    = image_tag "/user_images/default_icon.png"
+                p= "#{user.name}さんがあなたをフォローしました。"
+                p.common_timeLine_container_followSection_descript-date= date_display(notification.created_at)
+          - elsif notification.kind == "comment"
+            - comment = Comment.find(notification.target)
+            .common_timeLine_container_commentSection
+              .common_timeLine_container_commentSection_icon
+                =link_to "/users/#{user.user_id}" do
+                  - if user.icon.attached?
+                    = image_tag user.icon
+                  - else
+                    = image_tag "/user_images/default_icon.png"
+              .common_timeLine_container_commentSection_descript
+                .common_timeLine_container_commentSection_descript_head
+                  p= user.name
+                  p= "@#{user.user_id}"
+                  p.common_timeLine_container_reactionSection_descript_head-date= date_display(notification.created_at)
+                .common_timeLine_container_reactionSection_descript_content
+                  p= comment.content

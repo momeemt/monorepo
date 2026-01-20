@@ -1,0 +1,112 @@
+.be.lay
+  - if login?
+    / ユーザー情報
+    .lay_1p4.lay_sticky.lay_100vh
+      = render "components/userInfo"
+    / タイムライン
+    .lay_1p2
+      section.homeIndex
+        p.homeIndex_title= "投稿"
+      section.common_timeLine
+        - user = User.find_by(id: @micropost.user_id)
+        .common_timeLine_data
+          .common_timeLine_data_icon
+            =link_to "/bector/users/#{user.user_id}" do
+              - if user.icon.attached?
+                = image_tag user.icon
+              - else
+                = image_tag "/user_images/default_icon.png"
+          .common_timeLine_data_container
+            .common_timeLine_data_container_top
+              p.common_timeLine_data_container_top_name
+                = render "components/show_star_name", user: user
+              p.common_timeLine_data_container_top_id = "@#{user.user_id}"
+              p.common_timeLine_data_container_top_date = @micropost.created_at.strftime("%Y年%m月%d日%H時%M分")
+
+            .common_timeLine_data_container_content
+              p= simple_format(sanitize(markdown(@micropost.content), tags: %w(h1 h2 h3 h4 h5 strong em a p), attributes: %w(href)).html_safe)
+
+              - if @micropost.tags.present?
+                - @micropost.tags.each do |tag|
+                  = link_to "##{tag.name} ", "/bector/tags/#{tag.name}"
+
+            - post_images = @micropost.images
+            - if post_images.attached?
+              - post_images.each do |image|
+                = image_tag image, class: "common_timeLine_data_container_img"
+
+            .app_reactionContainer
+
+              div id="heart_reaction_#{@micropost.id}"
+                = render "components/reaction",  type: "heart", faName: "heart", post: @micropost, color: "pink", user: user
+              div id="good_reaction_#{@micropost.id}"
+                = render "components/reaction",  type: "good", faName: "thumbs-up", post: @micropost, color: "blue", user: user
+              div id="cry_reaction_#{@micropost.id}"
+                = render "components/reaction",  type: "cry", faName: "sad-tear", post: @micropost, color: "deepskyblue", user: user
+              div id="surprise_reaction_#{@micropost.id}"
+                = render "components/reaction",  type: "surprise", faName: "surprise", post: @micropost, color: "darkorange", user: user
+              div id="angry_reaction_#{@micropost.id}"
+                = render "components/reaction",  type: "angry", faName: "angry", post: @micropost, color: "red", user: user
+
+              = render "components/reportButton", data: @micropost, type: "bector"
+
+              - if @micropost.user_id == current_user.id
+                = form_with scope: :micropost, url: "/bector/destroy", local: true do |f|
+                  = f.hidden_field :post_id, :value => @micropost.id
+                  = button_tag type: "submit", class: "common_timeLine_data_container_report", data: { confirm: "投稿を削除しますか？\n削除した投稿は運営が30日間確認することができますが、ユーザーは元に戻すことはできません。"} do
+                    i.far.fa-trash-alt
+
+        - @comments.each do |comment|
+          - user = User.find_by(id: comment.user_id)
+
+          .common_timeLine_data
+
+            .common_timeLine_data_icon
+              =link_to "/bector/users/#{user.user_id}" do
+                - if user.icon.attached?
+                  = image_tag user.icon
+                - else
+                  = image_tag "/user_images/default_icon.png"
+
+            .common_timeLine_data_container
+              .common_timeLine_data_container_top
+                i.fas.fa-reply-all
+                p.common_timeLine_data_container_top_name
+                  = render "components/show_star_name", user: user
+                p.common_timeLine_data_container_top_id = "@#{user.user_id}"
+                p.common_timeLine_data_container_top_date = date_display(comment.created_at)
+
+              .common_timeLine_data_container_content
+                p= simple_format(sanitize(markdown(comment.content), tags: %w(h1 h2 h3 h4 h5 strong em a p), attributes: %w(href)).html_safe)
+
+      section.common_release.common_notMargin
+        .common_release_container
+          - if current_user.icon.attached?
+            = image_tag current_user.icon, class:"common_release_container_icon"
+          - else
+            = image_tag "/user_images/default_icon.png", class:"common_release_container_icon"
+          = form_with scope: :comment, url: "/bector/microposts/#{@micropost.id}", multipart: true, local: true do |f|
+            = f.hidden_field :parent_model, :value => "bector"
+            = f.hidden_field :parent_id, :value => @micropost.id
+            p= f.text_area :content, placeholder: "返信コメントを入力しましょう"
+            .preview
+            = f.label :image
+              i.far.fa-images
+            = f.file_field :image
+            = f.submit "返信"
+
+    / メニュー
+    .lay_1p4.lay_sticky.lay_100vh
+      section.common_sidemenu
+        = render "components/menulist", u: bector_index_url,   f:"home",            d: "ホーム"
+        = render "components/menulist", u: "/bector/global",   f:"globe-americas",  d: "グローバルタイムライン"
+        = render "components/menulist", u: "/bector/friends",  f:"user-friends",    d: "フレンドタイムライン"
+        = render "components/menulist", u: bector_index_url,   f:"images",          d: "メディアタイムライン"
+        = render "components/menulist", u: bector_index_url,   f:"envelope",        d: "ダイレクトメッセージ"
+        = render "components/menulist", u: bector_index_url,   f:"list",            d: "ユーザーリスト"
+        = render "components/menulist", u: bector_index_url,   f:"bookmark",        d: "ブックマーク"
+        = render "components/menulist", u: bector_index_url,   f:"volume-mute",     d: "ミュートしたユーザー"
+        = render "components/menulist", u: bector_index_url,   f:"ban",             d: "ブロックしたユーザー"
+        = render "components/menulist", u: users_edit_url,     f:"cog",             d: "プロフィールを編集"
+        = render "components/menulist", u: help_url,           f:"question-circle", d: "ヘルプセンター"
+        = render "components/menulist", u: root_url,           f:"chevron-left",    d: "Miftonに戻る"

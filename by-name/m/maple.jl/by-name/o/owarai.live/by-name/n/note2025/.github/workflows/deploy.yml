@@ -1,0 +1,23 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - run: nix build .
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: ./result/book
+          branch: 'gh-pages'
+          clean-exclude: 'pr-preview'
+          force: false

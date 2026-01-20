@@ -1,0 +1,50 @@
+.layout
+  - if login?
+    - @user = current_user
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/crafesFunctionBar"
+
+    .layout_1p2.lay_b
+      - if flash[:error]
+        .crafes_flash
+          i.fas.fa-exclamation-triangle
+          p= flash[:error]
+      .crafes_newContest
+        h1 コンテストを作成する
+        hr
+        p コンテストを作成する際の注意
+        p
+          | 詳しい内容は
+          = link_to "ガイドライン", "/crafes/questions/guideline"
+          | をご覧ください
+        ul
+          li 作成しても、管理者の認可によるまで公開されません。
+          li 不当にたくさんのコンテストを作成することは星の剥奪対象です。
+        hr
+        = form_with scope: :contest, url: crafes_contests_url, class: "crafes_newContest_form",  local: true do |f|
+          .crafes_newContest_form_group
+            = f.label :name, "コンテスト名"
+            = f.text_field :name
+          .crafes_newContest_form_group
+            = f.label :times, "コンテスト開催回数(省略可)"
+            = f.number_field :times
+          .crafes_newContest_form_group
+            = f.label :start_datetime, "開始時刻"
+            = f.datetime_field :start_datetime
+          .crafes_newContest_form_group
+            = f.label :duration, "大会時間(分)"
+            = f.number_field :duration
+          .crafes_newContest_form_group
+            = f.label :rated_range, "レート変動"
+            = f.number_field :rated_range
+          .crafes_newContest_form_group
+            = f.label :contest_type, "コンテストの種類"
+            = f.text_field :contest_type, list: "categories_list"
+            datalist#categories_list
+              - @categories.each do |c|
+                option value="#{c}"
+          = f.submit "作成する"
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

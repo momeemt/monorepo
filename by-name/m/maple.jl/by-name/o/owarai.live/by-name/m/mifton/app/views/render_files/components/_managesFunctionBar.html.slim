@@ -1,0 +1,45 @@
+.components_manageFunctionBar
+  = render "render_files/components/userImages", user: @user
+
+  .components_manageFunctionBar_buttons
+
+    .components_manageFunctionBar_buttons_makeNotificationButton
+      p 通知を作成
+
+    .components_manageFunctionBar_buttons_dropByMiftonButton
+      p @mifton で投稿
+
+    .components_manageFunctionBar_buttons_button
+      = link_to manages_url do
+        i.fas.fa-home
+        p ホーム
+
+    .components_manageFunctionBar_buttons_button
+      = link_to manage_users_url do
+        i.fas.fa-users
+        p ユーザー管理
+
+    .components_manageFunctionBar_buttons_button
+      = link_to manage_bector_index_url do
+        i.far.fa-comments
+        p Bector管理
+
+    .components_manageFunctionBar_buttons_button
+      = link_to manage_reports_url do
+        i.far.fa-flag
+        p レポート管理
+
+    .components_manageFunctionBar_buttons_button
+      = link_to manage_contests_url do
+        i.fas.fa-crown
+        p コンテスト管理
+
+    .components_manageFunctionBar_buttons_button
+      = link_to manage_questions_url do
+        i.fas.fa-question
+        p 問題管理
+
+    .components_manageFunctionBar_buttons_button
+      = link_to "/" do
+        i.fas.fa-chevron-left
+        p Miftonに戻る

@@ -1,0 +1,29 @@
+@media screen and (min-width:1024px) {
+
+  .top_section {
+    width: 50%;
+  }
+
+  .bector_topPage {
+    background-image: url("/bector-top.jpg");
+    background-size: cover;
+    height: calc(100vh - 50px);
+
+    &_registerForm {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    &_descript {
+      h1 {
+        font-size: 50px;
+        color: white;
+      }
+
+      p {
+        font-size: 18px;
+        color: white;
+      }
+    }
+  }
+}

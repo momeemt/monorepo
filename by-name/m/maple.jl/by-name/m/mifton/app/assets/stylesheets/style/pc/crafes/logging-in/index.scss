@@ -1,0 +1,85 @@
+@media screen and (min-width:1024px) {
+	.crafes_index {
+		background-image: url("/crafes-top.jpg");
+		height: calc(100vh - 50px);
+		width: 100%;
+		&_container {
+			width: 100%;
+			&_descript {
+				color: white;
+				display: flex;
+				justify-content: center;
+				text-align: center;
+
+				&_contain {
+					width: 100%;
+					&_loginSection {
+						display: flex;
+						justify-content: center;
+					}
+
+					h1 {
+						font-size: 44px;
+						margin-top: 24px;
+						letter-spacing: 1.2px;
+					}
+
+					p {
+						font-size: 20px;
+						padding-top: 4px;
+					}
+
+					h2 {
+						font-size: 28px;
+						padding-left: 40px;
+					}
+
+					hr {
+						border: 0;
+						border-top: 2px white solid;
+						width: 80%;
+						margin: 12px auto 0;
+					}
+
+					&_loginSection {
+						padding-top: 24px;
+					}
+				}
+
+			}
+
+			&_registerForm{
+				display: flex;
+				justify-content: center;
+
+				&_contain {
+					width: 50%;
+				}
+
+				.components_registerForm {
+	        opacity: 0.3;
+	        transition: 0.5s;
+
+	        &:hover {
+	          opacity: 1.0;
+	          transition: 0.5s;
+	        }
+	      }
+			}
+		}
+
+
+	}
+
+	.crafes_index_noContest {
+		padding: 4vh 4vw;
+		text-align: center;
+		h1 {
+			font-size: 32px;
+		}
+
+		p {
+			margin-top: 16px;
+		}
+	}
+}

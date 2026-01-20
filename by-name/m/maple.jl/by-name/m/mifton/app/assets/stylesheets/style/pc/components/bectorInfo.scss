@@ -1,0 +1,71 @@
+/*
+name: bectorInfo.scss
+description: おすすめユーザーのscss
+*/
+@media screen and (min-width:1024px) {
+  .components_bectorInfo {
+    background-color: white;
+    height: 100vh;
+    border-left: 2px darkgray solid;
+
+    &_recommendTag {
+      &_title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-left: 12px;
+        margin-top: 32px;
+      }
+
+      &_tag {
+        padding-left: 12px;
+        display: flex;
+
+        a {
+          width: 50%;
+        }
+
+        p {
+          font-size: 12px;
+          color: darkgray;
+        }
+      }
+    }
+
+    &_recommendUser {
+      display: block;
+      width: 100%;
+      padding-top: 32px;
+
+      &_title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-left: 12px;
+      }
+
+
+      &_userBox {
+        padding-left: 12px;
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+
+        &_identity {
+          p {
+            color: darkgray;
+            font-size: 12px;
+          }
+        }
+
+        img {
+          border-radius: 50%;
+          width: 40px;
+          border: 1px darkgray solid;
+          margin-right: 12px;
+        }
+      }
+
+    }
+  }
+}

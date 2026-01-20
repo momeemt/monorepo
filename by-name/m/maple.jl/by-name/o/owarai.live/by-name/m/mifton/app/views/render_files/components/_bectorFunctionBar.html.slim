@@ -1,0 +1,50 @@
+.components_bectorFunctionBar
+  = render "render_files/components/userImages", user: @user
+
+  .components_bectorFunctionBar_buttons
+
+    .components_bectorFunctionBar_buttons_micropostButton
+      p 投稿する
+
+    .components_bectorFunctionBar_buttons_topicButton
+      p トピックを書く
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/bector" do
+        i.fas.fa-home
+        p ホーム
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/bector/global" do
+        i.fas.fa-globe-americas
+        p グローバル
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/bector/notifications" do
+        i.far.fa-bell
+        p 通知
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/bector/direct_messages" do
+        i.far.fa-envelope
+        p メッセージ
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/bector/custom_timelines" do
+        i.fas.fa-list
+        p リスト
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/bector/bookmarks" do
+        i.far.fa-bookmark
+        p ブックマーク
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/bector/more" do
+        i.fas.fa-ellipsis-h
+        p 他のご用事？
+
+    .components_bectorFunctionBar_buttons_button
+      = link_to "/" do
+        i.fas.fa-chevron-left
+        p Miftonに戻る

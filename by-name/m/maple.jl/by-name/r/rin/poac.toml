@@ -1,0 +1,5 @@
+[package]
+name = "rin"
+version = "0.1.0"
+authors = ["Mutsuha Asada <me@momee.mt>"]
+edition = "20"

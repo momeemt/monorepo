@@ -1,0 +1,36 @@
+.manageContest_draftShow
+  h1= @question.title
+
+  = form_with scope: :question, url: "/manage_questions/publish/#{@question.id}", class: "manageContest_draftShow_form", local: true do |f|
+    .manageContest_draftShow_form_group
+      = f.label :title, "問題名"
+      = f.text_field :title, :value => @question.title
+    .manageContest_draftShow_form_group
+      = f.label :writer, "作問者"
+      = f.text_field :writer, list: "users_list", :value => @question.writer
+      datalist#users_list
+        - User.all.each do |u|
+          option value="#{u.user_id}"
+    .manageContest_draftShow_form_group
+      = f.label :score, "スコア"
+      = f.number_field :score, :value => @question.score
+    .manageContest_draftShow_form_group
+      = f.label :content, "問題文"
+      = f.text_area :content, :value => @question.content
+    .manageContest_draftShow_form_group
+      = f.label :constraints, "制約"
+      = f.text_area :constraints, :value => @question.constraints
+    .manageContest_draftShow_form_group
+      = f.label :input_example, "入力例"
+      = f.text_area :input_example, :value => @question.input_example
+    .manageContest_draftShow_form_group
+      = f.label :output_example, "出力例"
+      = f.text_area :output_example, :value => @question.output_example
+    .manageContest_draftShow_form_group
+      = f.label :answer, "解答"
+      = f.text_area :answer, :value => @question.answer
+    .manageContest_draftShow_form_group
+      = f.label :contest_id, "コンテストID"
+      = f.select :contest_id, @contests_list, :value => @question.contest_id
+    = f.submit "更新する"
+    = f.submit "更新し、一覧に戻る", name: "back"

@@ -1,0 +1,57 @@
+
+
+@media screen and (min-width:1024px) {
+
+  // wide/home/header.scss に則る
+
+  .home,.manages, .session {
+
+    .application_header {
+      background: #ec6d51;
+      height: 50px;
+      color: white;
+
+      &_mobile {
+        display: none;
+      }
+
+
+      &_naviList {
+        display: flex;
+
+        i {
+          padding-right: 5px;
+        }
+
+        height: 100%;
+        &_group {
+          margin: 0 auto;
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          line-height: 50px;
+
+          &-image {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+        a {
+          color: white;
+          height: 50px;
+          display: block;
+        }
+        img {
+          display: block;
+          height: 80%;
+          border-radius: 50%;
+          margin: auto 0;
+          line-height: 50px;
+        }
+      }
+    }
+  }
+
+}

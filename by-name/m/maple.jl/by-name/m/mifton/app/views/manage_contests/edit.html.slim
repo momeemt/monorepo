@@ -1,0 +1,48 @@
+h1= @contest.name
+
+= form_with scope: :contest, url: "/manage_contests/#{@contest.id}" ,multipart: true , local: true do |f|
+  table
+    tbody
+      tr
+        td= f.label :name, "名前"
+        td= f.text_field :name, value: @contest.name
+      tr
+        td= f.label :times, "開催回数"
+        td= f.number_field :times, value: @contest.times
+      tr
+        td= f.label :start_datetime, "開催時刻"
+        td= f.datetime_select :start_datetime, value: @contest.start_datetime
+      tr
+        td= f.label :duration, "コンテスト時間"
+        td= f.number_field :duration, value: @contest.duration
+      tr
+        td= f.label :rated_range, "Rated範囲"
+        td= f.number_field :rated_range, value: @contest.rated_range
+      tr
+        td= f.label :penalty, "ペナルティ"
+        td= f.number_field :penalty, value: @contest.penalty
+      tr
+        td= f.label :contest_type, "コンテストタイプ"
+        td= f.text_field :contest_type, value: @contest.contest_type
+      tr
+        td= f.label :is_public, "公開されているか"
+        td= f.check_box :is_public, value: @contest.is_public
+      tr
+        td 登録日時
+        td= f.datetime_select :created_at, value: @contest.created_at
+      tr
+        td 最終更新日時
+        td= f.datetime_select :updated_at, value: @contest.updated_at
+      tr
+        td= f.label :question1_id, "問題１"
+        td= f.number_field :question1_id, value: @contest.question1_id
+      tr
+        td= f.label :question2_id, "問題２"
+        td= f.number_field :question2_id, value: @contest.question2_id
+      tr
+        td= f.label :question3_id, "問題３"
+        td= f.number_field :question3_id, value: @contest.question3_id
+      tr
+        td= f.label :question4_id, "問題４"
+        td= f.number_field :question4_id, value: @contest.question4_id
+  = f.submit '更新する', class: 'admins_new__content-wrapper--container--submit'

@@ -1,0 +1,11 @@
+- if user.authority.manage_pos == "admin"
+  i.fas.fa-star style="color:red;font-size:8px;"
+- if user.authority.manage_pos == "operator"
+  i.fas.fa-star style="color:green;font-size:8px;"
+- if user.authority.manage_pos == "trust_user"
+  i.fas.fa-star style="color:deepskyblue;font-size:8px;"
+- if user.authority.dev_pos == "developer"
+  i.fas.fa-star style="color:darkorange;font-size:8px;"
+- if user.authority.dev_pos == "contributor"
+  i.fas.fa-star style="color:gold;font-size:8px;"
+span style="margin-left:5px;"= user.name

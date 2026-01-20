@@ -1,0 +1,13 @@
+- if reactioned?(post,type)
+  = form_with url: "/reactions/#{type}/#{post.id}/destroy", method: :delete, remote: true, class: "app_reaction" do |f|
+    = f.hidden_field :post_id, :value => post.id
+    = f.button type: "submit" do
+      i class="far fa-#{faName} app_reaction-#{color}"
+      span = reaction_count(post,type)
+- else
+  = form_with url: "/reactions/#{type}/#{post.id}/create", remote: true, class: "app_reaction" do |f|
+    = f.hidden_field :post_id, :value => post.id
+    = f.button type: "submit" do
+      i class="far fa-#{faName} app_reaction-gray"
+      - if reaction_count(post,type) != 0
+        span = reaction_count(post,type)

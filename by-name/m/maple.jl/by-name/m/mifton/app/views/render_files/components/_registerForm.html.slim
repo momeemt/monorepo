@@ -1,0 +1,39 @@
+= form_with scope: :user, url: "/register", class: "components_registerForm", local: true do |f|
+	.components_registerForm_container
+		.components_registerForm_container_title
+			p Miftonに参加する
+		hr
+		- if @user.errors.any?
+			.users_new_container_errorMessage
+				- @user.errors.full_messages.each do |message|
+					p= message
+		.components_registerForm_container_inputGroupRow
+			.components_registerForm_container_inputGroupRow_group
+				p= f.label :user_id, "ユーザーID"
+				= f.text_field :user_id,  placeholder: "userid", required: "required"
+			.components_registerForm_container_inputGroupRow_group
+				p= f.label :email, "メールアドレス"
+				= f.text_field :email, placeholder: "me@example.com", required: "required"
+		.components_registerForm_container_inputGroupRow
+			.components_registerForm_container_inputGroupRow_group
+				p= f.label :password, 'パスワード'
+				= f.password_field :password,　placeholder: "password", required: "required"
+			.components_registerForm_container_inputGroupRow_group
+				p= f.label :password_confirmation, 'パスワード(確認)'
+				= f.password_field :password_confirmation,　placeholder: "password", required: "required"
+		.components_registerForm_container_recaptcha
+			= recaptcha_tags
+		.components_registerForm_container_descript
+			p　パスワードは、6文字以上、少なくとも英字と数字の両方が含まれている必要があります。
+			p 下の[登録する]をクリックすると、
+			= link_to "利用規約", terms_url
+			= "と"
+			= link_to "プライバシーポリシー", policy_url
+			= "に同意したことになります。"
+			p クリックする前に必ずお読みください！
+		p.components_registerForm_container_registerButton-main
+			= f.submit "登録する"
+		p.components_registerForm_container_registerButton-twitter
+			= link_to "/auth/twitter", class: "signUpForm_submit signUpForm_submit_twitter" do
+				i.fab.fa-twitter
+				= "Twitterで登録/ログイン"

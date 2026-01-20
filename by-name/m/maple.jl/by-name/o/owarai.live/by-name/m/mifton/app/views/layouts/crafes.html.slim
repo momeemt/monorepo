@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title = contests_title(yield(:title))
+    = render 'layouts/rails_default'
+    = render 'layouts/shim'
+    = favicon_link_tag('favicon.ico')
+    = favicon_link_tag('apple-touch-icon-180x180.png',
+                     {:rel => 'apple-touch-icon',
+                      :sizes => '180x180',
+                      :type => 'image/png'})
+    link href="https://fonts.googleapis.com/css?family=Noto+Serif+JP&display=swap" rel="stylesheet"
+  body.crafes
+    header= render "layouts/header", type:"crafes"
+    main= yield

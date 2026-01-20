@@ -1,0 +1,47 @@
+h1 コンテスト作成
+hr
+= form_with scope: :contests, url: manage_contests_url , local: true do |f|
+  table
+    tbody
+      tr
+        td コンテスト名
+        td= f.text_field :name
+      tr
+        td コンテスト開催回数
+        td= f.number_field :times
+      tr
+        td 開催時刻
+        td= f.datetime_select :start_datetime
+      tr
+        td コンテスト時間
+        td= f.number_field :duration
+      tr
+        td レート変動
+        td= f.number_field :rated_range
+      tr
+        td ペナルティ
+        td= f.number_field :penalty
+      tr
+        td コンテストタイプ
+        td= f.text_field :contest_type
+      tr
+        td 公開
+        = f.hidden_field :is_public, :value => false
+        td= f.check_box :is_public , {}, true, false
+
+      tr
+        td 問題１
+        td= f.number_field :question1_id
+
+      tr
+        td 問題2
+        td= f.number_field :question2_id
+      tr
+        td 問題3
+        td= f.number_field :question3_id
+      tr
+        td 問題4
+        td= f.number_field :question4_id
+
+
+  = f.submit '登録する', class: 'admins_new__content-wrapper--container--submit'

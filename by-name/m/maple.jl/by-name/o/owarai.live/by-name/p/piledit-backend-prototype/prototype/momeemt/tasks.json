@@ -1,0 +1,44 @@
+{
+  "info": {
+    "target_movie": "hogehoge.mp4",
+    "tasks_count": 3
+  },
+  "tasks": [
+    {
+      "edit_type": "text",
+      "begin_frame": 0,
+      "end_frame": 100,
+      "position": {
+        "x": 0,
+        "y": 10,
+        "z": 20
+      },
+      "content": "テスト"
+    },
+    {
+      "edit_type": "shape",
+      "begin_frame": 0,
+      "end_frame": 100,
+      "position": {
+        "x": 100,
+        "y": 200,
+        "z": 50
+      },
+      "content": {
+        "shape_type": "triangle",
+        "color": "#101010"
+      }
+    },
+    {
+      "edit_type": "image",
+      "begin_frame": 100,
+      "end_frame": 200,
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "content": "hogehoge.jpg"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+.lay.manages
+  - if login?
+    .lay_1p4.lay_sticky.lay_100vh
+      = render "components/userInfo"
+
+    .lay_3p4
+      h1 プロフィールを編集
+      hr
+
+      = form_with scope:"user", url:"/users/update", local: true do |f|
+        table
+          tr
+            td= f.label :icon, "アイコン"
+            td= f.file_field :icon, accept: 'image/jpg,image/jpeg,image/png,image/gif'
+          / tr
+          /   td= f.label :header, "ヘッダー"
+          /   td= f.file_field :header, accept: 'image/jpg,image/jpeg,image/png,image/gif'
+          tr
+            td= f.label :name, "名前"
+            td= f.text_field :name
+          tr
+            td= f.label :user_id, "ユーザーID"
+            td= f.text_field :user_id
+          tr
+            td= f.label :password
+            td= f.text_field :password
+          tr
+            td= f.label :profile, "自己紹介"
+            td= f.text_area :profile, value: current_user.user_traffic.profile
+          tr
+            td= f.label :location, "場所"
+            td= f.text_field :location, value: current_user.user_traffic.location
+          tr
+            td= f.label :user_link, "ウェブサイト"
+            td= f.text_field :user_link, value: current_user.user_traffic.user_link
+          tr
+            td= f.label :birthday, "誕生日"
+            td= f.date_select :birthday, default: current_user.user_traffic.birthday, start_year: Time.now.year - 60 , end_year: Time.now.year - 8
+
+          // , ["フォロワー", "only_follower"], ["フォローしているユーザー", "only_following"], ["相互フォローのユーザー", "only_friend"]
+
+          tr
+            td= f.label :publish_years, "年齢を公開しますか？"
+            - if @user_birthday.present?
+              td= f.select :publish_years, [["公開", "publish"], ["非公開", "private"]], :selected => @user_birthday.publish_years
+            - else
+              td= f.select :publish_years, [["公開", "publish"], ["非公開", "private"]]
+          tr
+            td= f.label :publish_date, "月日を公開しますか？"
+            - if @user_birthday.present?
+              td= f.select :publish_date, [["公開", "publish"], ["非公開", "private"]], :selected => @user_birthday.publish_date
+            - else
+              td= f.select :publish_date, [["公開", "publish"], ["非公開", "private"]]
+          tr
+            td= f.label :twitter_id, "TwitterID"
+            td= f.text_field :twitter_id, value: current_user.user_traffic.twitter_id
+          tr
+            td= f.label :lobi_id, "Lobi ID"
+            td= f.text_field :lobi_id, value: current_user.user_traffic.lobi_id
+          tr
+            td= f.label :github_id, "Github ID"
+            td= f.text_field :github_id, value: current_user.user_traffic.github_id
+          tr
+            td= f.label :discord_id, "Discord ID"
+            td= f.text_field :discord_id, value: current_user.user_traffic.discord_id
+
+        = f.submit

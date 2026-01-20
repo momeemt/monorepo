@@ -1,0 +1,13 @@
+.layout
+  - if login?
+    - @user = current_user
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/crafesFunctionBar"
+
+    .layout_1p2.lay_b
+      .crafes_notifications
+        p 通知
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

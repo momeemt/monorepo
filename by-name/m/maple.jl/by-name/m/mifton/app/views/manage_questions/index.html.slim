@@ -1,0 +1,52 @@
+.managesQuestion_index
+  .managesQuestion_index_contestsTable
+    p.managesQuestion_index_contestsTable_head 公開中の問題
+
+    - if @questions.present?
+      table
+        tr
+          th 問題名
+          th 作問者
+          th 得点
+        - @questions.each do |q|
+          tr
+            td= link_to q.title, "/manage_questions/publish/#{q.id}"
+
+            - if q.writer.present?
+              td= q.writer
+            - else
+              td 未設定
+
+            - if q.score.present?
+              td= q.score
+            - else
+              td 未設定
+
+    - else
+      p.managesQuestion_index_contestsTable_noneContest 公開中の問題はありません
+
+  .managesQuestion_index_draftContestsTable
+    p.managesQuestion_index_draftContestsTable_head 非公開の問題
+
+    - if @draft_questions.present?
+      table
+        tr
+          th 問題名
+          th 作問者
+          th 得点
+        - @draft_questions.each do |q|
+          tr
+            td= link_to q.title, "/manage_questions/draft/#{q.id}"
+
+            - if q.writer.present?
+              td= q.writer
+            - else
+              td 未設定
+
+            - if q.score.present?
+              td= q.score
+            - else
+              td 未設定
+
+    - else
+      p.managesQuestion_index_contestsTable_noneContest 非公開中の問題はありません

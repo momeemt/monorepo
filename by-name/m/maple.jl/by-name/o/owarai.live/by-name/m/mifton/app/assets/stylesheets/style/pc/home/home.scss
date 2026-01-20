@@ -1,0 +1,17 @@
+.home {
+  hr {
+    margin-top: 8px;
+  }
+
+  &_reportForm {
+    margin-top: 30px;
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .group {
+      margin-top: 5px;
+    }
+  }
+}

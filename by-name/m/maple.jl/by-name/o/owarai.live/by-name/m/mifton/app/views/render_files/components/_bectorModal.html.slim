@@ -1,0 +1,40 @@
+.components_modalOverlay
+.components_mobileDropButton
+  img src="/mifton.001.png"
+.components_micropostModal
+  .components_micropostModal_close
+  i.fas.fa-times.components_micropostModal_closeButton
+  .components_micropostModal_icon
+    - if current_user.icon.attached?
+      = image_tag current_user.icon
+    - else
+      = image_tag "/user_images/default_icon.png"
+  .components_micropostModal_form
+    = form_with scope: :micropost, url: bector_index_url, multipart: true, remote: true do |f|
+      = f.hidden_field :custom_timeline, :value => @custom_timeline
+      = f.text_area :content, placeholder: "進捗や日常の体験を発信しよう"
+      = f.text_field :tags, placeholder: "タグ", value: ""
+      .preview
+      = f.label :images
+        i.far.fa-images
+      = f.file_field :images, multiple: true, accept: 'image/jpg,image/jpeg,image/png,image/gif'
+
+      = f.submit "ドロップ"
+.components_topicModal
+  .components_topicModal_close
+  i.fas.fa-times.components_topicModal_closeButton
+  .components_topicModal_icon
+    - if current_user.icon.attached?
+      = image_tag current_user.icon
+    - else
+      = image_tag "/user_images/default_icon.png"
+  .components_topicModal_form
+    = form_with scope: :topic, url: bector_index_url, multipart: true, remote: true do |f|
+      = f.text_field :title, placeholder: "タイトル"
+      = f.text_area :content, placeholder: "紹介文や日記をたくさん書き込もう"
+      .preview
+      = f.label :images
+        i.far.fa-images
+      = f.file_field :images, multiple: true, accept: 'image/jpg,image/jpeg,image/png,image/gif'
+
+      = f.submit "トピックを投稿"

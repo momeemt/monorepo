@@ -1,0 +1,23 @@
+.components_bectorInfo
+  /.components_bectorInfo_searchBox
+    p 検索
+  .components_bectorInfo_recommendUser
+    p.components_bectorInfo_recommendUser_title おすすめユーザー
+    - @random_users.each do |user|
+      hr
+      .components_bectorInfo_recommendUser_userBox
+        = link_to "/bector/users/#{user.user_id}"
+          - if user.icon.attached?
+            = image_tag user.icon
+          - else
+            = image_tag "/user_images/default_icon.png"
+        .components_bectorInfo_recommendUser_userBox_identity
+          a= user.name
+          p= "@" + user.user_id
+
+  .components_bectorInfo_recommendTag
+    p.components_bectorInfo_recommendTag_title トレンド
+    - @random_tags.each do |tag|
+      .components_bectorInfo_recommendTag_tag
+        =link_to "#" + tag.name, "/bector/tags/#{tag.name}"
+        p= Tag.where(name: tag.name).length.to_s + "件の投稿"

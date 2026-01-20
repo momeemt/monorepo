@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MovieEdit": {
+      "commandName": "Project",
+      "commandLineArgs": "--debug"
+    }
+  }
+}

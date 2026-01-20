@@ -1,0 +1,14 @@
+h1 報告一覧
+
+table
+  tr
+    th 報告したユーザー
+    th 報告されたユーザー
+    th 報告されたオブジェクト
+    th 報告された理由
+  - @reports.each do |report|
+    tr
+      td= "@#{User.find_by(id: report.user_id).user_id}"
+      td= "@#{User.find_by(id: Micropost.find_by(id: report.reported_object_id).user_id).user_id}"
+      td= Micropost.find_by(id: report.reported_object_id).content
+      td= report.report_reason

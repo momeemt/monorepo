@@ -1,0 +1,54 @@
+.components_crafesFunctionBar
+  = render "render_files/components/userImages", user: @user
+
+  - if than_operator
+    .components_crafesFunctionBar_buttons_micropostButton
+      p
+        = link_to "問題を作成する", crafes_questions_new_url
+
+  - if than_operator
+    .components_crafesFunctionBar_buttons_topicButton
+      p
+        = link_to "コンテストを作成する", crafes_contests_new_url
+
+  .components_crafesFunctionBar_buttons
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/crafes" do
+        i.fas.fa-home
+        p ホーム
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/crafes/schedule" do
+        i.far.fa-flag
+        p 開催予定
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/crafes/finished" do
+        i.fas.fa-check
+        p 終了コンテスト
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/crafes/notifications" do
+        i.far.fa-bell
+        p 通知
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/crafes/standings" do
+        i.fas.fa-crown
+        p ランキング
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/crafes/bookmarks" do
+        i.far.fa-bookmark
+        p ブックマーク
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/crafes/more" do
+        i.fas.fa-ellipsis-h
+        p もっと見てみる
+
+    .components_crafesFunctionBar_buttons_button
+      = link_to "/" do
+        i.fas.fa-chevron-left
+        p Miftonに戻る

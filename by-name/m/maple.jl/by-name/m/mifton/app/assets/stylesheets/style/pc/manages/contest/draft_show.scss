@@ -1,0 +1,66 @@
+@media screen and (min-width:1024px) {
+  .manageContest_draftShow {
+    padding: 3vh 3vw 6vh;
+
+    input[type="submit"] {
+      font-size: 16px;
+      border: 0;
+      border-radius: 20px;
+      color: white;
+      padding: 4px 24px;
+      margin-top: 20px;
+      margin-right: 24px;
+    }
+
+    &_publishButton {
+      background-color: #EC6D51;
+    }
+
+    &_deleteButton {
+      background-color: red;
+    }
+
+    &_form {
+      margin-top: 64px;
+      &_group {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        label, input, textarea, select {
+          flex: 1;
+        }
+
+        select {
+          height: 32px;
+          font-size: 16px;
+        }
+
+        input {
+          outline: none;
+          padding: 8px;
+          height: 20px;
+          font-size: 14px;
+        }
+
+        textarea {
+          outline: none;
+          resize: vertical;
+          height: 64px;
+          padding: 8px;
+          font-size: 14px;
+        }
+      }
+
+      input[type="submit"]{
+        font-size: 16px;
+        border: 0;
+        background: #F08301;
+        border-radius: 20px;
+        color: white;
+        padding: 4px 24px;
+        margin-top: 44px;
+        margin-right: 24px;
+      }
+    }
+  }
+}

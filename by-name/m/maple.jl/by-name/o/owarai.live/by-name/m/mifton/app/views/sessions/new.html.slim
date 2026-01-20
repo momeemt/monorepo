@@ -1,0 +1,22 @@
+.session--page-container
+  .session--page-container--container
+    h1.session--page-container--container__top-title ログイン
+    = link_to "/auth/twitter" do
+      i.fab.fa-twitter
+      = "Twitterで簡単ログイン"
+    hr.session--page-container--container__top-line
+
+    = form_with scope: :session, local: true, class:"session--page-container--container__login-form" do |f|
+      .session--page-container--container__login-form__group
+        - if @login_type == "email"
+          = f.text_field :email, :placeholder => "メールアドレス", class: "session--page-container--container__login-form__group--input"
+          a href="/login/id" tabindex="-1" IDでログイン
+        - else
+          = f.text_field :user_id, :placeholder => "ユーザーID", class: "session--page-container--container__login-form__group--input"
+          a href="/login/email" tabindex="-1" メールアドレスでログイン
+      .session--page-container--container__login-form__group
+        = f.password_field :password, :placeholder => "パスワード", class: "session--page-container--container__login-form__group--input"
+      = f.submit 'ログインする', class: "session--page-container--container__login-form--submit-button"
+      = f.check_box :test,class:"session--page-container--container__login-form--check-box"
+      span ログイン情報を保存する
+      p= link_to "パスワードを思い出せませんか？","#";

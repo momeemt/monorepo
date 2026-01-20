@@ -1,0 +1,96 @@
+.users_new {
+  &_container {
+
+    &_errorMessage {
+      margin-top: 30px;
+      color: red;
+    }
+
+    .app_recaptcha {
+      margin-bottom: 20px;
+    }
+
+    a:visited {
+      color: blue;
+    }
+
+    hr {
+      border: 0.5px #ec6d51 solid;
+      width: 70%;
+      margin-top: 15px;
+    }
+
+    width: 70%;
+    margin: 50px auto;
+    h1 {
+      font-size: 40px;
+      font-weight: normal;
+    }
+
+    &_highlightText {
+      margin-top: 50px;
+      font-size: 22px;
+    }
+
+    &_accountForm {
+      margin-top: 20px;
+
+      &_group {
+        margin-top: 15px;
+
+        &_userIdError{
+          color: red;
+        }
+
+        &_checkGroup {
+          margin-top: 10px;
+          input[type="checkbox"], input[type="radio"] {
+            margin-right: 10px;
+          }
+        }
+        span {
+          color: red;
+        }
+        input[type="text"], input[type="password"] {
+          width: 40%;
+          border-radius: 5px;
+          border: 0.5px solid gray;
+          padding: 5px 10px;
+          background-color: aliceblue;
+          margin-top: 8px;
+        }
+
+        &_descriptGroup {
+          p {
+            font-size: 11px;
+          }
+          margin-top: 5px;
+        }
+      }
+
+      &_dataDescript {
+        font-size: 15px;
+        margin-top: 20px;
+      }
+
+      &_submitGroup {
+        margin-top: 50px;
+
+        input[type="submit"] {
+          background-color: #ec6d51;
+          border-radius: 20px;
+          padding: 5px 40px;
+          border: 0px;
+          color: white;
+          font-size: 16px;
+          margin-top: 20px;
+          &:hover {
+            background-color: #ec6d51 * 1.5;
+            transition: .6s;
+          }
+        }
+      }
+    }
+  }
+
+}

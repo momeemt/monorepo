@@ -1,0 +1,22 @@
+/*
+name: mobileDropButton.scss
+description: 投稿ボタンのscss
+*/
+@media screen and (max-width:1023px) {
+  .components_mobileDropButton {
+    position: fixed;
+    bottom: 12%;
+    right: 6%;
+    width: 15%;
+    z-index: 100;
+
+    img {
+      background-color: white;
+      width: 100%;
+      border: 4px #4b6cb7 solid;
+      border-radius: 50%;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

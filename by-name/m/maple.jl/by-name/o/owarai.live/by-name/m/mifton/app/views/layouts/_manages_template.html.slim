@@ -1,0 +1,37 @@
+doctype html
+html
+  head
+    title = full_title(yield(:title))
+    = render 'layouts/rails_default'
+    = render 'layouts/shim'
+    = favicon_link_tag('favicon.ico')
+    = favicon_link_tag('apple-touch-icon-180x180.png',
+                     {:rel => 'apple-touch-icon',
+                      :sizes => '180x180',
+                      :type => 'image/png'})
+  body.manages
+    header = render "layouts/header", type:"home"
+    main.layout
+      - @user = current_user
+      .layout_1p4.lay_sticky.lay_100vh
+        = render "render_files/components/managesFunctionBar"
+      .layout_1p2
+        = yield
+      .layout_1p4.lay_sticky.lay_100vh
+        .components_managesInfoBar
+          p.components_managesInfoBar_sectionTitle 最近登録したユーザー
+          .components_managesInfoBar_newUsers
+            - User.limit(5).order(created_at: :desc).each do |user|
+              .components_managesInfoBar_newUsers_box
+                = link_to "/users/#{user.user_id}"
+                  - if user.icon.attached?
+                    = image_tag user.icon
+                  - else
+                    = image_tag "/user_images/default_icon.png"
+                .components_managesInfoBar_newUsers_box_identity
+                  p= user.name
+                  p= "@" + user.user_id
+
+          p.components_managesInfoBar_sectionTitle 最新の通報
+
+          p.components_managesInfoBar_sectionTitle エラー情報

@@ -1,0 +1,61 @@
+@media screen and (min-width:1024px) {
+  .crafes_newContest {
+    padding: 4vh 4vw;
+
+    h1 {
+      font-size: 28px;
+    }
+
+    hr {
+      border: 0;
+      border: 1px #2C4E53 solid;
+      margin: 16px 0;
+    }
+
+    ul {
+      padding-left: 2em;
+    }
+
+    &_form {
+      margin-top: 64px;
+      &_group {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        label, input, textarea, select {
+          flex: 1;
+        }
+
+        select {
+          height: 32px;
+          font-size: 16px;
+        }
+
+        input {
+          outline: none;
+          padding: 8px;
+          height: 20px;
+          font-size: 14px;
+        }
+
+        textarea {
+          outline: none;
+          resize: vertical;
+          height: 64px;
+          padding: 8px;
+          font-size: 14px;
+        }
+      }
+
+      input[type="submit"]{
+        font-size: 18px;
+        border: 0;
+        background: #5C9291;
+        border-radius: 20px;
+        color: white;
+        padding: 4px 32px;
+        margin-top: 44px;
+      }
+    }
+  }
+}

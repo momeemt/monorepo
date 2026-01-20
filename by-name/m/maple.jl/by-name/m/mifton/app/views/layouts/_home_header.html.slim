@@ -1,0 +1,33 @@
+header
+  .header__wraps
+    section.header__wraps--not-mobile
+
+      ul.header__wraps--not-mobile__left
+        a href="/"
+          img[src="/mifton.001.png"]
+        li= link_to  "Crafes!", "/crafes"
+        li= link_to  "Bector", "/bector"
+          / i.fas.fa-chevron-down
+          / .shadow
+          /   p Crafes!
+          /   hr
+          /   =link_to "Crafes!とは？", "#"
+        - if !current_user.nil?
+          - if current_user.authority == "admin"
+            li= link_to "管理者", "/manages"
+        li= link_to  "開発者", "https://twitter.com/momeemt" ,:target => "_blank"
+        li= link_to  "MineCraft", "https://www.minecraft.net/ja-jp/", :target => "_blank"
+        li= link_to  "開発マップ", "https://trello.com/b/CzFf02M1",:target => "_blank"
+
+
+      ul.header__wraps--not-mobile__right
+        - if !current_user.nil?
+          li.header__wraps--not-mobile__right--btn
+            = link_to "ログアウト", "/logout", method: :delete
+          li.header__wraps--not-mobile__right--btn
+            = link_to "設定","#"
+        - else
+          li.header__wraps--not-mobile__right--btn
+            = link_to "ログイン", "/login/id"
+          li.header__wraps--not-mobile__right--btn
+            = link_to "登録", "/signup"

@@ -1,0 +1,72 @@
+.layout
+  - if login?
+    = render "render_files/components/bectorModal"
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/bectorFunctionBar"
+
+    .layout_1p2.lay_b
+      section.bector_userIndex
+        .bector_userIndex_header
+          - if @user.header.attached?
+            = image_tag @user.header
+          - else
+            = image_tag "/user_images/header/default_header.png"
+
+        .bector_userIndex_icon
+          - if @user.icon.attached?
+            = image_tag @user.icon
+          - else
+            = image_tag "/user_images/default_icon.png"
+        .bector_userIndex_spacer
+        .bector_userIndex_name
+          p= @user.name
+        .bector_userIndex_userid
+          p= "@#{@user.user_id}"
+        .bector_userIndex_profile
+          p= @user.user_traffic.profile
+
+
+
+        .bector_userIndex_createdAt
+          p= "#{@user.created_at.strftime("%Y年%m月%d日")}にMiftonへ飛び込みました！"
+
+        .bector_userIndex_kindsInfo
+          - if @user.user_traffic.user_link.present?
+            .bector_userIndex_kindsInfo_userLink
+              i.fas.fa-external-link-alt
+              - if @user.user_traffic.user_link.include?("https://")
+                = link_to @user.user_traffic.user_link, @user.user_traffic.user_link,  target: :_blank
+              - else
+                = link_to @user.user_traffic.user_link, "https://www.#{@user.user_traffic.user_link}", target: :_blank
+
+          - if @user.user_birthday.present?
+            .bector_userIndex_kindsInfo_birthday
+              - if @user.user_birthday.present?
+                - @show_birthday = ""
+
+                - if @user.user_birthday.publish_years == "publish"
+                  - @show_birthday += @user.user_birthday.birthday.strftime("%Y")
+
+                - if @user.user_birthday.publish_date == "publish"
+                  - @show_birthday += @user.user_birthday.birthday.strftime("%m/%d")
+
+                - if @show_birthday.present?
+                    i.fas.fa-birthday-cake
+                    = @show_birthday
+
+        .bector_userIndex_follow
+          .bector_userIndex_follow_following
+            p= "#{@user.following.count}フォロー"
+          .bector_userIndex_follow_follower
+            p= "#{@user.followers.count}フォロワー"
+
+      section.common_timeLine
+        .post_list.jscroll
+          #common_timeline
+            = render "/bector/timeline", microposts: @posts
+
+          = paginate @posts, remote: true
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

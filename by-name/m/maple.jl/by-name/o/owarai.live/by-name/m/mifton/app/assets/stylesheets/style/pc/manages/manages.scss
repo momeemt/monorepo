@@ -1,0 +1,33 @@
+.manages {
+  table {
+    width: 100%;
+  }
+
+  input[type="text"], input[type="number"] {
+    width: 60%;
+    height: 2em;
+    outline: none;
+  }
+
+  textarea {
+    resize: none;
+    width: 60%;
+    height: 10em;
+    border: 0.5px gray solid;
+    outline: none;
+  }
+
+  td {
+    padding: 5px 0;
+  }
+
+  hr {
+    border: 0.5px gray solid;
+    margin-top: 8px;
+    width: 80%;
+  }
+
+  form {
+    margin-top: 30px;
+  }
+}

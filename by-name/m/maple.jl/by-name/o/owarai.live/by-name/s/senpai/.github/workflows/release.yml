@@ -1,0 +1,27 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - run: nix build .
+      - id: vars
+        run: |
+          sha=$(git rev-parse --short HEAD)
+          echo "tag=v${sha}" >>"$GITHUB_OUTPUT"
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.vars.outputs.tag }}
+          name: ${{ steps.vars.outputs.tag }}
+          prerelease: true
+          generateReleaseNotes: true
+          artifacts: ./result/bin/senpai
+

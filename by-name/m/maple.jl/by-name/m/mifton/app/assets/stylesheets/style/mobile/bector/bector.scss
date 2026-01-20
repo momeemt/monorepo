@@ -1,0 +1,138 @@
+@media screen and (max-width:425px) {
+  .bector {
+    background-color: #eaf4fc;
+
+    .mobile-functionbar {
+      position: fixed;
+      background-color: white;
+      width: 100%;
+      bottom: 0;
+      z-index: 5;
+      height: 8vh;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      a {
+
+        width: 20%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        i {
+          font-size: 26px;
+          color: #365089;
+        }
+      }
+    }
+
+    .application_header {
+
+      background: #365089;
+      height: 50px;
+      color: white;
+
+      &_naviList_group {
+        padding: 0 15%;
+        padding-top: 2vw;
+        font-size: 4.5vw;
+        i {
+          margin-right: 5px;
+        }
+      }
+
+      &_wide {
+        display: none;
+      }
+
+      &_mobile {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100%;
+        position: relative;
+      }
+
+      &_logo {
+        padding-right: 30%;
+
+        a {
+          color: white;
+          font-size: 1.2em;
+
+          i {
+            padding-right: 0.5em;
+          }
+        }
+
+      }
+
+      &_hamburger {
+        padding-right: 5%;
+
+        &_content {
+
+          &_close {
+            margin-left: 85%;
+            font-size: 6vw;
+          }
+          hr {
+            border: 1px solid white;
+            margin: 5vw 7%;
+          }
+          position: fixed;
+          top: 0;
+          left: 0;
+          background-color: #23365E;
+          height: 100%;
+          width: 80%;
+          padding-top: 5vw;
+          z-index: 999;
+          transition: .3s ease-in-out;
+          -webkit-transform: translateX(150%);
+          transform: translateX(150%);
+
+          a {
+            color: white;
+
+            :visited {
+              color: white;
+            }
+          }
+
+        }
+      }
+
+      .application_header_hamburger_closeLabel {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: .6s ease-in-out;
+      }
+
+      #application_header_hamburger_checkbox {
+        display: none;
+
+        &:checked ~ .application_header_hamburger_content {
+          display: block;
+          -webkit-transform: translateX(25%);
+          transform: translateX(25%);
+        }
+        &:checked ~ .application_header_hamburger_closeLabel {
+          display: block;
+          z-index: 99;
+          background: black;
+          opacity: 0.3;
+        }
+      }
+
+
+    }
+  }
+}

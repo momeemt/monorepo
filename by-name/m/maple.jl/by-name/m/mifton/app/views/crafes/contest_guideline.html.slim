@@ -1,0 +1,19 @@
+.layout
+  - if login?
+    - @user = current_user
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/crafesFunctionBar"
+
+    .layout_1p2.lay_b
+      .crafes_contestGuideline
+        h1 コンテストを作成する際の注意
+        hr
+        ul
+          li 作成しても、管理者の認可によるまで公開されません。
+          li 不当にたくさんのコンテストを作成することは星の剥奪対象です。
+          li シリーズのコンテストの場合は「回数」で何回目の開催かを入力してください。
+          li 逆に単独のコンテストの場合は入力しないでください。
+          li 
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

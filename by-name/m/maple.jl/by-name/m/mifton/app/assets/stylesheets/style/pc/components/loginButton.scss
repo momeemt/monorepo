@@ -1,0 +1,14 @@
+/*
+name: loginButton.scss
+description: ログインボタンコンポーネントのscss
+*/
+
+@media screen and (min-width:1024px) {
+	.components_loginButton {
+		border: 2px white solid;
+		border-radius: 20px;
+		color: white;
+		padding: 4px 28px;
+		font-size: 20px;
+	}
+}

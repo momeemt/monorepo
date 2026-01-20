@@ -1,0 +1,24 @@
+section.common_sidemenu
+  = render "components/menulist", u: root_url, f:"home", d: "ホーム"
+  - if login?
+    = render "components/menulist", u: users_edit_url, f:"cog", d: "プロフィールを編集"
+  = render "components/menulist", u: bector_index_url, f:"users", d: "Bector"
+  = render "components/menulist", u: terms_url, f:"align-left", d: "利用規約"
+  = render "components/menulist", u: policy_url, f:"user-secret", d: "プライバシーポリシー"
+  = render "components/menulist", u: authority_url, f:"star", d: "権限ユーザー"
+  = render "components/menulist", u: condition_url, f:"file-code", d: "開発状況"
+  = render "components/menulist", u: "https://docs.google.com/forms/d/e/1FAIpQLSfKIT-A8AQRDSyQ4uiFzGDDu5-XAHv-CjB6calFzZs29mtabg/viewform", f:"comment-dots", d: "フィードバック"
+  = render "components/menulist", u: "https://twitter.com/momeemt", f:"hashtag", d: "開発者"
+  = render "components/menulist", u: help_url, f:"question-circle", d: "ヘルプセンター"
+  - if login?
+    = link_to "/logout/home", :method => "delete" do
+      p
+        i.fas.fa-door-open
+        = "ログアウトする"
+    = render "components/menulist", u: "/exit", f:"user-times", d: "退会する"
+  - else
+    = render "components/menulist", u: "/login/id", f:"sign-in-alt", d: "ログインする"
+    = render "components/menulist", u: "/signup", f: "user-plus", d: "登録する"
+  - if than_trust_user
+    = render "components/menulist", u: crafes_url, f:"chess", d: "Crafes!"
+    = render "components/menulist", u: manages_url, f:"users-cog", d: "管理パネル"

@@ -1,0 +1,91 @@
+/*
+name: registerForm.scss
+description: アカウント登録フォームコンポーネントのscss
+*/
+@media screen and (min-width:1024px) {
+	.components_registerForm {
+
+		$background-color: white;
+		$input-background-color: #F0F8FF;
+
+		background-color: $background-color;
+		border-radius: 10px;
+		width: 90%;
+		padding: 20px;
+		margin-top: 25px;
+
+		&_container {
+			padding: 0 4%;
+
+			hr {
+				border: 0;
+				border-top: gray 0.5px solid;
+				width: 100%;
+				margin-top: 8px;
+			}
+
+			&_title {
+				font-size: 24px;
+			}
+			&_recaptcha {
+				padding-top: 28px;
+				transform-origin: 0% 0%;
+	  		transform: scale(0.75);
+			}
+
+			&_inputGroupRow {
+				display: flex;
+				justify-content: space-around;
+				padding-top: 20px;
+				&_group {
+					p {
+						font-size: 16px;
+					}
+					input {
+						background-color: $input-background-color;
+						border: 1px gray solid;
+						border-radius: 4px;
+						width: 90%;
+						padding: 4px 8px;
+						font-size: 16px;
+					}
+				}
+			}
+
+			@mixin registButton {
+				input[type="submit"], a {
+					background-color: transparent;
+		      border: none;
+		      cursor: pointer;
+		      outline: none;
+		      padding: 0;
+		      appearance: none;
+					color: white;
+					font-size: 16px;
+				}
+				text-align: center;
+				border-radius: 100px;
+				display: inline-block;
+				padding: 5px 20px;
+				margin-top: 20px;
+			}
+
+			&_registerButton-main {
+				@include registButton
+				background-color: #EC6D51;
+				width: 20%;
+				margin-right: 10px;
+			}
+
+			&_registerButton-twitter {
+				@include registButton
+				background-color: #55ACEE;
+				width: 50%;
+			}
+
+			&_descript {
+				font-size: 12px;
+			}
+		}
+	}
+}

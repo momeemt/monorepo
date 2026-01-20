@@ -1,0 +1,12 @@
+.components_userImages
+  .components_userImages_userHeader
+    - if user.header.attached?
+      = image_tag user.header
+    - else
+      = image_tag "/user_images/header/default_header.png"
+
+  .components_userImages_userIcon
+    - if user.icon.attached?
+      = image_tag user.icon
+    - else
+      = image_tag "/user_images/default_icon.png"

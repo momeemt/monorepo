@@ -1,0 +1,91 @@
+@media screen and (min-width:1024px) {
+  .bector_userIndex {
+    img {
+      display: block;
+    }
+
+    position: relative;
+
+    &_header img {
+      width: 100%;
+      height: 15vh;
+      object-fit: cover;
+    }
+
+    &_icon img {
+      object-fit: cover;
+      border: 2px white solid;
+      border-radius: 50%;
+      width: 15%;
+      position: absolute;
+      top: 8vh;
+      left: 20px;
+    }
+
+    &_spacer {
+      height: 8vh;
+    }
+
+    &_name {
+      font-size: 24px;
+      font-weight: bold;
+      padding-left: 4%;
+    }
+
+    &_userid {
+      color: gray;
+      font-size: 12px;
+      padding-left: 4%;
+    }
+
+    &_profile {
+      padding-left: 4%;
+      padding-top: 2%;
+      padding-right: 4%;
+    }
+
+    &_createdAt {
+      padding-left: 4%;
+      padding-top: 2%;
+    }
+
+    &_kindsInfo {
+      display: flex;
+      padding-top: 1%;
+
+      &_birthday {
+        width: 12%;
+        i {
+          color: gray;
+          padding-right: 8px;
+        }
+        padding-left: 4%;
+      }
+
+      &_userLink {
+        width: 20%;
+        a {
+          color: blue;
+        }
+        i {
+          color: gray;
+          padding-right: 8px;
+        }
+        padding-left: 4%;
+      }
+
+    }
+
+    &_follow {
+      display: flex;
+      padding-left: 4%;
+      padding-top: 1%;
+      padding-bottom: 2%;
+
+      &_following {
+        margin-right: 2%;
+      }
+    }
+
+  }
+}

@@ -1,0 +1,51 @@
+h1 ユーザーリスト
+hr
+
+.user_index__content-wrapper--container--nav
+  = paginate @users
+  = page_entries_info @users
+
+.user_index__content-wrapper--container--search-form
+  details
+    summary 詳細な検索
+    = search_form_for(@q, url: manage_users_path) do |f|
+      table
+        tbody
+          tr
+            td= f.label :name_cont, 'ユーザー名'
+            td= f.search_field :name_cont
+          - if than_admin
+            tr
+              td= f.label :email_cont, "メールアドレス"
+              td= f.search_field :email_cont
+      = f.submit class:"user_index__content-wrapper--container--search-form--submit"
+
+
+
+
+
+table
+  tr
+    th= User.human_attribute_name(:id)
+    th= User.human_attribute_name(:name)
+    th ユーザーID
+    th 登録日
+    th
+
+  tbody
+  - @users.each do |user|
+    tr
+      td= user.id
+      - if user.name.length > 15
+        td= "#{user.name.slice(0,15)}..."
+      - else
+        td= user.name
+      - if than_admin
+        td= link_to "@#{user.user_id}", "/manage_users/#{user.user_id}"
+      - else
+        td= "@#{user.user_id}"
+      td= user.created_at.strftime("%Y/%m/%d")
+      - unless user.authority.present? && user.user_traffic.present?
+        td
+          = form_with url: "/manage_users/fix_model/#{user.id}" do |f|
+            = f.submit "モデルエラー"

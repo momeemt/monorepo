@@ -1,0 +1,2 @@
+class Repost < ApplicationRecord
+end

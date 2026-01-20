@@ -1,0 +1,2 @@
+module ManageContestsHelper
+end

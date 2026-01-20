@@ -1,0 +1,91 @@
+@media screen and (min-width:960px) {
+  .home .aboutSection {
+
+    &_miftonSection {
+
+    }
+    .topCatchCopy {
+      text-align: center;
+      margin-top: 100px;
+
+      &-button {
+        margin: 20px 0 100px;
+      }
+
+      a {
+        background-color: #ec6d51;
+        border-radius: 20px;
+        padding: 10px 80px;
+        border: 0px;
+        color: white;
+        font-size: 25px;
+        &:hover {
+          background-color: #ec6d51 * 1.5;
+          transition: .6s;
+        }
+      }
+
+      &-title {
+        font-size: 55px;
+      }
+
+      &-subtitle {
+        font-size: 45px;
+      }
+      &-descript {
+        font-size: 30px;
+        margin-top: 10px;
+      }
+
+      &-subdescript {
+        font-size: 25px;
+        margin-top: 10px;
+      }
+
+      &_flex {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: left;
+        margin-top: 30px;
+        width: 100%;
+
+        &-right {
+          text-align: right;
+        }
+
+        img {
+          width: 100%;
+        }
+
+        &_image {
+          width: 45%;
+
+          &-per80 {
+            text-align: left;
+            img{
+              width: 80%;
+            }
+          }
+        }
+
+        &_descript {
+          width: 55%;
+          font-size: 17px;
+          margin-top: 25px;
+
+          &-title {
+            font-size: 24px;
+            margin-bottom: 25px;
+          }
+
+          p {
+            margin-top: 5px;
+          }
+        }
+      }
+    }
+
+
+  }
+}

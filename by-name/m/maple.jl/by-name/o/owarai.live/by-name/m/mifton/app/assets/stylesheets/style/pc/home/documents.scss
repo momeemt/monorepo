@@ -1,0 +1,17 @@
+@media screen and (min-width:1024px) {
+  .home_documents {
+    padding: 5% 10%;
+    hr {
+      border: 1px solid black;
+      margin-top: 10px;
+    }
+
+    &_contents {
+      margin-top: 20px;
+
+      h2 {
+        margin-top: 20px;
+      }
+    }
+  }
+}

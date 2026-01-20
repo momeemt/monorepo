@@ -1,0 +1,5 @@
+<img src="icon.png">
+    <blur radius="10" sigma="10">
+        <text x="100" y="100">Momeemt!</text>
+    </blur>
+</img>

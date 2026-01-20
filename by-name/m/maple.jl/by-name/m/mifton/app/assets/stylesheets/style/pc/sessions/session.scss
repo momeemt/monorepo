@@ -1,0 +1,97 @@
+@media screen and (min-width:1024px) {
+  .session {
+    input {
+      outline: none;
+    }
+
+    &--page-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+
+      margin-top: 30px;
+      padding: 20px 10px;
+
+
+      a {
+        color: #ec6d51;
+        text-decoration: none;
+      }
+
+
+
+      &--container {
+        border: 1px black solid;
+        border-radius: 8px;
+        width: 70%;
+        padding: 20px 50px;
+        transition: .6s;
+
+        &:hover {
+          transition: .6s;
+          box-shadow: 2px 2px 4px gray;
+        }
+
+        text-align: left;
+
+        &__top-title {
+          font-size: 28px;
+          margin: 20px 0;
+        }
+        &__top-line {
+          border: 1px black solid;
+          margin-bottom: 20px;
+          opacity: 0.4;
+          width: 100%;
+        }
+        &__login-form {
+          &__group {
+            margin-bottom: 20px;
+            &--input {
+              display: inline;
+              background-color: aliceblue;
+              border: 1px gray solid;
+              border-radius: 4px;
+              margin: 10px auto;
+              padding: 5px;
+              font-size: 18px;
+              width: 100%;
+              height: 20px;
+            }
+          }
+          &--check-box {
+            display: inline;
+            margin: 0 10px;
+          }
+
+          &--submit-button {
+            a {
+              display: block;
+              text-decoration: none;
+              color: white;
+              font-size: 2vw;
+            }
+            color: white;
+            font-size: 1.2vw;
+            text-align: center;
+            width: 30%;
+            background-color: #ec6d51;
+            margin: 20px auto;
+            padding: 4px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: .6s;
+            border: 0px white solid;
+
+            &:hover {
+              background-color: #ec6d51 * 1.5;
+              transition: .6s;
+            }
+          }
+        }
+      }
+    }
+  }
+
+}

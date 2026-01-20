@@ -1,0 +1,33 @@
+.manageContest_draftShow
+  h1= @contest.name
+
+  = form_with scope: :contest, url: "/manage_contests/draft/#{@contest.id}", class: "manageContest_draftShow_form", local: true do |f|
+    .manageContest_draftShow_form_group
+      = f.label :name, "コンテスト名"
+      = f.text_field :name, :value => @contest.name
+    .manageContest_draftShow_form_group
+      = f.label :times, "コンテスト開催回数(省略可)"
+      = f.number_field :times, :value => @contest.times
+    .manageContest_draftShow_form_group
+      = f.label :start_datetime, "開始時刻"
+      = f.datetime_field :start_datetime, :value => @contest.start_datetime && @contest.start_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+    .manageContest_draftShow_form_group
+      = f.label :duration, "大会時間(分)"
+      = f.number_field :duration, :value => @contest.duration
+    .manageContest_draftShow_form_group
+      = f.label :rated_range, "レート変動"
+      = f.number_field :rated_range, :value => @contest.rated_range
+    .manageContest_draftShow_form_group
+      = f.label :contest_type, "コンテストの種類"
+      = f.text_field :contest_type, list: "categories_list", :value => @contest.contest_type
+      datalist#categories_list
+        - @categories.each do |c|
+          option value="#{c}"
+    = f.submit "更新する"
+    = f.submit "更新し、一覧に戻る", name: "back"
+
+
+  = button_to "コンテストを公開する", manage_contests_create_url,
+    {params: { contest: { name: @contest.name, times: @contest.times, start_datetime: @contest.start_datetime, duration: @contest.duration, rated_range: @contest.rated_range, contest_type: @contest.contest_type } }, class: "manageContest_draftShow_publishButton", data: {confirm: "本当に公開しますか？"} }
+
+  = button_to "コンテストを削除する", "/manage_contests/draft/#{@contest.id}/destroy", method: :delete, data: {confirm: "本当に削除しますか？"}, class: "manageContest_draftShow_deleteButton"

@@ -1,0 +1,77 @@
+@media screen and (min-width:1024px) {
+  .common {
+    &_timeLine_noneInformation {
+
+      &_box {
+        margin-top: 10px;
+        border: 2px #EC6D51 solid;
+        border-radius: 8px;
+        padding: 10px 15px;
+        background-color: rgba(255, 165, 0, 0.05);
+
+        &-title {
+          font-size: 25px;
+        }
+
+        &-detail {
+          margin-top: 15px;
+        }
+
+        hr {
+          border: 1.5px dotted #EC6D51;
+          width: 90%;
+        }
+      }
+
+      &_descript {
+        margin-top: 20px;
+
+        i {
+          margin-right: 5px;
+        }
+
+        &-title {
+          display: flex;
+          align-items: center;
+          p,i {
+            font-size: 25px;
+          }
+
+          i {
+            margin-right: 8px;
+          }
+        }
+
+
+        ul {
+          margin-top: 10px;
+          list-style: none;
+        }
+
+        a {
+          display: inline-block;
+          color: white;
+          padding: 7.5px 30px;
+          border-radius: 30px;
+          margin-top: 10px;
+        }
+
+        &_able {
+          background-color: #EC6D51;
+        }
+
+        &_twitter {
+          background-color: #00acee;
+        }
+
+        &_mifton {
+          color: #EC6D51 !important;
+          border: 2px #EC6D51 solid;
+        }
+      }
+
+
+
+    }
+  }
+}

@@ -1,0 +1,112 @@
+section.common_userInfo#common_userInfo
+
+  - if @user.header.attached?
+    = image_tag @user.header, class: "common_userInfo_header"
+  - else
+    = image_tag "/user_images/header/default_header.png", class: "common_userInfo_header"
+
+  - if @user.icon.attached?
+    = image_tag @user.icon, class:"common_userInfo_icon"
+  - else
+    = image_tag "/user_images/default_icon.png", class:"common_userInfo_icon"
+
+
+  .common_userInfo_wrapper
+    / before card
+
+    - unless @user == current_user
+      - if current_user.following?(@user)
+        .common_userInfo_wrapper_unfollowButton
+          = form_for(current_user.active_relationships.find_by(followed_id: @user.id), html: { method: :delete }) do |f|
+            = hidden_field_tag :service, "Bector"
+            = f.submit "フォロー解除"
+      - else
+        .common_userInfo_wrapper_followButton
+          = form_for(current_user.active_relationships.build) do |f|
+            = hidden_field_tag :followed_id, @user.id
+            = hidden_field_tag :service, "Bector"
+            = f.submit "フォロー"
+
+    .common_userInfo_wrapper_basicSection
+
+      p.common_userInfo_wrapper_basicSection_userName= render "components/show_star_name", user: @user
+
+      p.common_userInfo_wrapper_basicSection_userID= "@#{@user.user_id}"
+
+      - if @user == current_user
+        p.common_userInfo_wrapper_basicSection_isMyAccount 自分のアカウントです
+
+    .common_userInfo_wrapper_dataSection
+      .common_userInfo_wrapper_dataSection_profile
+        = simple_format(@user.user_traffic.profile)
+
+    .common_userInfo_wrapper_dataSection
+      .common_userInfo_wrapper_dataSection_group
+        p.common_userInfo_wrapper_dataSection_group_name フォロー
+        p.common_userInfo_wrapper_dataSection_group_data= @user.following.count
+      .common_userInfo_wrapper_dataSection_group
+        p.common_userInfo_wrapper_dataSection_group_name フォロワー
+        p.common_userInfo_wrapper_dataSection_group_data= @user.followers.count
+
+    .common_userInfo_wrapper_dataSection
+      .common_userInfo_wrapper_dataSection_group
+        p.common_userInfo_wrapper_dataSection_group_name 投稿数
+        p.common_userInfo_wrapper_dataSection_group_data= @user.microposts.count + @user.comments.count
+      .common_userInfo_wrapper_dataSection_group
+        p.common_userInfo_wrapper_dataSection_group_name リアクション
+        = link_to "/bector/reactions/#{@user.id}" do
+          p.common_userInfo_wrapper_dataSection_group_data= Reaction.where(user_id: @user.id).count
+
+    = render "components/userAuthority"
+
+
+    .common_userInfo_wrapper_trafficSection
+
+
+      - if @user.user_traffic.location.present?
+        .common_userInfo_wrapper_trafficSection_bar
+          i.fas.fa-map-marker-alt
+          p= @user.user_traffic.location
+
+      - if @user.user_traffic.user_link.present?
+        .common_userInfo_wrapper_trafficSection_bar
+          i.fas.fa-link
+          = link_to @user.user_traffic.user_link, "https://#{@user.user_traffic.user_link}", :target => "_blank"
+
+      - if @user.user_birthday.present?
+        - @show_birthday = ""
+
+        - if @user.user_birthday.publish_years == "publish"
+          - @show_birthday += @user.user_birthday.birthday.strftime("%Y")
+
+        - if @user.user_birthday.publish_date == "publish"
+          - @show_birthday += @user.user_birthday.birthday.strftime("%m/%d")
+
+        - if @show_birthday.present?
+          .common_userInfo_wrapper_trafficSection_bar
+            i.fas.fa-birthday-cake
+            p= @show_birthday
+
+      .common_userInfo_wrapper_trafficSection_bar
+        i.fas.fa-calendar-week
+        p= "Jump in #{@user.created_at.strftime("%Y/%m/%d")}"
+
+      - if @user.user_traffic.twitter_id.present?
+        .common_userInfo_wrapper_trafficSection_bar
+          i.fab.fa-twitter
+          = link_to "@#{@user.user_traffic.twitter_id}", "https://twitter.com/#{@user.user_traffic.twitter_id}", :target => "_blank"
+
+      - if @user.user_traffic.lobi_id.present?
+        .common_userInfo_wrapper_trafficSection_bar
+          i.far.fa-comment-alt
+          = link_to "Lobi", @user.user_traffic.lobi_id, :target => "_blank"
+
+      - if @user.user_traffic.github_id.present?
+        .common_userInfo_wrapper_trafficSection_bar
+          i.fab.fa-github
+          = link_to "#{@user.user_traffic.github_id}", "https://github.com/#{@user.user_traffic.github_id}", :target => "_blank"
+
+      - if @user.user_traffic.discord_id.present?
+        .common_userInfo_wrapper_trafficSection_bar
+          i.fab.fa-discord
+          = link_to "Discord", "https://discord.com/users/#{@user.user_traffic.discord_id}", :target => "_blank"

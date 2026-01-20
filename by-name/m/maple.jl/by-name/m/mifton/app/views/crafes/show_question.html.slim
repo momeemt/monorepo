@@ -1,0 +1,24 @@
+.layout
+  - if login?
+    - @user = current_user
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/crafesFunctionBar"
+
+    .layout_1p2.lay_b
+      .crafes_showContest
+        h1= @question.title
+        hr
+        p= "配点: #{@question.score}点"
+        h2 問題
+        p= @question.content
+        h2 制約
+        p= @question.constraints
+        h2 提出
+
+        = form_with url: "/crafes/question/#{@question.id}/submit", multipart: true do |f|
+          = f.file_field :fileupload, accept: ".mcpack"
+          = f.submit 'Send file'
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"
