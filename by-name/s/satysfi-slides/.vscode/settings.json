@@ -1,0 +1,6 @@
+{
+    "satysfi-workshop.executable": "satysfi",
+    "satysfi-workshop.languageServer.enabled": true,
+    "satysfi-workshop.build.when": "onSave",
+    "satysfi-workshop.mathPreview.when": "onHover"
+}
