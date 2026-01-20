@@ -1,0 +1,46 @@
+name: deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v22
+      - uses: actions/cache/restore@v4
+        id: nix-cache
+        with:
+          path: /tmp/nixcache
+          key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+      - if: "steps.nix-cache.outputs.cache-hit == 'true'"
+        run: "nix-store --import < /tmp/nixcache"
+      - run: nix profile install ".#deploy-environment"
+      - name: Build credential files
+        run: |
+          mkdir -p .config/sops/age
+          echo $SOPS_AGE_SECRET_KEY > $SOPS_AGE_KEY_FILE
+          chmod 755 $SOPS_AGE_KEY_FILE
+          ./secrets/build.sh
+        env:
+          SOPS_AGE_SECRET_KEY: ${{ secrets.SOPS_AGE_SECRET_KEY }}
+          SOPS_AGE_KEY_FILE: .config/sops/age/keys.txt
+      - run: |
+          cd terraform
+          terraform init -backend-config=backend.hcl
+          terraform apply -auto-approve
+      - if: "always() && steps.nix-cache.outputs.cache-hit != 'true'"
+        run: "nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache"
+      - if: "always() && steps.nix-cache.outputs.cache-hit != 'true'"
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/nixcache
+          key: nix-${{ runner.os }}-${{ hashFiles('flake.lock') }}
+      - name: Remove credential files
+        if: always()
+        run: |
+          ./secrets/remove.sh
+          rm -f .config/sops/keys.txt
+

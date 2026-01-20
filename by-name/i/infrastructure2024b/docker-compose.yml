@@ -1,0 +1,29 @@
+version: "3"
+services:
+  minio:
+    container_name: minio-container
+    image: minio/minio:RELEASE.2024-04-06T05-26-02Z
+    volumes:
+      - ./volumes/minio/data:/export
+      - ./volumes/minio/config:/root/.minio
+    ports:
+      - ${MINIO_PORT}:9000
+      - ${MINIO_CONSOLE_PORT}:9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /export --console-address ":9001"
+  
+  createbuckets:
+    image: minio/mc:RELEASE.2024-03-30T15-29-52Z
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until (/usr/bin/mc alias set myminio http://minio:9000 '${MINIO_ROOT_USER}' '${MINIO_ROOT_PASSWORD}') do sleep 1; done;
+      /usr/bin/mc admin user svcacct add myminio '${MINIO_ROOT_USER}' --access-key '${MINIO_ACCESS_KEY}' --secret-key '${MINIO_SECRET_KEY}';
+      /usr/bin/mc mb myminio/terraform;
+      /usr/bin/mc policy download myminio/terraform;
+      exit 0;
+      "
+
