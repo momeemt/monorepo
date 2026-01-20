@@ -1,0 +1,3 @@
+use nix
+
+export GOOGLE_MAPS_PLATFORM_API_KEY=""
