@@ -1,0 +1,10 @@
+name = "sf-lean"
+version = "0.1.0"
+defaultTargets = ["sf-lean"]
+
+[[lean_lib]]
+name = "SfLean"
+
+[[lean_exe]]
+name = "sf-lean"
+root = "Main"
