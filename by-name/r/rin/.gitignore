@@ -1,0 +1,6 @@
+/poac-out
+.envrc
+.direnv
+.cache
+compile_commands.json
+
