@@ -1,0 +1,110 @@
+@media screen and (min-width:1024px) {
+  .bector {
+
+    .mobile-functionbar {
+      display: none;
+    }
+
+    background-color: white;
+
+    .application_header {
+
+      background: #365089;
+      height: 50px;
+      color: white;
+
+      &_mobile {
+        display: none;
+      }
+
+      &_naviList {
+        display: flex;
+
+        i {
+          //padding-right: 1vw;
+          padding-right: 5px;
+        }
+
+        height: 100%;
+        &_group {
+          margin: 0 auto;
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          line-height: 50px;
+
+          &-image {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+        a {
+          color: white;
+          height: 50px;
+          display: block;
+          //font-size: 1.4vw;
+        }
+        img {
+          display: block;
+          height: 80%;
+          border-radius: 50%;
+          margin: auto 0;
+          line-height: 50px;
+        }
+      }
+    }
+  }
+}
+
+.app_reactionContainer {
+  display: flex;
+
+  &:hover {
+    background-color: #f3f3f2;
+  }
+}
+
+.app_reaction {
+
+  button {
+    border: none;
+    font-size: 18px;
+    color: gray;
+    outline: none;
+    background-color: rgba(0,0,0,0);
+  }
+
+  span {
+    padding-right: 5px;
+    color: black;
+
+    &:visited {
+      color: black;
+    }
+  }
+  &-gray {
+    color: #afafb0;
+  }
+
+  &-pink {
+    color: #f09199;
+  }
+
+  &-blue {
+    color: #0095d9;
+  }
+
+  &-deepskyblue {
+    color: #007bbb;
+  }
+
+  &-darkorange {
+    color: #eb6101;
+  }
+
+  &-red {
+    color: #e83929;
+  }
+}

@@ -1,0 +1,49 @@
+@media screen and (min-width:1024px) {
+  .crafes_showContest {
+    padding: 4vh 4vw;
+
+    h1 {
+      font-size: 28px;
+    }
+
+    h2 {
+      margin-top: 16px;
+    }
+
+    hr {
+      border: 0;
+      border: 1px #2C4E53 solid;
+      margin: 16px 0;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 28px;
+      border-collapse: collapse;
+      border-spacing: 0;
+
+
+      th {
+        background-color: #5C9291;
+        color: white;
+        padding: 4px;
+        border: #5C9291 1px solid;
+      }
+
+      td {
+        background-color: #F7F8FA;
+        padding: 12px;
+        border: #5C9291 1px solid;
+      }
+
+      a {
+        color: blue;
+
+        &:visited {
+          color: blue;
+        }
+      }
+      background-color: white;
+    }
+  }
+}

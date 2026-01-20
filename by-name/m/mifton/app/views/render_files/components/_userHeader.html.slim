@@ -1,0 +1,5 @@
+.components_userHeader
+  - if user.header.attached?
+    = image_tag user.header
+  - else
+    = image_tag "/user_images/header/default_header.png"

@@ -1,0 +1,183 @@
+@media screen and (min-width:1024px) {
+  .common {
+
+    @mixin make_follow_button {
+      position: absolute;
+      right: 50px;
+      top: 120px;
+
+      // RESET CSS BEGIN
+
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      padding: 0;
+      appearance: none;
+
+      // RESET CSS END
+
+      font-size: 14px;
+      padding: 5px 10px;
+    }
+
+    &_userInfo {
+      position: relative;
+
+      &_header {
+        display: block;
+        width: 80%;
+        margin: 0 auto;
+        padding-top: 10px;
+      }
+
+      &_icon {
+        object-fit: cover;
+        position: absolute;
+        border: 3px solid black;
+        border-radius: 50%;
+        display: block;
+        width: 19%;
+        top: 67px;
+        left: 14%;
+      }
+
+      &_wrapper {
+        width: 80%;
+        margin: 0 auto;
+        background-color: white;
+
+        &_followButton input[type="submit"] {
+          @include make_follow_button
+          border-radius: 30px;
+          border: #2E4577 2px solid;
+          color: #2E4577;
+          font-weight: bold;
+        }
+
+        &_unfollowButton input[type="submit"] {
+          @include make_follow_button
+          background-color: #2E4577;
+          border-radius: 30px;
+          padding: 5px 10px;
+          color: white;
+        }
+
+        &_basicSection {
+          padding-top: 55px;
+          padding-left: 8px;
+          &_userName {
+            font-size: 20px;
+            font-weight: bold;
+          }
+
+          &_userID {
+            font-size: 13px;
+          }
+
+          &_isMyAccount {
+            display: inline-block;
+            font-size: 13px;
+            background: linear-gradient(transparent 50%, yellow 50%);
+          }
+        }
+
+        &_authorityBadge {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color:white;
+
+          width: 70%;
+          margin: 5px auto 0;
+          padding: 3px 0;
+          border-radius: 30px;
+
+          i {
+            font-size: 8px;
+            padding-right: 5px;
+          }
+        }
+
+        &_authorityAdmins {
+          background-color: red;
+        }
+
+        &_authorityOperator {
+          background-color: green;
+        }
+
+        &_authorityTrustUser {
+          background-color: deepskyblue;
+        }
+
+        &_authorityDeveloper {
+          background-color: darkorange;
+        }
+
+        &_authorityContributor {
+          background-color: gold;
+        }
+
+        &_dataSection {
+          display: flex;
+          padding-top: 7px;
+          padding-bottom: 6px;
+
+          &_profile {
+            font-size: 13px;
+            font-weight: lighter;
+            margin: 0 8px;
+            margin-top: 10px;
+          }
+
+          &_group {
+            padding: 0 14px;
+            &_name {
+              font-size: 13px;
+              font-weight: lighter;
+            }
+            &_data {
+              color: #007bbb;
+              font-weight: 900;
+              font-size: 16px;
+            }
+          }
+        }
+
+        &_trafficSection {
+          margin-top: 15px;
+          padding-bottom: 15px;
+          &_bar {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+            margin-left: 8px;
+
+            a {
+              font-size: 15px;
+              color: blue;
+
+              &:visited {
+                color: blue;
+              }
+            }
+
+            i {
+              font-size: 14px;
+              color: gray;
+              padding-right: 5px;
+            }
+
+            p {
+              font-size: 15px;
+            }
+          }
+        }
+      }
+
+    }
+
+
+  }
+}

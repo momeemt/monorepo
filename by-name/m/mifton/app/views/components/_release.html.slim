@@ -1,0 +1,23 @@
+section.common_release
+  .common_release_container
+    - if current_user.icon.attached?
+      = image_tag current_user.icon, class:"common_release_container_icon"
+    - else
+      = image_tag "/user_images/default_icon.png", class:"common_release_container_icon"
+    = form_with scope: :micropost, url: bector_index_url, multipart: true, local: true do |f|
+      p= f.text_area :content, placeholder: "進捗や日常の体験を発信しよう"
+      p= f.text_field :tags, placeholder: "タグ(スペース区切りで5個まで)", value: ""
+      .preview
+      = f.label :images
+        i.far.fa-images
+      = f.file_field :images, multiple: true, accept: 'image/jpg,image/jpeg,image/png,image/gif'
+
+      = f.label :topic
+        i.far.fa-sticky-note
+
+      = f.label :vote
+        i.fas.fa-poll
+
+      = f.label :emoji
+        i.far.fa-laugh-squint
+      = f.submit "投稿"

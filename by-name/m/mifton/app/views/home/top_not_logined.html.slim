@@ -1,0 +1,67 @@
+section.topSection
+  section.topSection_backGroundSection
+    .title
+      p.title-firstLine Minecraftを
+      p.title-secondLine もっと面白くもっと便利に
+    .descript
+      p クラフターのクラフターによるクラフターのためのサービス
+      p あなたの何気ない気づきや技術が、コミュニティをより進歩させます。
+
+  section.topSection_registerForm
+    = render "render_files/components/registerForm"
+
+section.aboutSection
+  section.aboutSection_miftonSection
+    .topCatchCopy
+      p.topCatchCopy-title Miftonに参加しよう
+      p.topCatchCopy-descript MiftonはMinecraftユーザーのための新しいコミュニティーサービスです
+      .topCatchCopy_flex
+        .topCatchCopy_flex_image
+          img src="/steve-has-sword.png"
+        .topCatchCopy_flex_descript
+          p.topCatchCopy_flex_descript-title Miftonは基本的なコミュニティを提供します
+          p Minecraftユーザーの皆さまはどんなSNSでコミュニティを図っていますか？
+          p Twitter？Lobi？Google+？Discord？
+          p 日本のMinecraftコミュニティは大きく分散しています。
+          p それによって情報格差や友人関係の損失に繋がっていると私たちは考えました。
+          p MiftonはMinecraftユーザーのためのコミュニティサービス。
+          p 利用して、自らサービスを成長させることができる新しい試みです。
+  section.aboutSection_bectorSection
+    .topCatchCopy
+      p.topCatchCopy-subtitle コミュニケーション
+      p.topCatchCopy-subdescript BectorはSNS・チャット機能を提供するアプリケーションです
+      .topCatchCopy_flex.topCatchCopy_flex-right
+
+        .topCatchCopy_flex_descript
+          p.topCatchCopy_flex_descript-title Bectorでトレンドを掴もう
+          p BectorではMinecraftのトピックに限らず、一般的なSNSと同様に利用できます。
+          p Minecraftユーザーがほとんどを占めているため、新たな情報の発見や
+          p 交友関係の幅が広がります。
+          p また、Twitterのようなマイクロポスト型(短い内容をたくさん投稿するタイプ)と
+          p Lobi,G+のようなトピック型(知ってもらいたい内容について字数を割いて投稿できるタイプ)の
+          p どちらにも対応しており、自分で選択することができます。
+
+
+        .topCatchCopy_flex_image.topCatchCopy_flex_image-per80
+          img src="/talking.png"
+      p.topCatchCopy-button= link_to "Bectorを見てみる", "/bector"
+  section.aboutSection_crafesSection
+    .topCatchCopy
+      p.topCatchCopy-subtitle 技術力を競おう
+      p.topCatchCopy-subdescript Crafes!は日本初の競技Minecraftを提供するアプリケーションです
+      .topCatchCopy_flex
+        .topCatchCopy_flex_image style="text-align: center;"
+          img src="/programming.png" style="width: 60%;"
+        .topCatchCopy_flex_descript
+          p.topCatchCopy_flex_descript-title Minecraftは多くの技術があることを知っていますか？
+          p Minecraftはゲームソフトです。
+          p しかしコマンドやアドオン、ScriptingAPIなどが導入され始めました。
+          p これらを使いこなすには論理的思考で物事を解決する必要があります。
+          p Crafes!はこれらを用いた問題や課題を提示します。
+          p また、建築技術や美しい演出を要求することもあります。
+          p Crafes!でMinecraftの新しい楽しみ方を発見しましょう！
+      p.topCatchCopy-button= link_to "Crafes!を見てみる", "/crafes"
+
+section.forUsSection
+  p.forUsSection-title 私たちについて
+  p Miftonは、Minecraftユーザーの有志によって運営・開発が行われています。

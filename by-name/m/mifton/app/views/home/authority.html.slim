@@ -1,0 +1,38 @@
+.lay
+  .lay_3p4
+    .home_documents
+      h1 権限ユーザー
+      hr
+
+      .home_documents_contents
+        p Miftonを運営するにあたり、管理者によって信頼されたユーザーが様々な業務を行なっています。
+        p 名前のカラーが違うユーザーは、権限者/名誉ユーザーです。
+        p このページではその権限について説明します。
+
+        h2 style="color:red;" Admin / 管理者
+        p Mifton全体を管理しているユーザーです。
+        - @users.each do |user|
+          - if user.authority.manage_pos == "admin"
+            p= link_to user.user_id, "users/#{user.user_id}"
+
+        h2 style="color:green;" Operator / 運営者
+        p Miftonを運営しているユーザーです。
+        - @users.each do |user|
+          - if user.authority.manage_pos == "operator"
+            p= link_to user.user_id, "users/#{user.user_id}"
+
+        h2 style="color:deepskyblue;" TrustUser / トラストユーザー
+        p 普段からMiftonを利用し、コミュニティ形成に良い影響を与えているユーザー。
+        - @users.each do |user|
+          - if user.authority.manage_pos == "trust_user"
+            p= link_to user.user_id, "users/#{user.user_id}"
+
+        h2 style="color:darkorange;" Developer / 開発者
+        p Miftonの開発を行なっているユーザー。
+        - @users.each do |user|
+          - if user.authority.dev_pos == "developer"
+            p= link_to user.user_id, "users/#{user.user_id}"
+
+  .lay_1p4.lay_sticky
+
+    = render "home/components/sidemenu"

@@ -1,0 +1,88 @@
+/*
+name: topicModal.scss
+description: トピック投稿モーダルのscss
+*/
+@media screen and (max-width:1023px) {
+  .components_topicModal {
+    width: 80%;
+    height: 60%;
+    position: fixed;
+    z-index: 10000;
+    background-color: white;
+    top:20%;
+    left: 5%;
+    border-radius: 20px;
+    padding: 24px;
+
+    &_close {
+      height: 32px;
+    }
+
+    i.fas.fa-times {
+      position: absolute;
+      color: #027ABB;
+      font-size: 24px;
+      top: 16px;
+    }
+
+    &_form {
+      width: 100%;
+      height:100%;
+      position: relative;
+
+      form {
+        height: 100%;
+      }
+      textarea {
+        border: 0;
+        width: 100%;
+        font-size: 20px;
+        resize: none;
+        outline: none;
+        height: 60%;
+      }
+
+      input[type="text"] {
+        border: 0;
+        width: 100%;
+        font-size: 20px;
+        resize: none;
+        outline: none;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      input[type="submit"] {
+        border: 2px solid #027ABB;
+        border-radius: 20px;
+        padding: 2px 48px;
+        font-size: 16px;
+        color: #027ABB;
+        position: absolute;
+        right: 12px;
+        bottom: 78px;
+      }
+
+      i.far.fa-images {
+        padding-top: 24px;
+        color: #027ABB;
+        font-size: 32px;
+      }
+    }
+
+
+
+    &_icon {
+      width: 12%;
+      margin-right: 24px;
+      img {
+        object-fit: cover;
+        width: 100%;
+        border-radius: 50%;
+      }
+    }
+    display: none;
+  }
+}

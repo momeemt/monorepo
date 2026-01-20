@@ -1,0 +1,31 @@
+h1 投稿一覧
+
+.user_index__content-wrapper--container--nav
+  = paginate @microposts
+  = page_entries_info @microposts
+
+table
+  tr
+    th ID
+    th ユーザーID
+    th 内容
+    - if than_operator
+      th
+  - @microposts.each do |micropost|
+    - if !micropost.content.blank?
+      - if micropost.content.length >= 50
+        - micropost.content = micropost.content.slice(0,49) + "..."
+    tr
+      td= micropost.id
+      td
+        - if than_admin
+          = link_to "@#{@users.find_by(id: micropost.user_id).user_id}", "/manage_users/#{@users.find_by(id: micropost.user_id).user_id}"
+        - else
+          = "@#{@users.find_by(id: micropost.user_id).user_id}"
+      td
+        - if than_operator
+          = link_to micropost.content, "/manage_bector/#{micropost.id}"
+        - else
+          = micropost.content
+      - if than_operator
+        td= link_to "削除", "/manage_bector/#{micropost.id}", method: :delete, data: {confirm: "投稿「#{micropost.content}」を削除します。よろしいですか？"}

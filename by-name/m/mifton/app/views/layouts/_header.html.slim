@@ -1,0 +1,458 @@
+.application_header
+  .application_header_wide
+    .application_header_naviList
+
+      .application_header_naviList_group
+        =link_to "/" do
+          i.fas.fa-home
+          = "Mifton"
+      .application_header_naviList_group
+        =link_to "/bector" do
+          i.fas.fa-users
+          = "Bector"
+      .application_header_naviList_group
+        =link_to "https://twitter.com/momeemt" do
+          i.fab.fa-twitter
+          = "開発者"
+      - if login?
+        - if !(current_user.authority.manage_pos == "general")
+          .application_header_naviList_group
+            =link_to "/manages" do
+              i.fas.fa-users-cog
+              = "管理者"
+
+          .application_header_naviList_group
+            =link_to "/crafes" do
+              i.fas.fa-chess
+              = "Crafes!"
+
+        .application_header_naviList_group
+          =link_to "/logout/#{type}", :method => "delete" do
+            i.fas.fa-door-open
+            = "ログオフ"
+        .application_header_naviList_group
+          =link_to "/users/edit" do
+            .application_header_naviList_group-image
+              - if current_user.icon.attached?
+                = image_tag current_user.icon
+              - else
+                = image_tag "/user_images/default_icon.png"
+      - else
+        .application_header_naviList_group
+          =link_to "/login/id" do
+            i.fas.fa-sign-in-alt
+            = "ログイン"
+        .application_header_naviList_group
+          =link_to "/signup" do
+            i.fas.fa-user-plus
+            = "登録"
+  .application_header_mobile
+    .application_header_logo
+      - if request.path.include?("bector")
+        =link_to "/bector" do
+          i.fas.fa-users
+          = "Bector"
+      - else
+        =link_to "/" do
+          i.fas.fa-home
+          = "Mifton"
+    .application_header_hamburger
+      input#application_header_hamburger_checkbox type="checkbox"
+      label.application_header_hamburger_openLabel for="application_header_hamburger_checkbox"
+        i.fas.fa-list
+      label.application_header_hamburger_closeLabel for="application_header_hamburger_checkbox"
+      .application_header_hamburger_content
+
+        label.application_header_hamburger_content_close for="application_header_hamburger_checkbox"
+          i.fas.fa-times
+        .application_header_naviList_group
+          =link_to "/" do
+            i.fas.fa-home
+            = "Mifton"
+        .application_header_naviList_group
+          =link_to "/bector" do
+            i.fas.fa-users
+            = "Bector"
+        .application_header_naviList_group
+          =link_to "https://twitter.com/momeemt" do
+            i.fab.fa-twitter
+            = "開発者"
+        - if login?
+          - if !(current_user.authority.manage_pos == "general")
+            .application_header_naviList_group
+              =link_to "/manages" do
+                i.fas.fa-users-cog
+                = "管理者"
+
+            .application_header_naviList_group
+              =link_to "/crafes" do
+                i.fas.fa-chess
+                = "Crafes!"
+
+          .application_header_naviList_group
+            =link_to "/logout/#{type}", :method => "delete" do
+              i.fas.fa-door-open
+              = "ログオフ"
+          .application_header_naviList_group
+            i.fas.fa-cog
+            =link_to "/users/edit" do
+              = "プロフィールを編集する"
+
+          - if request.path.include?("bector")
+            hr
+            .application_header_naviList_group
+              =link_to "/bector/global" do
+                i.fas.fa-globe-americas
+                = "グローバルタイムライン"
+            .application_header_naviList_group
+              =link_to "/bector/friends" do
+                i.fas.fa-user-friends
+                = "フレンドタイムライン"
+            .application_header_naviList_group
+              =link_to bector_index_url do
+                i.fas.fa-images
+                = "メディアタイムライン"
+            .application_header_naviList_group
+              =link_to bector_index_url do
+                i.fas.fa-envelope
+                = "ダイレクトメッセージ"
+            .application_header_naviList_group
+              =link_to bector_index_url do
+                i.fas.fa-list
+                = "ユーザーリスト"
+            .application_header_naviList_group
+              =link_to bector_index_url do
+                i.fas.fa-bookmark
+                = "ブックマーク"
+            .application_header_naviList_group
+              =link_to bector_index_url do
+                i.fas.fa-volume-mute
+                = "ミュートしたユーザー"
+            .application_header_naviList_group
+              =link_to bector_index_url do
+                i.fas.fa-ban
+                = "ブロックしたユーザー"
+
+          - elsif request.path.include?("manage")
+            hr
+            .application_header_naviList_group
+              =link_to manages_url do
+                i.fas.fa-solar-panel
+                = "ダッシュボード"
+            .application_header_naviList_group
+              =link_to manages_url do
+                i.fas.fa-chart-bar
+                = "統計情報"
+            .application_header_naviList_group
+              =link_to manage_users_url do
+                i.fas.fa-chart-bar
+                = "ユーザー管理"
+            - if than_admin
+              .application_header_naviList_group
+                =link_to new_manage_user_url do
+                  i.fas.fa-user-plus
+                  = "ユーザー作成"
+            .application_header_naviList_group
+              =link_to manage_bector_index_url do
+                i.fas.fa-comments
+                = "投稿一覧"
+            .application_header_naviList_group
+              =link_to manage_reports_url do
+                i.fas.fa-flag
+                = "通報一覧"
+            .application_header_naviList_group
+              =link_to manage_informations_url do
+                i.fas.fa-info-circle
+                = "通知一覧"
+            - if than_admin
+              .application_header_naviList_group
+                =link_to manage_informations_url do
+                  i.fas.fa-paper-plane
+                  = "通知作成"
+            .application_header_naviList_group
+              =link_to manage_contests_url do
+                i.fas.fa-crown
+                = "コンテスト一覧"
+            .application_header_naviList_group
+              =link_to manage_questions_url do
+                i.fas.fa-question
+                = "問題一覧"
+            - if than_admin
+              .application_header_naviList_group
+                =link_to new_manage_question_url do
+                  i.fas.fa-seedling
+                  = "問題作成"
+
+          - else
+            hr
+            .application_header_naviList_group
+              =link_to terms_url do
+                i.fas.fa-align-left
+                = "利用規約"
+            .application_header_naviList_group
+              =link_to terms_url do
+                i.fas.fa-user-secret
+                = "プライバシーポリシー"
+            .application_header_naviList_group
+              =link_to authority_url do
+                i.fas.fa-star
+                = "権限ユーザー"
+            .application_header_naviList_group
+              =link_to condition_url do
+                i.fas.fa-file-code
+                = "開発状況"
+            .application_header_naviList_group
+              =link_to "https://docs.google.com/forms/d/e/1FAIpQLSfKIT-A8AQRDSyQ4uiFzGDDu5-XAHv-CjB6calFzZs29mtabg/viewform" do
+                i.fas.fa-comment-dots
+                = "フィードバック"
+            .application_header_naviList_group
+              =link_to "https://twitter.com/momeemt" do
+                i.fas.fa-hashtag
+                = "開発者"
+            .application_header_naviList_group
+              =link_to help_url do
+                i.fas.fa-question-circle
+                = "ヘルプセンター"
+
+        - else
+          .application_header_naviList_group
+            =link_to "/login/id" do
+              i.fas.fa-sign-in-alt
+              = "ログイン"
+          .application_header_naviList_group
+            =link_to "/signup" do
+              i.fas.fa-user-plus
+              = "登録"
+
+/
+/
+/ .components_header
+/   .components_header_wide
+/     .components_header_wide_naviList
+/
+/       .components_header_wide_naviList_group
+/         =link_to "/" do
+/           i.fas.fa-home
+/           = "Mifton"
+/       .components_header_wide_naviList_group
+/         =link_to "/bector" do
+/           i.fas.fa-users
+/           = "Bector"
+/       .components_header_wide_naviList_group
+/         =link_to "https://twitter.com/momeemt" do
+/           i.fab.fa-twitter
+/           = "開発者"
+/       - if login?
+/         - if !(current_user.authority.manage_pos == "general")
+/           .components_header_wide_naviList_group
+/             =link_to "/manages" do
+/               i.fas.fa-users-cog
+/               = "管理者"
+/
+/           .components_header_wide_naviList_group
+/             =link_to "/crafes" do
+/               i.fas.fa-chess
+/               = "Crafes!"
+/
+/         .components_header_wide_naviList_group
+/           =link_to "/logout/#{type}", :method => "delete" do
+/             i.fas.fa-door-open
+/             = "ログオフ"
+/         .components_header_wide_naviList_group
+/           =link_to "/users/edit" do
+/             .application_header_naviList_group-image
+/               - if current_user.icon.attached?
+/                 = image_tag current_user.icon
+/               - else
+/                 = image_tag "/user_images/default_icon.png"
+/       - else
+/         .components_header_wide_naviList_group
+/           =link_to "/login/id" do
+/             i.fas.fa-sign-in-alt
+/             = "ログイン"
+/         .components_header_wide_naviList_group
+/           =link_to "/signup" do
+/             i.fas.fa-user-plus
+/             = "登録"
+/   .components_header_mobile
+/     .components_header_mobile_logo
+/       - if request.path.include?("bector")
+/         =link_to "/bector" do
+/           i.fas.fa-users
+/           = "Bector"
+/       - else
+/         =link_to "/" do
+/           i.fas.fa-home
+/           = "Mifton"
+/     .components_header_mobile_hamburger
+/       input#components_header_mobile_hamburger_checkbox type="checkbox"
+/       label.components_header_mobile_hamburger_openLabel for="components_header_mobile_hamburger_checkbox"
+/         i.fas.fa-list
+/       label.components_header_mobile_hamburger_closeLabel for="components_header_mobile_hamburger_checkbox"
+/       .components_header_mobile_hamburger_content
+/
+/         label.components_header_mobile_hamburger_content_close for="components_header_mobile_hamburger_checkbox"
+/           i.fas.fa-times
+/         .components_header_mobile_naviList_group
+/           =link_to "/" do
+/             i.fas.fa-home
+/             = "Mifton"
+/         .components_header_mobile_naviList_group
+/           =link_to "/bector" do
+/             i.fas.fa-users
+/             = "Bector"
+/         .components_header_mobile_naviList_group
+/           =link_to "https://twitter.com/momeemt" do
+/             i.fab.fa-twitter
+/             = "開発者"
+/         - if login?
+/           - if !(current_user.authority.manage_pos == "general")
+/             .components_header_mobile_naviList_group
+/               =link_to "/manages" do
+/                 i.fas.fa-users-cog
+/                 = "管理者"
+/
+/             .components_header_mobile_naviList_group
+/               =link_to "/crafes" do
+/                 i.fas.fa-chess
+/                 = "Crafes!"
+/
+/           .components_header_mobile_naviList_group
+/             =link_to "/logout/#{type}", :method => "delete" do
+/               i.fas.fa-door-open
+/               = "ログオフ"
+/           .components_header_mobile_naviList_group
+/             i.fas.fa-cog
+/             =link_to "/users/edit" do
+/               = "プロフィールを編集する"
+/
+/           - if request.path.include?("bector")
+/             hr
+/             .application_header_naviList_group
+/               =link_to "/bector/global" do
+/                 i.fas.fa-globe-americas
+/                 = "グローバルタイムライン"
+/             .application_header_naviList_group
+/               =link_to "/bector/friends" do
+/                 i.fas.fa-user-friends
+/                 = "フレンドタイムライン"
+/             .application_header_naviList_group
+/               =link_to bector_index_url do
+/                 i.fas.fa-images
+/                 = "メディアタイムライン"
+/             .application_header_naviList_group
+/               =link_to bector_index_url do
+/                 i.fas.fa-envelope
+/                 = "ダイレクトメッセージ"
+/             .application_header_naviList_group
+/               =link_to bector_index_url do
+/                 i.fas.fa-list
+/                 = "ユーザーリスト"
+/             .application_header_naviList_group
+/               =link_to bector_index_url do
+/                 i.fas.fa-bookmark
+/                 = "ブックマーク"
+/             .application_header_naviList_group
+/               =link_to bector_index_url do
+/                 i.fas.fa-volume-mute
+/                 = "ミュートしたユーザー"
+/             .application_header_naviList_group
+/               =link_to bector_index_url do
+/                 i.fas.fa-ban
+/                 = "ブロックしたユーザー"
+/
+/           - elsif request.path.include?("manage")
+/             hr
+/             .application_header_naviList_group
+/               =link_to manages_url do
+/                 i.fas.fa-solar-panel
+/                 = "ダッシュボード"
+/             .application_header_naviList_group
+/               =link_to manages_url do
+/                 i.fas.fa-chart-bar
+/                 = "統計情報"
+/             .application_header_naviList_group
+/               =link_to manage_users_url do
+/                 i.fas.fa-chart-bar
+/                 = "ユーザー管理"
+/             - if than_admin
+/               .application_header_naviList_group
+/                 =link_to new_manage_user_url do
+/                   i.fas.fa-user-plus
+/                   = "ユーザー作成"
+/             .application_header_naviList_group
+/               =link_to manage_bector_index_url do
+/                 i.fas.fa-comments
+/                 = "投稿一覧"
+/             .application_header_naviList_group
+/               =link_to manage_reports_url do
+/                 i.fas.fa-flag
+/                 = "通報一覧"
+/             .application_header_naviList_group
+/               =link_to manage_informations_url do
+/                 i.fas.fa-info-circle
+/                 = "通知一覧"
+/             - if than_admin
+/               .application_header_naviList_group
+/                 =link_to manage_informations_url do
+/                   i.fas.fa-paper-plane
+/                   = "通知作成"
+/             .application_header_naviList_group
+/               =link_to manage_contests_url do
+/                 i.fas.fa-crown
+/                 = "コンテスト一覧"
+/             - if than_admin
+/               .application_header_naviList_group
+/                 =link_to new_manage_contest_url do
+/                   i.fas.fa-meteor
+/                   = "コンテスト作成"
+/             .application_header_naviList_group
+/               =link_to manage_questions_url do
+/                 i.fas.fa-question
+/                 = "問題一覧"
+/             - if than_admin
+/               .application_header_naviList_group
+/                 =link_to new_manage_question_url do
+/                   i.fas.fa-seedling
+/                   = "問題作成"
+/
+/           - else
+/             hr
+/             .application_header_naviList_group
+/               =link_to terms_url do
+/                 i.fas.fa-align-left
+/                 = "利用規約"
+/             .application_header_naviList_group
+/               =link_to terms_url do
+/                 i.fas.fa-user-secret
+/                 = "プライバシーポリシー"
+/             .application_header_naviList_group
+/               =link_to authority_url do
+/                 i.fas.fa-star
+/                 = "権限ユーザー"
+/             .application_header_naviList_group
+/               =link_to condition_url do
+/                 i.fas.fa-file-code
+/                 = "開発状況"
+/             .application_header_naviList_group
+/               =link_to "https://docs.google.com/forms/d/e/1FAIpQLSfKIT-A8AQRDSyQ4uiFzGDDu5-XAHv-CjB6calFzZs29mtabg/viewform" do
+/                 i.fas.fa-comment-dots
+/                 = "フィードバック"
+/             .application_header_naviList_group
+/               =link_to "https://twitter.com/momeemt" do
+/                 i.fas.fa-hashtag
+/                 = "開発者"
+/             .application_header_naviList_group
+/               =link_to help_url do
+/                 i.fas.fa-question-circle
+/                 = "ヘルプセンター"
+/
+/         - else
+/           .application_header_naviList_group
+/             =link_to "/login/id" do
+/               i.fas.fa-sign-in-alt
+/               = "ログイン"
+/           .application_header_naviList_group
+/             =link_to "/signup" do
+/               i.fas.fa-user-plus
+/               = "登録"

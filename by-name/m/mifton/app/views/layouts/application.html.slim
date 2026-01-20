@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    title = full_title(yield(:title))
+    = render 'layouts/rails_default'
+    = render 'layouts/shim'
+    = favicon_link_tag('favicon.ico')
+    = favicon_link_tag('apple-touch-icon-180x180.png',
+                     {:rel => 'apple-touch-icon',
+                      :sizes => '180x180',
+                      :type => 'image/png'})
+  body.home
+    header = render "layouts/header", type:"home"
+    = yield

@@ -1,0 +1,26 @@
+/*
+name: userImages.scss
+description: ユーザーアイコン,ヘッダーのscss
+*/
+@media screen and (min-width:1024px) {
+  .components_userImages {
+    position: relative;
+    &_userIcon {
+      position: absolute;
+      top: 40px;
+      left: 16px;
+      img {
+        border-radius: 50%;
+        width: 60px;
+        display: block;
+        border: 2px white solid;
+      }
+    }
+    &_userHeader {
+      img {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+}

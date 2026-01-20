@@ -1,0 +1,37 @@
+/*
+name: layout/layout.scss
+descript: レイアウトを定義します
+*/
+
+
+@media screen and (min-width:1024px) {
+	// 1カラム
+	.layout {
+		display: flex;
+    justify-content: flex-start;
+    position:relative;
+		width: 100%;
+
+		&_1p4 {
+			width: 25%;
+		}
+
+		&_1p2 {
+      width: 50%;
+    }
+
+    &_3p4 {
+      width: 75%;
+    }
+
+    &_sticky {
+      position: sticky;
+      top: 0px;
+    }
+
+    &_100vh {
+      height: 100vh;
+    }
+
+	}
+}

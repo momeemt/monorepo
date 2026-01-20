@@ -1,0 +1,29 @@
+.layout
+  - if login?
+    - @user = current_user
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/crafesFunctionBar"
+
+    .layout_1p2.lay_b
+      section.crafes_noticeLine
+        - if @contests.present?
+          - mifton_user = User.find_by(user_id: "mifton")
+          - @contests.each do |contest|
+            hr
+            article
+              =image_tag mifton_user.icon
+              =link_to "#{contest.name}", "/crafes/contest/#{contest.id}"
+              .crafes_noticeLine_detail
+                p= "#{contest.name} が開催されます。"
+                p= "開催時刻: #{contest.start_datetime.strftime("%Y年%m月%d日%H時%M分より")}"
+                p= "コンテスト時間: #{contest.duration}分"
+                p= "レーティング変化: ~#{contest.rated_range}"
+        - else
+          .crafes_index_noContest
+            h1 Sorry!
+            p 現在はコンテストがありません！
+            p 開催されるまでもうしばらくお待ちください。
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

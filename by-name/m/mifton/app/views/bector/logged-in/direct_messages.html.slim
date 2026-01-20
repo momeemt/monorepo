@@ -1,0 +1,12 @@
+.layout
+  - if login?
+    = render "render_files/components/bectorModal"
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/bectorFunctionBar"
+
+    .layout_1p2.lay_b
+      p ダイレクトメッセージ
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

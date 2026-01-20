@@ -1,0 +1,12 @@
+.lay.manages
+  - if login?
+    .lay_1p4.lay_sticky.lay_100vh
+      - @user = current_user
+      = render "components/userInfo"
+
+    .lay_3p4
+      h1 Miftonから飛び立つ
+      p できればもう少し居て欲しいですが...
+
+      p アカウントを削除するには、パスワードを入力してください。
+      p 削除されたアカウントは永久に元に戻すことはできません。

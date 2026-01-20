@@ -1,0 +1,16 @@
+@media screen and (min-width:1024px) {
+  .crafes_flash {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: #ee827c;
+    height: 60px;
+    color: white;
+    font-size: 20px;
+
+    i {
+      padding-right: 16px;
+    }
+  }
+}

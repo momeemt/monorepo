@@ -1,0 +1,29 @@
+h1 問題作成
+hr
+= form_with scope: :questions, url: manage_questions_url , local: true do |f|
+  table
+    tbody
+      = f.hidden_field :writer, :value => current_user.user_id
+      tr
+        td タイトル
+        td= f.text_field :title
+      tr
+        td スコア
+        td= f.number_field :score
+      tr
+        td 問題文
+        td= f.text_area :content
+      tr
+        td 制約
+        td= f.text_area :constraints
+      tr
+        td 入力例
+        td= f.text_area :input_example
+      tr
+        td 出力例
+        td= f.text_area :output_example
+      tr
+        td 答え
+        td= f.text_area :answer
+
+  = f.submit '登録する', class: 'admins_new__content-wrapper--container--submit'

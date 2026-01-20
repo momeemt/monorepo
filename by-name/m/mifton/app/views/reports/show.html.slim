@@ -1,0 +1,51 @@
+.lay
+  - @user = current_user
+
+  .lay_1p4.lay_sticky.lay_100vh
+    = render "components/userInfo"
+
+  .lay_1p2
+    h1 報告
+    p この投稿の何が問題でしたか？最も適当なものを選んでください。
+    hr
+
+
+    .home_reportForm
+      = form_with scope: :report, url: "/reports/create", local: true do |f|
+        = f.hidden_field :reported_object_id, :value => @id
+        = f.hidden_field :reported_object_type, :value => @type
+        .group
+          = f.radio_button :report_reason, 1
+          = f.label :report_reason, "暴言を含む・公序良俗を満たさない"
+        .group
+          = f.radio_button :report_reason, 2
+          = f.label :report_reason, "有害なサイトへのリンクが含まれている"
+        .group
+          = f.radio_button :report_reason, 3
+          = f.label :report_reason, "デマの流布"
+        .group
+          = f.radio_button :report_reason, 4
+          = f.label :report_reason, "自殺・自傷行為の示唆"
+        .group
+          = f.radio_button :report_reason, 5
+          = f.label :report_reason, "個人情報を含んでいる"
+        .group
+          = f.radio_button :report_reason, 6
+          = f.label :report_reason, "法律に接触する発言"
+        .group
+          = f.radio_button :report_reason, 7
+          = f.label :report_reason, "人種・宗教・性別・性的嗜好などへの差別"
+        = f.submit "送信"
+
+  .lay_1p4.lay_sticky.lay_100vh
+    = render "components/search_form", type: "be", url: "/bector/search/", param: ":user_id"
+
+    section.be_menuTab
+      = render "components/menuTab", u: "/", f:"home", d: "ホーム"
+      = render "components/menuTab", u: bector_index_url, f:"cog", d: "ユーザー設定"
+      = render "components/menuTab", u: bector_index_url, f:"question-circle", d: "ヘルプ"
+      = render "components/menuTab", u: bector_index_url, f:"users", d: "Bector"
+      = render "components/menuTab", u: "/crafes", f:"chess", d: "Crafes!"
+      = render "components/menuTab", u: "https://twitter.com/momeemt", f:"hashtag", d: "開発者"
+      - if current_user.authority == "admin"
+        = render "components/menuTab", u: "/manages", f:"users-cog", d: "管理者"

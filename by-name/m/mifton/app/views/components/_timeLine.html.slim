@@ -1,0 +1,66 @@
+/ datas を使って共通化
+
+section.common_timeLine
+  - if datas.empty? && type == "home"
+    p あなたへの通知やユーザーの近況はないようです。
+    p おすすめユーザーやあなたの友人をもっとフォローしたり、友達をMiftonに誘ってみましょう！
+  - elsif type == "bector"
+    .post_list.jscroll
+      - datas.each do |data|
+        - user = User.find_by(id: data.user_id)
+
+        .common_timeLine_data
+          = link_to "","/bector/microposts/#{data.id}", class: "common_timeLine_data_link"
+          .common_timeLine_data_icon
+            =link_to "/bector/users/#{user.user_id}" do
+              - if user.icon.attached?
+                = image_tag user.icon
+              - else
+                = image_tag "/user_images/default_icon.png"
+          .common_timeLine_data_container
+            .common_timeLine_data_container_top
+              p.common_timeLine_data_container_top_name
+                = render "components/show_star_name", user: user
+              p.common_timeLine_data_container_top_id = "@#{user.user_id}"
+              p.common_timeLine_data_container_top_date = date_display(data.created_at)
+
+            .common_timeLine_data_container_content
+              p= simple_format(sanitize(markdown(data.content), tags: %w(h1 h2 h3 h4 h5 strong em a p), attributes: %w(href)).html_safe)
+
+              - if type == "bector"
+                - if data.tags.present?
+                  - data.tags.each do |tag|
+                    = link_to "##{tag.name} ", "/bector/tags/#{tag.name}"
+
+            - if type == "bector"
+              - if data.images.attached?
+                - data.images.each do |image|
+                  = image_tag image, class:"common_timeLine_data_container_img"
+
+              .app_reactionContainer
+
+                div id="heart_reaction_#{data.id}"
+                  = render "components/reaction",  type: "heart", faName: "heart", post: data, color: "pink", user: user
+                div id="good_reaction_#{data.id}"
+                  = render "components/reaction",  type: "good", faName: "thumbs-up", post: data, color: "blue", user: user
+                div id="cry_reaction_#{data.id}"
+                  = render "components/reaction",  type: "cry", faName: "sad-tear", post: data, color: "deepskyblue", user: user
+                div id="surprise_reaction_#{data.id}"
+                  = render "components/reaction",  type: "surprise", faName: "surprise", post: data, color: "darkorange", user: user
+                div id="angry_reaction_#{data.id}"
+                  = render "components/reaction",  type: "angry", faName: "angry", post: data, color: "red", user: user
+
+                = render "components/reportButton", data: data, type: type
+
+                - if data.user_id == current_user.id
+                  = form_with scope: :micropost, url: "/bector/destroy", local: true do |f|
+                    = f.hidden_field :post_id, :value => data.id
+                    = button_tag type: "submit", class: "common_timeLine_data_container_report", data: { confirm: "投稿を削除しますか？\n削除した投稿は運営が30日間確認することができますが、ユーザーは元に戻すことはできません。"} do
+                      i.far.fa-trash-alt
+
+            - elsif type == "home"
+              - if data.from_any_service == "bector"
+                p= simple_format(sanitize(markdown(Micropost.find(data.target_object).content), tags: %w(h1 h2 h3 h4 h5 strong em a p), attributes: %w(href)).html_safe)
+              - elsif data.from_any_service == "comment"
+                p= simple_format(sanitize(markdown(Comment.find(data.target_object).content), tags: %w(h1 h2 h3 h4 h5 strong em a p), attributes: %w(href)).html_safe)
+      = paginate datas

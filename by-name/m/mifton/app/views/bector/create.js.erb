@@ -1,0 +1,9 @@
+$(this).blur();
+$(".components_modalOverlay").fadeOut("slow");
+$(".components_micropostModal").fadeOut("slow");
+var windowWidth = window.innerWidth;
+if (windowWidth < 1024) {
+  $(".components_mobileDropButton").fadeIn("slow");
+}
+$("#micropost_content").val('');
+$("#common_timeline").html("<%= escape_javascript(render partial: 'bector/timeline', locals: { microposts: @microposts }) %>");

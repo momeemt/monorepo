@@ -1,0 +1,25 @@
+- if @user.authority.manage_pos == "admin"
+  = link_to "/authority" do
+    .common_userInfo_wrapper_authorityBadge.common_userInfo_wrapper_authorityAdmins
+      i.fas.fa-star
+      p 管理者
+- if @user.authority.manage_pos == "operator"
+  = link_to "/authority" do
+    .common_userInfo_wrapper_authorityBadge.common_userInfo_wrapper_authorityOperator
+      i.fas.fa-star
+      p 運営者
+- if @user.authority.manage_pos == "trust_user"
+  = link_to "/authority" do
+    .common_userInfo_wrapper_authorityBadge.common_userInfo_wrapper_authorityTrustUser
+      i.fas.fa-star
+      p トラストユーザー
+- if @user.authority.dev_pos == "developer"
+  = link_to "/authority" do
+    .common_userInfo_wrapper_authorityBadge.common_userInfo_wrapper_authorityDeveloper
+      i.fas.fa-star
+      p 開発者
+- if @user.authority.dev_pos == "contributor"
+  = link_to "/authority" do
+    .common_userInfo_wrapper_authorityBadge.common_userInfo_wrapper_authorityContributor
+      i.fas.fa-star
+      p 開発貢献者

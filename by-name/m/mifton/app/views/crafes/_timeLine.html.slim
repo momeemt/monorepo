@@ -1,0 +1,15 @@
+/ datas を使って共通化
+
+section.common_timeLine
+
+  - datas.each do |data|
+
+    .common_timeLine_data
+      .common_timeLine_data_container
+
+        .common_timeLine_data_container_content
+          p= "#{data.name} ##{data.times} 開催のお知らせ"
+          p= "#{data.name} ##{data.times} を開催します"
+          p= "開催時刻: #{data.start_datetime.strftime("%Y年%m月%d日%H時%M分より")}"
+          p= "コンテスト時間: #{data.duration}分"
+          p= "レーティング変化: ~#{data.rated_range}"
