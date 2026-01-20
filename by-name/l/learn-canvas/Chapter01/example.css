@@ -1,0 +1,8 @@
+#canvas {
+    margin: 10px;
+    padding: 10px;
+    background: #ffffff;
+    border: thin inset #aaaaaa;
+    width: 600px;
+    height: 300px;
+}

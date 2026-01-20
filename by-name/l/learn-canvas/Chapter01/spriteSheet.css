@@ -1,0 +1,19 @@
+body {
+    background: #dddddd;
+}
+
+#canvas {
+    position: absolute;
+    left: 0px;
+    top: 20px;
+    margin: 20px;
+    background: white;
+    border: thin inset rgba(100,150,230,0.5);
+    cursor: pointer;
+}
+
+#readout {
+    margin-top: 10px;
+    margin-left: 15px;
+    color: blue;
+}
