@@ -1,0 +1,5 @@
+.envrc
+.direnv
+node_modules
+
+.clasp.json
