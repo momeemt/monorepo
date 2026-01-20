@@ -1,0 +1,10 @@
+doctype html
+html
+  head
+    title = full_title(yield(:title))
+    = render 'layouts/rails_default'
+    = render 'layouts/shim'
+    = favicon_link_tag('favicon.ico')
+  body.session
+    header = render "layouts/header", type:"home"
+    main= yield

@@ -1,0 +1,83 @@
+.home, .manages {
+  //background-color: #F6F8FA;
+}
+
+
+@media screen and (min-width:1024px) {
+  .lay {
+
+    display: flex;
+    justify-content: flex-start;
+    position:relative;
+
+    padding: 1%;
+
+    &_1p4 {
+      width: 25%;
+    }
+
+    &_1p2 {
+      width: 50%;
+    }
+
+    &_3p4 {
+      width: 75%;
+    }
+
+    &_1p1 {
+      width: 100%;
+    }
+
+    &_sticky {
+      position: sticky;
+      top: 0px;
+    }
+
+    &_100vh {
+      height: 100vh;
+    }
+
+
+
+  }
+}
+
+@media screen and (max-width:1023px) and (min-width:426px) {
+
+  .lay {
+    display: flex;
+    flex-wrap: wrap;
+    &_a {
+      order: 1;
+      width: 50%;
+      position: static;
+    }
+
+    &_b {
+      order: 3;
+      width: 100vw;
+    }
+
+    &_c {
+      order: 2;
+      width: 50%;
+      position: static;
+    }
+  }
+}
+
+@media screen and (max-width:425px) {
+
+  .lay {
+    display: block;
+  }
+
+  &_a {
+    position: static;
+    width: 100%;
+  }
+
+  &_b {
+    width: 100%;
+  }
+}

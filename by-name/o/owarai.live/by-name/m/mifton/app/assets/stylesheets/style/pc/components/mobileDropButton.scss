@@ -1,0 +1,9 @@
+/*
+name: mobileDropButton.scss
+description: 投稿ボタンのscss
+*/
+@media screen and (min-width:1024px) {
+  .components_mobileDropButton {
+    display: none;
+  }
+}

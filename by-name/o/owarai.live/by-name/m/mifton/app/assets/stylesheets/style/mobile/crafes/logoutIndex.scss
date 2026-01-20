@@ -1,0 +1,63 @@
+@media screen and (max-width:425px) {
+
+  .crafes_index {
+    background-image: url("/crafes-top.jpg");
+    background-size: cover;
+    background-position:900px 0px;
+
+    color: white;
+
+    &_container {
+      &_descript {
+        text-align: center;
+        padding: 50px 20px 0;
+        h1 {
+
+        }
+
+        h2 {
+          font-size: 20px;
+          padding-top: 16px;
+        }
+
+        hr {
+          border: 0;
+          border-top: 2px white solid;
+          margin-top: 20px;
+        }
+      }
+      &_registerForm {
+
+        .components_registerForm {
+
+          background-color: rgba(0, 0, 0, 0);
+          //opacity: 0.3;
+          transition: 0.5s;
+          color: white;
+
+          hr {
+            border: 1px white solid;
+          }
+
+          &_container_descript {
+            a {
+              color: white;
+              text-decoration: underline;
+            }
+
+          }
+
+
+          &:hover {
+            opacity: 1.0;
+            transition: 0.5s;
+          }
+        }
+
+
+      }
+    }
+
+
+  }
+}

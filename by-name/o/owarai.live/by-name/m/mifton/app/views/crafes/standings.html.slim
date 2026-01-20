@@ -1,0 +1,35 @@
+.layout
+  - if login?
+    - @user = current_user
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/crafesFunctionBar"
+
+    .layout_1p2.lay_b
+      .crafes_showContest
+        h1 順位表
+
+        table
+          - i = 1
+          - @join_users.each do |juser|
+            - user = User.find(juser.user_id)
+            tr
+              th 順位
+              th ユーザー
+              th 得点
+              th A
+              th 解答時間
+              th B
+              th 解答時間
+              th C
+              th 解答時間
+              th D
+              th 解答時間
+            tr
+              td= i
+              td= user.name
+              td=
+              td= @contest_records.find_by(user_id: user.id).q1_score
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

@@ -1,0 +1,29 @@
+h1= @contest.name
+
+= form_with scope: :contest, url: "/manage_contests/publish/#{@contest.id}",  local: true do |f|
+  .crafes_newContest_form_group
+    = f.label :name, "コンテスト名"
+    = f.text_field :name, :value => @contest.name
+  .crafes_newContest_form_group
+    = f.label :times, "コンテスト開催回数(省略可)"
+    = f.number_field :times, :value => @contest.times
+  .crafes_newContest_form_group
+    = f.label :start_datetime, "開始時刻"
+    = f.datetime_field :start_datetime, :value => @contest.start_datetime && @contest.start_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+  .crafes_newContest_form_group
+    = f.label :duration, "大会時間(分)"
+    = f.number_field :duration, :value => @contest.duration
+  .crafes_newContest_form_group
+    = f.label :rated_range, "レート変動"
+    = f.number_field :rated_range, :value => @contest.rated_range
+  .crafes_newContest_form_group
+    = f.label :contest_type, "コンテストの種類"
+    = f.text_field :contest_type, list: "categories_list", :value => @contest.contest_type
+    datalist#categories_list
+      - @categories.each do |c|
+        option value="#{c}"
+  = f.submit "更新する"
+  = f.submit "更新し、一覧に戻る", name: "back"
+
+= button_to "コンテストを非公開する", manage_contests_destroy_url,
+  {params: { contest: { name: @contest.name, times: @contest.times, start_datetime: @contest.start_datetime, duration: @contest.duration, rated_range: @contest.rated_range, contest_type: @contest.contest_type } }}

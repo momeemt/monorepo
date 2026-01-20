@@ -1,0 +1,14 @@
+= render "/layouts/parts/menu_list", u: manages_url,                f:"solar-panel",     d: "ダッシュボード"
+= render "/layouts/parts/menu_list", u: manages_url,                f:"chart-bar",       d: "統計情報"
+= render "/layouts/parts/menu_list", u: manage_users_url,           f:"users",           d: "ユーザー管理"
+= render "/layouts/parts/menu_list", u: manage_bector_index_url,    f:"comments",        d: "投稿一覧"
+= render "/layouts/parts/menu_list", u: manage_reports_url,         f:"flag",            d: "通報一覧"
+= render "/layouts/parts/menu_list", u: manage_contests_url,        f:"crown",           d: "コンテスト一覧"
+- if than_operator
+  = render "/layouts/parts/menu_list", u: new_manage_contest_url,     f:"meteor",          d: "コンテスト作成"
+= render "/layouts/parts/menu_list", u: manage_questions_url,       f:"question",        d: "問題一覧"
+- if than_admin
+  = render "/layouts/parts/menu_list", u: new_manage_question_url,    f:"seedling",        d: "問題作成"
+= render "/layouts/parts/menu_list", u: "#",                        f:"database",        d: "データ管理"
+= render "/layouts/parts/menu_list", u: "#",                        f:"tasks",           d: "タスクリスト"
+= render "/layouts/parts/menu_list", u: "/",                        f:"chevron-left",    d: "Miftonに戻る"

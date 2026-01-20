@@ -1,0 +1,63 @@
+
+.users_new
+  .users_new_container
+    .users_new_container_catchCopy
+      h1 Miftonの世界に飛び込もう
+      p 全く新しいコミュニティ、ツール、有用な情報、それらを探し、自ら産み出そう
+
+    p.users_new_container_highlightText あなたのアカウントを作成しましょう
+
+    - if @user.errors.any?
+      .users_new_container_errorMessage
+        - @user.errors.full_messages.each do |message|
+          p= message
+
+    = form_with model: @user, url:"/signup" , local: true, class: "users_new_container_accountForm" do |f|
+      .users_new_container_accountForm_group
+        p
+          | ユーザーID
+          span  *
+        = f.text_field :user_id, class: "users_new_container_accountForm_group_userId"
+
+        .users_new_container_accountForm_group_descriptGroup
+          p これがあなたのユーザーIDになります。3文字以上、15文字以下で、英数字・ハイフンを使って構成してください。
+          p ただし、一文字目はアルファベットでなければなりません。
+
+      .users_new_container_accountForm_group
+        p
+          | メールアドレス
+          span  *
+        = f.text_field :email
+        .users_new_container_accountForm_group_descriptGroup
+          p メールが受信できるメールアドレスを入力してください。(受信設定で @mifton.xyz からのメールを許可してください)
+          p プライバシーポリシーの通り、Miftonの運営チームがユーザーの許可なくメールアドレス情報を公開することはありません。
+      .users_new_container_accountForm_group
+        p
+          | ユーザー名
+          span  *
+        = f.text_field :name
+        .users_new_container_accountForm_group_descriptGroup
+          p これは他のユーザーがあなたを見たときに表示されるニックネームです。1文字以上、15文字以下で入力してください。
+      .users_new_container_accountForm_group
+        p
+          | パスワード
+          span  *
+        = f.password_field :password
+        .users_new_container_accountForm_group_descriptGroup
+          p 少なくとも5文字以上、20文字以内で、アルファベット・数字を含むパスワードを入力してください。
+      .users_new_container_accountForm_group
+        p
+          | パスワードの確認
+          span  *
+        = f.password_field :password_confirmation
+
+      .users_new_container_accountForm_submitGroup#users_new_submit
+        .app_recaptcha
+          = recaptcha_tags
+        p 下の[登録する]をクリックすると、
+        = link_to "利用規約", terms_url, :target => :_blank
+        = "と"
+        = link_to "プライバシーポリシー", policy_url, :target => :_blank
+        = "に同意したことになります。"
+        p クリックする前に必ずお読みください！
+        = f.submit "登録する"

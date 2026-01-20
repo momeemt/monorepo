@@ -1,0 +1,12 @@
+.lay
+  - @user = current_user
+
+  .lay_1p4.lay_sticky.lay_a
+    = render "components/userInfo"
+
+  .lay_1p2.lay_b
+    = render "home/components/feed", datas: @notifications, type: "home"
+
+  .lay_1p4.lay_sticky.lay_c
+
+    = render "home/components/sidemenu"

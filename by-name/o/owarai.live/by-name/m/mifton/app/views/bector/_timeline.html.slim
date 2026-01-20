@@ -1,0 +1,50 @@
+- microposts.each do |post|
+  - user = User.find_by(id: post.user_id)
+
+
+  .common_timeLine_data
+    /= link_to "","/bector/microposts/#{post.id}", class: "common_timeLine_data_link"
+    .common_timeLine_data_icon
+      =link_to "/bector/users/#{user.user_id}" do
+        - if user.icon.attached?
+          = image_tag user.icon
+        - else
+          = image_tag "/user_images/default_icon.png"
+    .common_timeLine_data_container
+      .common_timeLine_data_container_top
+        p.common_timeLine_data_container_top_name
+          = render "components/show_star_name", user: user
+        p.common_timeLine_data_container_top_id = "@#{user.user_id}"
+        p.common_timeLine_data_container_top_date = date_display(post.created_at)
+
+      .common_timeLine_data_container_content
+        p= simple_format(sanitize(markdown(post.content), tags: %w(h1 h2 h3 h4 h5 strong em a p), attributes: %w(href)).html_safe)
+
+        - if post.tags.present?
+          - post.tags.each do |tag|
+            = link_to "##{tag.name} ", "/bector/tags/#{tag.name}"
+
+        - if post.images.attached?
+          - post.images.each do |image|
+            = image_tag image, class:"common_timeLine_data_container_img"
+
+        .app_reactionContainer
+
+          div id="heart_reaction_#{post.id}"
+            = render "components/reaction",  type: "heart", faName: "heart", post: post, color: "pink", user: user
+          div id="good_reaction_#{post.id}"
+            = render "components/reaction",  type: "good", faName: "thumbs-up", post: post, color: "blue", user: user
+          div id="cry_reaction_#{post.id}"
+            = render "components/reaction",  type: "cry", faName: "sad-tear", post: post, color: "deepskyblue", user: user
+          div id="surprise_reaction_#{post.id}"
+            = render "components/reaction",  type: "surprise", faName: "surprise", post: post, color: "darkorange", user: user
+          div id="angry_reaction_#{post.id}"
+            = render "components/reaction",  type: "angry", faName: "angry", post: post, color: "red", user: user
+
+          = render "components/reportButton", data: post, type: "bector"
+
+          - if post.user_id == current_user.id
+            = form_with scope: :micropost, url: "/bector/destroy", local: true do |f|
+              = f.hidden_field :post_id, :value => post.id
+              = button_tag type: "submit", class: "common_timeLine_data_container_report", data: { confirm: "投稿を削除しますか？\n削除した投稿は運営が30日間確認することができますが、ユーザーは元に戻すことはできません。"} do
+                i.far.fa-trash-alt

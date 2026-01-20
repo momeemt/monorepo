@@ -1,0 +1,27 @@
+PATH
+  remote: .
+  specs:
+    ammonite (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    mini_portile2 (2.4.0)
+    minitest (5.14.2)
+    nokogiri (1.10.10)
+      mini_portile2 (~> 2.4.0)
+    rake (12.3.3)
+    rmagick (4.1.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  ammonite!
+  minitest (~> 5.0)
+  nokogiri (~> 1.10.10)
+  rake (~> 12.0)
+  rmagick (~> 4.1.2)
+
+BUNDLED WITH
+   2.1.4

@@ -1,0 +1,5 @@
+$("#heart_reaction_<%= @post_id %>").html("<%= escape_javascript(render partial: 'components/reaction', locals: { type: 'heart', faName: 'heart', post: Micropost.find(@post_id), color: 'pink' }) %>");
+$("#good_reaction_<%= @post_id %>").html("<%= escape_javascript(render partial: 'components/reaction', locals: { type: 'good', faName: 'thumbs-up', post: Micropost.find(@post_id), color: 'blue' }) %>");
+$("#cry_reaction_<%= @post_id %>").html("<%= escape_javascript(render partial: 'components/reaction', locals: { type: 'cry', faName: 'sad-tear', post: Micropost.find(@post_id), color: 'deepskyblue' }) %>");
+$("#surprise_reaction_<%= @post_id %>").html("<%= escape_javascript(render partial: 'components/reaction', locals: { type: 'surprise', faName: 'surprise', post: Micropost.find(@post_id), color: 'darkorange' }) %>");
+$("#angry_reaction_<%= @post_id %>").html("<%= escape_javascript(render partial: 'components/reaction', locals: { type: 'angry', faName: 'angry', post: Micropost.find(@post_id), color: 'red' }) %>");

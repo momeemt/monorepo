@@ -1,0 +1,6 @@
+- unless data.user_id == current_user.id
+  = form_with scope: :report, url: "/reports", local: true do |f|
+    = f.hidden_field :type, :value => type
+    = f.hidden_field :post_id, :value => data.id
+    = button_tag type: "submit", class: "common_timeLine_data_container_report" do
+      i.far.fa-flag

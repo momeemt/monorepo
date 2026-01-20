@@ -1,0 +1,52 @@
+@media screen and (min-width:1024px) {
+  .managesQuestion_index {
+    padding: 3vh 3vw;
+
+    &_contestsTable {
+      &_head {
+        font-size: 24px;
+      }
+
+      &_noneContest {
+        margin-top: 28px;
+      }
+
+    }
+
+    &_draftContestsTable {
+      margin-top: 32px;
+      &_head {
+        font-size: 24px;
+      }
+
+      &_noneContest {
+        margin-top: 28px;
+      }
+    }
+
+    table {
+      margin-top: 28px;
+      border-collapse: collapse;
+      border-spacing: 0;
+
+      th {
+        background-color: #F08301;
+        color: white;
+        padding: 4px;
+      }
+
+      td {
+        padding: 12px;
+      }
+
+      a {
+        color: blue;
+
+        &:visited {
+          color: blue;
+        }
+      }
+      background-color: white;
+    }
+  }
+}

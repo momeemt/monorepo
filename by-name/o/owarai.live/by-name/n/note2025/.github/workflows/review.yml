@@ -1,0 +1,18 @@
+name: Note Review
+on:
+  schedule:
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: momeemt/senpai/actions/senpai@main
+        with:
+          gemini_api_key: ${{ secrets.AI_STUDIO_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

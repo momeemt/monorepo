@@ -1,0 +1,21 @@
+.home-top {
+
+  &_welcomeWrapper {
+    height: 100vh;
+    width: 100vw;
+    background: url("/sunset.png") no-repeat;
+    background-size: cover;
+
+    &_head {
+      color: white;
+      font-size: 45px;
+    }
+  }
+
+  &_aboutWrapper {
+    height: 100vh;
+    width: 100vw;
+    background: url("/iceland.png") no-repeat;
+    background-size: cover;
+  }
+}

@@ -1,0 +1,59 @@
+
+
+@media screen and (max-width:1023px) and (min-width:426px) {
+  .bector {
+    background-color: #eaf4fc;
+
+    .mobile-functionbar {
+      display: none;
+    }
+
+    .application_header {
+
+      background: linear-gradient(to right, #182848, #4b6cb7);
+      height: 50px;
+      color: white;
+
+      &_mobile {
+        display: none;
+      }
+
+      &_naviList {
+        display: flex;
+
+        i {
+          padding-right: 1vw;
+        }
+
+        height: 100%;
+        &_group {
+          margin: 0 auto;
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          line-height: 50px;
+
+          &-image {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+        a {
+          color: white;
+          height: 50px;
+          display: block;
+          font-size: 1.4vw;
+        }
+        img {
+          display: block;
+          height: 80%;
+          border-radius: 50%;
+          margin: auto 0;
+          line-height: 50px;
+        }
+      }
+    }
+  }
+}

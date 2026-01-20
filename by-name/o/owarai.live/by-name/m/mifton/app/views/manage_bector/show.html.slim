@@ -1,0 +1,21 @@
+h1 投稿の詳細
+
+= form_with scope: :micropost, url: "/manage_bector/#{@micropost.id}" , local: true do |f|
+  table
+    tbody
+      tr
+        td= f.label :user_id, 'ID'
+        td
+          = "@"
+          = @users.find_by(id: @micropost.user_id).user_id
+      tr
+        td= f.label :content, "内容"
+        td= f.text_area :content, value: @micropost.content
+      tr
+        td 登録日時
+        td= f.datetime_select :created_at, value: @micropost.created_at
+      tr
+        td 最終更新日時
+        td= @micropost.updated_at.strftime("%Y年%m月%d日 %H時%M分")
+
+  = f.submit '更新する', class: 'admins_new__content-wrapper--container--submit'

@@ -1,0 +1,56 @@
+.layout
+  - if login?
+    - @user = current_user
+    .layout_1p4.lay_sticky.lay_a.lay_100vh
+      = render "render_files/components/crafesFunctionBar"
+
+    .layout_1p2.lay_b
+      - if flash[:error]
+        .crafes_flash
+          i.fas.fa-exclamation-triangle
+          p= flash[:error]
+      .crafes_newContest
+        h1 問題を作成する
+        hr
+        p 問題を作成する際の注意
+        p
+          | 詳しい内容は
+          = link_to "ガイドライン", "/crafes/contests/guideline"
+          | をご覧ください
+        ul
+          li 作成しても、管理者の認可によるまで公開されません。
+          li 不当にたくさんの問題を作成することは星の剥奪対象です。
+        hr
+        = form_with scope: :question, url: crafes_questions_url, class: "crafes_newContest_form",  local: true do |f|
+          .crafes_newContest_form_group
+            = f.label :title, "問題名"
+            = f.text_field :title
+          .crafes_newContest_form_group
+            = f.label :writer, "作問者"
+            = f.text_field :writer
+          .crafes_newContest_form_group
+            = f.label :score, "得点"
+            = f.number_field :score
+          .crafes_newContest_form_group
+            = f.label :content, "問題文"
+            = f.text_area :content
+          .crafes_newContest_form_group
+            = f.label :constraints, "制約"
+            = f.text_area :constraints
+          .crafes_newContest_form_group
+            = f.label :input_example, "入力例"
+            = f.text_area :input_example
+          .crafes_newContest_form_group
+            = f.label :output_example, "出力例"
+            = f.text_area :output_example
+          .crafes_newContest_form_group
+            = f.label :answer, "解答"
+            = f.text_area :answer
+          .crafes_newContest_form_group
+            = f.label :contest_id, "コンテスト"
+            = f.select :contest_id, @contests_list
+          = f.submit "作成する"
+
+
+    .layout_1p4.lay_sticky.lay_c.lay_100vh
+      = render "render_files/components/bectorInfo"

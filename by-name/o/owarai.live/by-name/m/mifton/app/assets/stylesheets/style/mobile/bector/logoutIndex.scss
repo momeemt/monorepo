@@ -1,0 +1,63 @@
+@media screen and (max-width:425px) {
+
+  .bector_logoutIndex {
+    background-image: url("/bector-top.jpg");
+    background-size: cover;
+
+    color: white;
+
+    &_registerForm {
+
+      .components_registerForm {
+
+        background-color: rgba(0, 0, 0, 0);
+        //opacity: 0.3;
+        transition: 0.5s;
+        color: white;
+
+        hr {
+          border: 1px white solid;
+        }
+
+        &_container_descript {
+          a {
+            color: white;
+            text-decoration: underline;
+          }
+
+        }
+
+
+        &:hover {
+          opacity: 1.0;
+          transition: 0.5s;
+        }
+      }
+
+
+    }
+
+    &_about {
+			text-align: center;
+			padding-top: 40px;
+      h1 {
+        font-size: 28px;
+      }
+
+			hr {
+				border: 0;
+				border-top: 2px white solid;
+				width: 100%;
+				margin: 20px auto 0;
+			}
+
+      &_loginSection {
+        margin-top: 20px;
+
+        p {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

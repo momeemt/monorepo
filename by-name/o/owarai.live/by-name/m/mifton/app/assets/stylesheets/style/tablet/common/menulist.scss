@@ -1,0 +1,28 @@
+@media screen and (max-width:1023px) and (min-width:426px) {
+  .common {
+    &_sidemenu {
+      display: block;
+      width: 90%;
+      height: 80vw;
+      background-color: white;
+      margin: 10px auto;
+
+      p {
+        font-size: 2vw;
+        color: #007bbb;
+        padding: 1.5vw 2vw 0;
+      }
+
+      i {
+        font-size: 2vw;
+        width: 10%;
+        padding-right: 0.5vw;
+      }
+
+      hr {
+        border: 2px dotted #007bbb;
+        margin: 10px auto 0;
+      }
+    }
+  }
+}

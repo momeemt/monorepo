@@ -1,0 +1,16 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/.vs
+/obj/x86/Debug
+/out/build/x64-Debug
+/prototype/kuro1215/MovieEdit/obj
+/prototype/kuro1215/MovieEdit/bin/Debug/netcoreapp3.1
+/prototype/kuro1215/MovieEdit/.vs/MovieEdit/v16
+/prototype/kuro1215/MECommandReciver
+/prototype/kuro1215/MovieEdit/.vs/MovieEdit/DesignTimeBuild
+/prototype/kuro1215/MovieEditCommander
+/prototype/kuro1215/MovieEdit/.vs/MovieEdit/config
+/prototype/kuro1215/MovieEdit/Block
+/prototype/kuro1215/MovieEdit/debug

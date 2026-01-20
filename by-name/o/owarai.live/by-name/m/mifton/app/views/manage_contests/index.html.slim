@@ -1,0 +1,46 @@
+.managesContest_index
+  .managesContest_index_contestsTable
+    p.managesContest_index_contestsTable_head 公開中のコンテスト
+
+    - if @contests.present?
+      table
+        tr
+          th コンテスト名
+          th 開催時刻
+        - @contests.each do |c|
+          tr
+            - if c.times.present?
+              td= link_to "#{c.name} ##{c.times}", "/manage_contests/publish/#{c.id}"
+            - else
+              td= link_to c.name, "/manage_contests/draft/#{c.id}"
+
+            - if c.start_datetime.present?
+              td= c.start_datetime.strftime("%Y年%m月%d日%H時%M分")
+            - else
+              td 未設定
+
+    - else
+      p.managesContest_index_contestsTable_noneContest 公開中のコンテストはありません
+
+  .managesContest_index_draftContestsTable
+    p.managesContest_index_draftContestsTable_head 非公開のコンテスト
+
+    - if @draft_contests.present?
+      table
+        tr
+          th コンテスト名
+          th 開催時刻
+        - @draft_contests.each do |c|
+          tr
+            - if c.times.present?
+              td= link_to "#{c.name} ##{c.times}", "/manage_contests/draft/#{c.id}"
+            - else
+              td= link_to c.name, "/manage_contests/draft/#{c.id}"
+
+            - if c.start_datetime.present?
+              td= c.start_datetime.strftime("%Y年%m月%d日%H時%M分")
+            - else
+              td 未設定
+
+    - else
+      p.managesContest_index_contestsTable_noneContest 非公開中のコンテストはありません
