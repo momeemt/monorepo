@@ -1,0 +1,64 @@
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pre-commit-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = {flake-parts, ...} @ inputs:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      imports = with inputs; [
+        treefmt-nix.flakeModule
+        pre-commit-hooks-nix.flakeModule
+      ];
+
+      systems = import inputs.systems;
+
+      perSystem = {
+        config,
+        self',
+        inputs',
+        pkgs,
+        system,
+        ...
+      }: {
+        devShells.default = pkgs.mkShell {
+          inputsFrom = [
+            config.treefmt.build.devShell
+            config.pre-commit.devShell
+          ];
+          buildInputs = with pkgs; [
+            typst
+            typstfmt
+            typst-live
+          ];
+        };
+
+        treefmt = {
+          projectRootFile = "flake.nix";
+          programs = {
+            alejandra.enable = true;
+            mdformat.enable = true;
+            typstfmt.enable = true;
+          };
+        };
+
+        pre-commit = {
+          check.enable = true;
+          settings = {
+            hooks = {
+              treefmt.enable = true;
+            };
+          };
+        };
+      };
+    };
+}
