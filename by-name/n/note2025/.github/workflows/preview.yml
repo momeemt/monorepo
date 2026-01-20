@@ -1,0 +1,27 @@
+name: Preview
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+concurrency: preview-${{ github.ref }}
+
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - run: nix build .
+      - name: Deploy PR preview
+        if: github.event.action != 'closed'
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./result/book
+
