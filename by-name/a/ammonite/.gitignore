@@ -1,0 +1,8 @@
+
+*.ppm
+
+bin/
+
+ammonite-0.1.0.gem
+
+*.png
