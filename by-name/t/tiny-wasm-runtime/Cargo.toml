@@ -1,0 +1,18 @@
+[package]
+name = "runw"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.82"
+nom = "7.1.3"
+nom-leb128 = "0.2.0"
+num-derive = "0.4.2"
+num-traits = "0.2.18"
+
+[dev-dependencies]
+wat = "=1.0.67"
+pretty_assertions = "1.4.0"
+
