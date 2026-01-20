@@ -1,0 +1,4 @@
+(library
+ (name sanitizer)
+ (public_name wascaml.sanitizer)
+ (modules sanitizer))

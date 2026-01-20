@@ -1,0 +1,5 @@
+(executable
+ (name bin)
+ (public_name wascaml.bin)
+ (modules bin)
+ (libraries wascaml.compiler wascaml.sanitizer wascaml.runtime))

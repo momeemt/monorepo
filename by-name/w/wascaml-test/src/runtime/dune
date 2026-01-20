@@ -1,0 +1,4 @@
+(library
+ (name runtime)
+ (public_name wascaml.runtime)
+ (modules wat))

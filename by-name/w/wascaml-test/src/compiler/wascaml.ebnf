@@ -1,0 +1,22 @@
+expr       ::= let_expr | if_expr | fun_expr | match_expr | equal_expr
+
+let_expr   ::= "let" identifier "=" expr "in" expr
+if_expr    ::= "if" expr "then" expr "else" expr
+fun_expr   ::= "fun" identifier "->" expr
+match_expr ::= "match" expr "with" match_case_list
+match_case_list ::= match_case | match_case_list "|" match_case
+match_case ::= expr "->" expr
+
+equal_expr ::= add_sub_expr | equal_expr "=" add_sub_expr | equal_expr "<>" add_sub_expr
+
+add_sub_expr ::= mul_div_expr | add_sub_expr "+" mul_div_expr | add_sub_expr "-" mul_div_expr
+
+mul_div_expr ::= primary_expr | mul_div_expr "*" primary_expr | mul_div_expr "/" primary_expr
+
+primary_expr ::= int | float | string | bool | identifier | "(" expr ")" | app_expr
+
+app_expr   ::= identifier "(" expr_list ")"
+expr_list  ::= expr | expr_list "," expr
+
+pattern    ::= identifier | int | float | string | bool
+

@@ -1,0 +1,3 @@
+(tests
+ (names wascaml test_tokenizer)
+ (libraries alcotest wascaml.compiler))
