@@ -1,0 +1,43 @@
+name: Senpai
+description: senpai workflow
+inputs:
+  gemini_api_key:
+    description: Google AI Studio key
+    required: true
+  github_token:
+    description: GitHub token for gh CLI
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Resolve latest tag
+      id: tag
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github_token || github.token }}
+      run: |
+        tag=$(gh release list \
+                --repo "momeemt/senpai" \
+                --limit 1 \
+                --json tagName \
+                --jq '.[0].tagName')
+        if [[ -z "$tag" ]]; then
+          echo "No release found in momeemt/senpai"; exit 1
+        fi
+        echo "tag=$tag" >>"$GITHUB_OUTPUT"
+
+    - name: Download latest senpai binary
+      shell: bash
+      run: |
+        curl -sSL \
+          "https://github.com/momeemt/senpai/releases/download/${{ steps.tag.outputs.tag }}/senpai" \
+          -o senpai
+        chmod +x senpai
+
+    - name: Run senpai
+      shell: bash
+      env:
+        GEMINI_API_KEY: ${{ inputs.gemini_api_key }}
+        GH_TOKEN:  ${{ inputs.github_token || github.token }}
+      run: ./senpai
+
