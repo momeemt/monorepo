@@ -1,0 +1,246 @@
+{
+  "main": {
+    "id": "4f7a76656bf5ad7c",
+    "type": "split",
+    "children": [
+      {
+        "id": "65f7ba0b74dfab2b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "76e9ebdf9fa520c5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "directed-path.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "directed-path"
+            }
+          },
+          {
+            "id": "94848748ce4ae572",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "string.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "string"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "de24a31277cf5dbb",
+    "type": "split",
+    "children": [
+      {
+        "id": "2b40b6294345cd8b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "400622203df1da45",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "byModifiedTime",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "ファイルエクスプローラ"
+            }
+          },
+          {
+            "id": "415aa9392ebcbe44",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "検索"
+            }
+          },
+          {
+            "id": "9531fac8eef325aa",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "ブックマーク"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "153145b25ca9db8d",
+    "type": "split",
+    "children": [
+      {
+        "id": "e42b9195daf9d306",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1d2bfba9ed81f97c",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "読書メモ/計算理論の基礎 1. オートマトンと言語.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "計算理論の基礎 1. オートマトンと言語へのバックリンク"
+            }
+          },
+          {
+            "id": "6e5bd048b5f36c38",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "読書メモ/計算理論の基礎 1. オートマトンと言語.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "計算理論の基礎 1. オートマトンと言語からのアウトゴーイングリンク"
+            }
+          },
+          {
+            "id": "8ea890f398d85fad",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "タグ"
+            }
+          },
+          {
+            "id": "a32ad3f1f99fd036",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "すべてのプロパティ"
+            }
+          },
+          {
+            "id": "f0ca2e931f45d1c7",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "読書メモ/計算理論の基礎 1. オートマトンと言語.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "計算理論の基礎 1. オートマトンと言語のアウトライン"
+            }
+          },
+          {
+            "id": "4133b288578efd4c",
+            "type": "leaf",
+            "state": {
+              "type": "footnotes",
+              "state": {
+                "file": "未整理/オートマトン.md"
+              },
+              "icon": "lucide-file-signature",
+              "title": "脚注"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:クイックスイッチャーを開く": false,
+      "graph:グラフビューを開く": false,
+      "templates:テンプレートを挿入": false,
+      "command-palette:コマンドパレットを開く": false,
+      "random-note:ランダムノートを開く": false
+    }
+  },
+  "active": "94848748ce4ae572",
+  "lastOpenFiles": [
+    "symbol.md",
+    "alphabet.md",
+    "strongly-connected.md",
+    "directed-path.md",
+    "directed-graph.md",
+    "outdegree.md",
+    "leaf.md",
+    "indegree.md",
+    "root.md",
+    "tree.md",
+    "simple-cycle.md",
+    "cycle.md",
+    "connected.md",
+    "simple-path.md",
+    "path.md",
+    "subgraph.md",
+    "undirected-graph.md",
+    "self-loop.md",
+    "degree.md",
+    "edge.md",
+    "node.md",
+    "equivalence-relation.md",
+    "symmetric.md",
+    "reflexive.md",
+    "transitive.md",
+    "binary-relation.md",
+    "devShell.nix",
+    "package.nix",
+    "templates",
+    "無題のファイル.canvas",
+    "無題のファイル.base",
+    "未整理"
+  ]
+}

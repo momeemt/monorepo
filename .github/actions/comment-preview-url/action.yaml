@@ -1,0 +1,34 @@
+---
+name: "Comment preview URL"
+description: "Create or update a pull request comment with a deployment preview URL."
+inputs:
+  preview-name:
+    description: "Human-readable preview name shown in the comment and used to derive the marker."
+    required: true
+  deployment-url:
+    description: "Deployment preview URL."
+    required: true
+  deploy-branch:
+    description: "Branch name deployed to the preview."
+    required: true
+  github-token:
+    description: "GitHub token used by gh api."
+    required: true
+  pr-number:
+    description: "Pull request number to comment on."
+    required: true
+  commit-sha:
+    description: "Commit SHA shown in the comment."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        COMMIT_SHA: ${{ inputs.commit-sha }}
+        DEPLOY_BRANCH: ${{ inputs.deploy-branch }}
+        DEPLOYMENT_URL: ${{ inputs.deployment-url }}
+        GH_TOKEN: ${{ inputs.github-token }}
+        PREVIEW_NAME: ${{ inputs.preview-name }}
+        PR_NUMBER: ${{ inputs.pr-number }}
+      run: bash "${GITHUB_ACTION_PATH}/comment-preview-url.sh"

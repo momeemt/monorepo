@@ -1,0 +1,4 @@
+.envrc
+.direnv
+.pre-commit-config.yaml
+.claude/settings.local.json

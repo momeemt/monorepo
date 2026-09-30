@@ -1,0 +1,38 @@
+---
+name: "Deploy Cloudflare Pages"
+description: "Deploy a static directory to Cloudflare Pages and expose the preview URL."
+inputs:
+  directory:
+    description: "Static directory to deploy."
+    required: true
+  project-name:
+    description: "Cloudflare Pages project name."
+    required: true
+  domain:
+    description: "Custom domain used to find the deployment URL."
+    required: true
+  cloudflare-account-id:
+    description: "Cloudflare account ID."
+    required: true
+  cloudflare-api-token:
+    description: "Cloudflare API token."
+    required: true
+outputs:
+  deploy_branch:
+    description: "Branch name deployed to Cloudflare Pages."
+    value: ${{ steps.deploy.outputs.deploy_branch }}
+  deployment_url:
+    description: "Cloudflare Pages deployment URL."
+    value: ${{ steps.deploy.outputs.deployment_url }}
+runs:
+  using: "composite"
+  steps:
+    - id: deploy
+      shell: bash
+      env:
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.cloudflare-account-id }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.cloudflare-api-token }}
+        PAGES_DIRECTORY: ${{ inputs.directory }}
+        PAGES_DOMAIN: ${{ inputs.domain }}
+        PAGES_PROJECT_NAME: ${{ inputs.project-name }}
+      run: bash "${GITHUB_ACTION_PATH}/deploy-cloudflare-pages.sh"

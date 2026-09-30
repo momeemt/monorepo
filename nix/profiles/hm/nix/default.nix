@@ -10,6 +10,11 @@
         experimental-features = [
           "nix-command"
           "flakes"
+          "pipe-operators"
+        ];
+        trusted-users = [
+          "root"
+          "@wheel"
         ];
         extra-substituters = [
           "https://cache.numtide.com"

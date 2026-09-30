@@ -1,11 +1,21 @@
 _: {
-  perSystem = {pkgs, ...}: {
+  perSystem = {
+    pkgs,
+    lib,
+    ...
+  }: {
     treefmt = {
       package = pkgs.treefmt;
       enableDefaultExcludes = true;
       flakeCheck = true;
       flakeFormatter = true;
       projectRootFile = "flake.nix";
+      settings.formatter.dockerfmt.options = lib.mkForce [
+        "-w"
+        "-n"
+        "-i"
+        "4"
+      ];
 
       programs = {
         # GitHub Actions
@@ -53,6 +63,9 @@ _: {
               mdformat-gfm
               mdformat-gfm-alerts
             ];
+          excludes = [
+            "packages/o/obsidian/**"
+          ];
           settings = {
             end-of-line = "lf";
             number = true;
@@ -179,6 +192,9 @@ _: {
           enable = true;
           package = pkgs.autocorrect;
           threads = 0; # auto
+          excludes = [
+            "packages/o/obsidian/**"
+          ];
           settings = {
             context = {
               codeblock = "error";

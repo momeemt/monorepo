@@ -1,0 +1,112 @@
+---
+name: "Deploy Blog"
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - ".github/workflows/blog.yaml"
+      - "nix/flakes/default.nix"
+      - "nix/flakes/packages.nix"
+      - "packages/b/blog/**"
+  pull_request:
+    branches:
+      - '**'
+    paths:
+      - ".github/workflows/blog.yaml"
+      - "nix/flakes/default.nix"
+      - "nix/flakes/packages.nix"
+      - "packages/b/blog/**"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+concurrency:
+  group: blog-pages-${{ github.ref }}
+  cancel-in-progress: true
+env:
+  BLOG_PAGES_PROJECT_NAME: blog-momee-mt-2026
+  BLOG_PRODUCTION_BRANCH: develop
+  BLOG_PRODUCTION_SITE: https://blog.momee.mt
+jobs:
+  deploy:
+    if: >-
+      github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+      - name: Setup Attic cache
+        if: >-
+          github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ryanccn/attic-action@5635a15ef0c5462194ffbd05d1daeddc74625c3a # v0.5.0
+        with:
+          endpoint: ${{ secrets.ATTIC_ENDPOINT }}
+          cache: ${{ secrets.ATTIC_CACHE }}
+          token: ${{ secrets.ATTIC_TOKEN }}
+      - name: Resolve Blog site URL
+        id: site
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          slugify() {
+            tr "[:upper:]" "[:lower:]" |
+              sed -E "s/[^a-z0-9]+/-/g; s/^-+//; s/-+$//"
+          }
+
+          deploy_branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}"
+          if [[ -z "${deploy_branch}" ]]; then
+            echo "GITHUB_HEAD_REF or GITHUB_REF_NAME is required." >&2
+            exit 1
+          fi
+
+          if [[ "${deploy_branch}" == "${BLOG_PRODUCTION_BRANCH}" ]]; then
+            site_url="${BLOG_PRODUCTION_SITE}"
+          else
+            branch_alias="$(printf "%s" "${deploy_branch}" | slugify)"
+            if [[ -z "${branch_alias}" ]]; then
+              echo "Deploy branch must contain at least one alphanumeric character." >&2
+              exit 1
+            fi
+            site_url="https://${branch_alias}.${BLOG_PAGES_PROJECT_NAME}.pages.dev"
+          fi
+
+          echo "site_url=${site_url}" >>"${GITHUB_OUTPUT}"
+      - name: Build Blog
+        env:
+          BLOG_SITE: ${{ steps.site.outputs.site_url }}
+        run: |
+          nix build --impure --expr '
+            let
+              flake = builtins.getFlake (toString ./.);
+              system = builtins.currentSystem;
+            in
+              import ./packages/b/blog/package.nix {
+                pkgs = builtins.getAttr system flake.inputs.nixpkgs.legacyPackages;
+                site = builtins.getEnv "BLOG_SITE";
+              }
+          '
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: ./.github/actions/deploy-cloudflare-pages
+        with:
+          directory: result
+          project-name: ${{ env.BLOG_PAGES_PROJECT_NAME }}
+          domain: blog.momee.mt
+          cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Comment preview URL
+        if: github.event_name == 'pull_request'
+        uses: ./.github/actions/comment-preview-url
+        with:
+          preview-name: "Blog"
+          deployment-url: ${{ steps.site.outputs.site_url }}
+          deploy-branch: ${{ steps.deploy.outputs.deploy_branch }}
+          github-token: ${{ github.token }}
+          pr-number: ${{ github.event.pull_request.number }}
+          commit-sha: ${{ github.sha }}

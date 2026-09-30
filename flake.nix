@@ -5,7 +5,7 @@
         treefmt-nix.flakeModule
         git-hooks-nix.flakeModule
         just-flake.flakeModule
-        files.flakeModules.default
+        # files.flakeModules.default
         ./nix/flakes
       ];
     };
@@ -74,6 +74,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     just-flake.url = "github:juspay/just-flake";
+    easy-purescript-nix.url = "github:justinwoo/easy-purescript-nix/117fd96acb69d7d1727df95b6fde9d8715e031fc";
     nur-packages = {
       url = "github:momeemt/nur-packages";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -88,5 +89,6 @@
         treefmt-nix.follows = "treefmt-nix";
       };
     };
+    attic.url = "github:zhaofengli/attic";
   };
 }

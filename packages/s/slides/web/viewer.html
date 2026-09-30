@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .toolbar {
+      background: #2d2d2d;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    .toolbar a {
+      color: #7cb3f5;
+      text-decoration: none;
+    }
+    .toolbar a:hover { text-decoration: underline; }
+    .nav-btn {
+      background: #404040;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .nav-btn:hover { background: #505050; }
+    .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .page-info { min-width: 100px; text-align: center; }
+    .spacer { flex: 1; }
+    .download-btn {
+      background: #4a7c4e;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .download-btn:hover { background: #5a8c5e; }
+
+    /* Slide mode (horizontal/desktop) */
+    .viewer-container {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    .viewer-container canvas {
+      max-width: 100%;
+      max-height: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Scroll mode (vertical/mobile) */
+    body.scroll-mode {
+      overflow: auto;
+    }
+    body.scroll-mode .viewer-container {
+      flex: none;
+      overflow: visible;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    body.scroll-mode .viewer-container canvas {
+      max-height: none;
+      width: 100%;
+      max-width: 100%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    body.scroll-mode .nav-controls { display: none; }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .loading {
+      color: white;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <a href="/">← Back to list</a>
+    <div class="spacer"></div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn">◀ Prev</button>
+      <span class="page-info"><span id="page-num">1</span> / <span id="page-count">-</span></span>
+      <button class="nav-btn" id="next-btn">Next ▶</button>
+    </div>
+    <div class="spacer"></div>
+    <a class="download-btn" id="download-btn" download>Download PDF</a>
+  </div>
+  <div class="viewer-container" id="viewer-container">
+    <div class="loading">Loading...</div>
+  </div>
+  <script type="module">
+    const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+
+    const params = new URLSearchParams(location.search);
+    const pdfFile = params.get('pdf');
+    if (!pdfFile) {
+      document.getElementById('viewer-container').innerHTML = '<div class="loading">No PDF specified</div>';
+      throw new Error('No PDF');
+    }
+
+    document.title = pdfFile.replace('.pdf', '') + ' - Slide Viewer';
+    document.getElementById('download-btn').href = '/' + pdfFile;
+
+    const pdfDoc = await pdfjsLib.getDocument({
+      url: '/' + pdfFile,
+      cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/cmaps/',
+      cMapPacked: true,
+      standardFontDataUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.379/standard_fonts/',
+    }).promise;
+
+    document.getElementById('page-count').textContent = pdfDoc.numPages;
+
+    const container = document.getElementById('viewer-container');
+    const isPortrait = () => window.innerHeight > window.innerWidth;
+
+    let currentMode = null;
+    let pageNum = 1;
+
+    // Double buffering: two canvases to avoid flicker
+    const canvasA = document.createElement('canvas');
+    const canvasB = document.createElement('canvas');
+    const ctxA = canvasA.getContext('2d');
+    const ctxB = canvasB.getContext('2d');
+    let activeCanvas = canvasA;
+    let backCanvas = canvasB;
+    let activeCtx = ctxA;
+    let backCtx = ctxB;
+
+    // Slide mode: render to back buffer, then swap
+    async function renderSlidePage(num) {
+      const page = await pdfDoc.getPage(num);
+      const scale = 2;
+      const viewport = page.getViewport({ scale });
+      backCanvas.height = viewport.height;
+      backCanvas.width = viewport.width;
+      await page.render({ canvasContext: backCtx, viewport }).promise;
+
+      // Swap buffers
+      [activeCanvas, backCanvas] = [backCanvas, activeCanvas];
+      [activeCtx, backCtx] = [backCtx, activeCtx];
+
+      // Update DOM
+      container.innerHTML = '';
+      container.appendChild(activeCanvas);
+
+      document.getElementById('page-num').textContent = num;
+      document.getElementById('prev-btn').disabled = num <= 1;
+      document.getElementById('next-btn').disabled = num >= pdfDoc.numPages;
+    }
+
+    // Scroll mode: render all pages vertically
+    async function renderScrollMode() {
+      container.innerHTML = '';
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i);
+        const scale = 2;
+        const viewport = page.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        const ctx = canvas.getContext('2d');
+        container.appendChild(canvas);
+        page.render({ canvasContext: ctx, viewport });
+      }
+      window.scrollTo(0, 0);
+    }
+
+    // Initialize slide mode
+    async function initSlideMode() {
+      await renderSlidePage(pageNum);
+    }
+
+    async function updateMode() {
+      const newMode = isPortrait() ? 'scroll' : 'slide';
+      if (newMode === currentMode) return;
+      currentMode = newMode;
+
+      if (newMode === 'scroll') {
+        document.body.classList.add('scroll-mode');
+        await renderScrollMode();
+      } else {
+        document.body.classList.remove('scroll-mode');
+        await initSlideMode();
+      }
+    }
+
+    // Navigation for slide mode
+    function prevPage() {
+      if (currentMode === 'slide' && pageNum > 1) {
+        pageNum--;
+        renderSlidePage(pageNum);
+      }
+    }
+
+    function nextPage() {
+      if (currentMode === 'slide' && pageNum < pdfDoc.numPages) {
+        pageNum++;
+        renderSlidePage(pageNum);
+      }
+    }
+
+    document.getElementById('prev-btn').addEventListener('click', prevPage);
+    document.getElementById('next-btn').addEventListener('click', nextPage);
+
+    document.addEventListener('keydown', (e) => {
+      if (currentMode !== 'slide') return;
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        prevPage();
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        nextPage();
+      }
+    });
+
+    // Handle resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateMode, 150);
+    });
+
+    // Initial render
+    await updateMode();
+  </script>
+</body>
+</html>

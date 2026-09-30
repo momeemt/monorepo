@@ -16,10 +16,19 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@b3e3f405539b332fcb96794525f35fb10c230baa # v3.13.2
+      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+      - name: Setup Attic cache
+        if: >-
+          github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ryanccn/attic-action@5635a15ef0c5462194ffbd05d1daeddc74625c3a # v0.5.0
+        with:
+          endpoint: ${{ secrets.ATTIC_ENDPOINT }}
+          cache: ${{ secrets.ATTIC_CACHE }}
+          token: ${{ secrets.ATTIC_TOKEN }}
       - run: nix flake check --all-systems
   nix-build:
     if: github.event_name == 'pull_request'
+    name: nix-build (${{ matrix.target }}, ${{ matrix.os }})
     permissions:
       contents: read
     runs-on: ${{ matrix.os }}
@@ -29,28 +38,41 @@ jobs:
         include:
           - target: nixosConfigurations.emu.config.system.build.toplevel
             os: ubuntu-24.04
+            attic_push_jobs: 1
+            attic_push_chunk_target_bytes: 2147483648
+            attic_push_max_path_nar_bytes: 8589934592
           - target: nixosConfigurations.shime.config.system.build.toplevel
             os: ubuntu-24.04
+            attic_push_jobs: 1
+            attic_push_chunk_target_bytes: 2147483648
+            attic_push_max_path_nar_bytes: 8589934592
           - target: darwinConfigurations.uguisu.system
             os: macos-15
+            attic_push_jobs: 1
+            attic_push_chunk_target_bytes: 2147483648
+            attic_push_max_path_nar_bytes: 8589934592
           - target: homeConfigurations.example.activationPackage
             os: ubuntu-24.04
+            attic_push_jobs: 1
+            attic_push_chunk_target_bytes: 2147483648
+            attic_push_max_path_nar_bytes: 8589934592
     steps:
-      - uses: easimon/maximize-build-space@fc881a613ad2a34aca9c9624518214ebc21dfc0c # v10
-        if: runner.os == 'Linux'
-        with:
-          root-reserve-mb: 4096
-          swap-size-mb: 1024
-          build-mount-path: /nix
-          remove-dotnet: true
-          remove-android: true
-          remove-haskell: true
-          remove-codeql: true
-          remove-docker-images: true
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@b3e3f405539b332fcb96794525f35fb10c230baa # v3.13.2
+      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+      - name: Setup Attic cache
+        if: >-
+          github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ryanccn/attic-action@5635a15ef0c5462194ffbd05d1daeddc74625c3a # v0.5.0
+        with:
+          endpoint: ${{ secrets.ATTIC_ENDPOINT }}
+          cache: ${{ secrets.ATTIC_CACHE }}
+          token: ${{ secrets.ATTIC_TOKEN }}
+          skip-push: true
+      - name: Free macOS disk space
+        if: runner.os == 'macOS'
+        uses: ./.github/actions/free-macos-disk-space
       - name: Setup age key
         run: |
           sudo mkdir -p /var/lib/sops-nix
@@ -61,32 +83,40 @@ jobs:
           chmod 600 ~/.config/sops/age/keys.txt
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-      - run: nix build .#${{ matrix.target }} --no-link
+      - name: Build target
+        run: |
+          set -o pipefail
+          nix build .#${{ matrix.target }} --no-link --print-build-logs --print-out-paths \
+            | tee "$RUNNER_TEMP/nix-build-out-paths"
       - name: Cleanup secrets
         if: always()
         run: |
           sudo rm -rf /var/lib/sops-nix
           rm -rf ~/.config/sops/age
           sudo rm -rf /run/secrets* /run/user/*/secrets* 2>/dev/null || true
+      - name: Push build outputs to Attic
+        if: >-
+          success() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          ATTIC_CACHE: ${{ secrets.ATTIC_CACHE }}
+          ATTIC_PUSH_JOBS: ${{ matrix.attic_push_jobs }}
+          ATTIC_PUSH_CHUNK_TARGET_BYTES: ${{ matrix.attic_push_chunk_target_bytes }}
+          ATTIC_PUSH_MAX_PATH_NAR_BYTES: ${{ matrix.attic_push_max_path_nar_bytes }}
+          MATRIX_TARGET: ${{ matrix.target }}
+        run: |
+          nix run .#attic-pack -- push "$ATTIC_CACHE" "$RUNNER_TEMP/nix-build-out-paths"
   container-build:
     if: github.event_name == 'pull_request'
     permissions:
       contents: read
     runs-on: ubuntu-24.04
     steps:
-      - uses: easimon/maximize-build-space@fc881a613ad2a34aca9c9624518214ebc21dfc0c # v10
-        with:
-          root-reserve-mb: 4096
-          swap-size-mb: 1024
-          remove-dotnet: true
-          remove-android: true
-          remove-haskell: true
-          remove-codeql: true
-          remove-docker-images: true
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
       - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+        with:
+          driver: docker
       - uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: .

@@ -30,6 +30,7 @@
     '';
 in {
   home.file."${path}" = {
+    force = true;
     source = inputs.mcp-servers-nix.lib.mkConfig pkgs {
       programs = {
         context7.enable = true;
@@ -55,6 +56,12 @@ in {
           command = "${mcpBlueskyWrapper}";
           args = [];
         };
+      };
+      settings.preferences = {
+        coworkScheduledTasksEnabled = false;
+        ccdScheduledTasksEnabled = false;
+        coworkWebSearchEnabled = true;
+        floatingAtollActive = true;
       };
     };
   };

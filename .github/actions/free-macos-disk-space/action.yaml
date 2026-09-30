@@ -1,0 +1,8 @@
+---
+name: "Free macOS disk space"
+description: "Remove large preinstalled macOS runner assets before Nix builds."
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/free-macos-disk-space.sh"
