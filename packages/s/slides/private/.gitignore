@@ -1,0 +1,5 @@
+*
+!**/
+!**/*.enc.*
+!.gitignore
+!.sops.yaml

@@ -50,7 +50,7 @@ in {
     home = let
       basePackages = with pkgs;
         [
-          neofetch
+          fastfetch
           ghq
           nixpkgs-review
           gnumake

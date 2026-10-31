@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import { TaggedPostsPage } from '../../components/Blog';
+import Layout from '../../layouts/Layout.astro';
+import { findAuthor } from '../../lib/authors';
+import { thumbnailPath } from '../../lib/thumbnails';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  const tags = Array.from(new Set(posts.flatMap((post) => post.data.tags ?? []))).sort((a, b) =>
+    a.localeCompare(b, 'ja')
+  );
+
+  return tags.map((tag) => {
+    const taggedPosts = posts
+      .filter((post) => post.data.tags?.includes(tag))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+    return {
+      params: { tag },
+      props: {
+        tag,
+        posts: taggedPosts.map((post) => ({
+          category: post.data.category,
+          href: `/posts/${post.id}/`,
+          title: post.data.title,
+          description: post.data.description,
+          pubDate: post.data.pubDate.toISOString(),
+          thumbnail: thumbnailPath(post.data.thumbnail, post.id),
+          author: findAuthor(post.data.author)
+        }))
+      }
+    };
+  });
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<Layout title={`#${tag} - blog.momee.mt`} description={`タグ「${tag}」の記事`}>
+  <TaggedPostsPage posts={posts} tag={tag} />
+</Layout>

@@ -1,4 +1,16 @@
 [files]
-  extend-exclude = [ "secrets/**" ]
+  extend-exclude = [
+    "**/*.asc",
+    "**/*.gpg",
+    "**/*.key",
+    "**/*.pem",
+    "assets/gpg/**",
+    "flake.lock",
+    "packages/o/obsidian/.obsidian/**",
+    "packages/s/slides/**",
+    "secrets/**",
+  ]
 
 [default.extend-words]
+  Canva  = "Canva"
+  Markov = "Markov"

@@ -14,6 +14,9 @@ locals {
   }
 
   github = {
-    token = local.secrets.github.token
+    token          = local.secrets.github.token
+    attic_endpoint = local.secrets.github.attic_endpoint
+    attic_cache    = local.secrets.github.attic_cache
+    attic_token    = local.secrets.github.attic_token
   }
 }

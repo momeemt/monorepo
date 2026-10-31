@@ -13,7 +13,7 @@
     inherit (pkgs) tmuxPlugins fetchFromGitHub;
   };
   tmux-window-name = import ./plugins/tmux-window-name.nix {
-    inherit (pkgs) tmuxPlugins fetchFromGitHub python311 python311Packages tmux ps lib;
+    inherit (pkgs) tmuxPlugins fetchFromGitHub python3 python3Packages tmux ps lib;
   };
   tmux-plugins = [
     tmux-battery

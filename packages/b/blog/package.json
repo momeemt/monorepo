@@ -1,0 +1,31 @@
+{
+  "name": "blog.momee.mt",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/react": "^5.0.5",
+    "@fontsource/noto-sans-jp": "^5.2.9",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@viz-js/viz": "^3.27.0",
+    "astro": "^6.3.8",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "satori": "^0.26.0",
+    "sharp": "^0.34.5",
+    "shiki": "^4.1.0"
+  }
+}

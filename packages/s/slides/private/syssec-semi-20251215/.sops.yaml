@@ -1,0 +1,6 @@
+---
+creation_rules:
+  - path_regex: "^.*$"
+    age:
+      # momeemt@uguisu
+      - age1m9cyg7vdl74w0gvgtgxta9x4afnhzkymg50pecm0l7uh6gvhpewscxfckw

@@ -18,7 +18,10 @@
   ];
 
   boot.loader = {
-    systemd-boot.enable = true;
+    systemd-boot = {
+      enable = true;
+      configurationLimit = 10;
+    };
     efi.canTouchEfiVariables = true;
   };
 
@@ -32,7 +35,7 @@
       br0.ipv4.addresses = [
         {
           address = siteLib.ip.emu;
-          prefixLength = 23;
+          prefixLength = 24;
         }
       ];
     };
@@ -42,6 +45,18 @@
     defaultGateway = {
       address = siteLib.ip.defaultGateway;
       interface = "br0";
+    };
+
+    firewall = {
+      allowedTCPPorts = [
+        53
+        80
+        443
+      ];
+      allowedUDPPorts = [
+        53
+        443
+      ];
     };
   };
 
@@ -60,7 +75,90 @@
     openssh.authorizedKeys.keys = siteLib.publicKeys;
   };
 
+  users.users.caddy.extraGroups = ["mastodon"];
+
   services = {
+    caddy = {
+      enable = true;
+      email = "me@momee.mt";
+
+      virtualHosts."photo.kitsutsuki.momee.mt".extraConfig = ''
+        redir / /photo/ 308
+
+        reverse_proxy https://192.168.1.33:5001 {
+          header_up Host {host}
+
+          transport http {
+            tls_insecure_skip_verify
+          }
+        }
+      '';
+
+      virtualHosts."mastodon.momee.mt".extraConfig = ''
+        handle_path /system/* {
+          root * /var/lib/mastodon/public-system
+          file_server
+        }
+
+        handle /api/v1/streaming/* {
+          reverse_proxy unix//run/mastodon-streaming/streaming-1.socket
+        }
+
+        route * {
+          file_server * {
+            root ${pkgs.mastodon}/public
+            pass_thru
+          }
+
+          reverse_proxy * unix//run/mastodon-web/web.socket
+        }
+
+        handle_errors {
+          root * ${pkgs.mastodon}/public
+          rewrite * /500.html
+          file_server
+        }
+
+        encode gzip
+
+        header /* {
+          Strict-Transport-Security "max-age=31536000;"
+        }
+
+        header /emoji/* Cache-Control "public, max-age=31536000, immutable"
+        header /packs/* Cache-Control "public, max-age=31536000, immutable"
+        header /system/accounts/avatars/* Cache-Control "public, max-age=31536000, immutable"
+        header /system/media_attachments/files/* Cache-Control "public, max-age=31536000, immutable"
+      '';
+
+      virtualHosts."attic.momee.mt".extraConfig = ''
+        reverse_proxy 127.0.0.1:8080
+      '';
+    };
+
+    dnsmasq = {
+      enable = true;
+      settings = {
+        listen-address = ["127.0.0.1" "192.168.1.37"];
+        bind-interfaces = true;
+
+        no-resolv = true;
+        local-ttl = 60;
+        cache-size = 10000;
+
+        address = [
+          "/photo.kitsutsuki.momee.mt/192.168.1.37"
+          "/mastodon.momee.mt/192.168.1.37"
+          "/attic.momee.mt/192.168.1.37"
+        ];
+
+        server = [
+          "1.1.1.1"
+          "8.8.8.8"
+        ];
+      };
+    };
+
     cloudflared = {
       enable = true;
       tunnels = {
@@ -88,7 +186,49 @@
       };
     };
 
+    mastodon = {
+      enable = true;
+      localDomain = "mastodon.momee.mt";
+      configureNginx = false;
+      streamingProcesses = 2;
+      webProcesses = 2;
+      webThreads = 5;
+
+      smtp = {
+        createLocally = false;
+        host = "smtp.resend.com";
+        port = 587;
+        authenticate = true;
+        user = "resend";
+        passwordFile = "${config.sops.secrets."resend/mastodon.momee.mt".path}";
+        fromAddress = "Mastodon <notifications@mastodon.momee.mt>";
+      };
+
+      extraConfig = {
+        SMTP_ENABLE_STARTTLS_AUTO = "true";
+        SMTP_AUTH_METHOD = "plain";
+      };
+    };
+
     udev.packages = [pkgs.usb-blaster-udev-rules];
+
+    atticd = {
+      enable = true;
+      environmentFile = config.sops.secrets."atticd/emu/env".path;
+
+      settings = {
+        listen = "127.0.0.1:8080";
+        api-endpoint = "https://attic.momee.mt/";
+        jwt = {};
+
+        chunking = {
+          nar-size-threshold = 64 * 1024;
+          min-size = 16 * 1024;
+          avg-size = 64 * 1024;
+          max-size = 256 * 1024;
+        };
+      };
+    };
   };
 
   # https://github.com/NixOS/nixpkgs/issues/100390

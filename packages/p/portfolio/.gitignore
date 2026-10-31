@@ -1,0 +1,7 @@
+.envrc
+.direnv
+output
+.spago
+.psc-ide-port
+public/index.css
+public/index.js

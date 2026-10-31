@@ -20,9 +20,27 @@
     ../../profiles/hm/wakatime
   ];
 
-  # see https://github.com/nix-community/home-manager/issues/8174
-  # Disable App Management checks to allow running in tmux (non-Aqua session)
-  targets.darwin.copyApps.enableChecks = lib.mkForce false;
+  # Avoid in-place rsync updates of running app bundles.
+  targets.darwin = {
+    copyApps.enable = lib.mkForce false;
+    linkApps.enable = lib.mkForce true;
+  };
+
+  home.activation.prepareHomeManagerAppsLink = lib.hm.dag.entryBefore ["checkLinkTargets"] ''
+    target="$HOME/Applications/Home Manager Apps"
+
+    if [ -e "$target" ] && [ ! -L "$target" ]; then
+      backup="$target.before-linkApps"
+      n=0
+
+      while [ -e "$backup" ]; do
+        n=$((n + 1))
+        backup="$target.before-linkApps-$n"
+      done
+
+      run mv "$target" "$backup"
+    fi
+  '';
 
   site = {
     home = {

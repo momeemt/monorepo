@@ -6,30 +6,20 @@ resource "cloudflare_dns_record" "www_dns_record" {
   zone_id = local.cloudflare.zone_id
   name    = "www"
   type    = "CNAME"
-  content = "momee.mt"
+  content = cloudflare_pages_project.portfolio.subdomain
   ttl     = 1
   proxied = true
-  comment = "www.momee.mt"
+  comment = "Cloudflare Pages project for www.momee.mt"
 }
 
 resource "cloudflare_dns_record" "root_dns_record" {
   zone_id = local.cloudflare.zone_id
   name    = "momee.mt"
   type    = "CNAME"
-  content = "momeemt.github.io"
-  ttl     = 1
-  proxied = false
-  comment = "https://github.com/momeemt/momee.mt"
-}
-
-resource "cloudflare_dns_record" "blog_dns_record" {
-  zone_id = local.cloudflare.zone_id
-  name    = "blog"
-  type    = "CNAME"
-  content = "blog-momee-mt.pages.dev"
+  content = cloudflare_pages_project.portfolio.subdomain
   ttl     = 1
   proxied = true
-  comment = "https://github.com/momeemt/blog.momee.mt"
+  comment = "Cloudflare Pages project for momee.mt"
 }
 
 resource "cloudflare_dns_record" "wascaml_dns_record" {

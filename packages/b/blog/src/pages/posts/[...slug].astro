@@ -1,0 +1,73 @@
+---
+import { getCollection, render } from 'astro:content';
+import { ArticleTags, PostHeader, SiteFooter } from '../../components/Blog';
+import {
+  EmbedFrame,
+  SpotifyAlbum,
+  SpotifyEmbed,
+  SpotifyPlaylist,
+  SpotifyTrack
+} from '../../components/Embeds';
+import {
+  Corollary,
+  Definition,
+  Lemma,
+  Proof,
+  Proposition,
+  Theorem
+} from '../../components/TheoremBox';
+import Layout from '../../layouts/Layout.astro';
+import { findAuthor } from '../../lib/authors';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const title = `${post.data.title} - blog.momee.mt`;
+const author = findAuthor(post.data.author);
+const ogImage = `/og/${post.id}.png`;
+---
+
+<Layout
+  title={title}
+  description={post.data.description}
+  image={ogImage}
+  imageAlt={`${post.data.title} by ${author.name}`}
+  type="article"
+  authorName={author.name}
+>
+  <div class="articlePage">
+    <PostHeader
+      title={post.data.title}
+      description={post.data.description}
+      pubDate={post.data.pubDate.toISOString()}
+      author={author}
+    />
+    <article class="articleContent">
+      <ArticleTags tags={post.data.tags ?? []} />
+      <Content
+        components={{
+          Corollary,
+          Definition,
+          EmbedFrame,
+          Lemma,
+          Proof,
+          Proposition,
+          SpotifyAlbum,
+          SpotifyEmbed,
+          SpotifyPlaylist,
+          SpotifyTrack,
+          Theorem
+        }}
+      />
+    </article>
+    <SiteFooter article />
+  </div>
+</Layout>

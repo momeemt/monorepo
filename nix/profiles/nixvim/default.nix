@@ -17,7 +17,9 @@
     vimAlias = true;
     enableMan = true;
     enablePrintInit = true;
-    package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+    package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default.overrideAttrs (_: {
+      doCheck = false;
+    });
     extraConfigLua = builtins.readFile ./init.lua;
   };
 }

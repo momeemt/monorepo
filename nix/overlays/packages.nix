@@ -1,16 +1,26 @@
 _final: prev: let
   pkgs = prev;
-  subscribePackages = import ../packages/subscribe {inherit pkgs;};
+  importPackage = name: let
+    firstLetter = builtins.substring 0 1 name;
+  in
+    import ../../packages/${firstLetter}/${name}/package.nix {inherit pkgs;};
+  subscribePackages = importPackage "subscribe";
 in {
-  destroy-all-vm = import ../packages/destroy-all-vm {inherit pkgs;};
-  encrypt-secrets = import ../packages/encrypt-secrets {inherit pkgs;};
-  ncp = import ../packages/ncp {inherit pkgs;};
-  quitapp = import ../packages/quitapp {inherit pkgs;};
-  switch-config-branch = import ../packages/switch-config-branch {inherit pkgs;};
-  updatekeys-secrets = import ../packages/updatekeys-secrets {inherit pkgs;};
-  xdg-compliance-checker = import ../packages/xdg-compliance-checker {inherit pkgs;};
+  activitywatch-mcp-server = importPackage "activitywatch-mcp-server";
+  attic-pack = importPackage "attic-pack";
+  blog = importPackage "blog";
+  bluesky-mcp = importPackage "bluesky-mcp";
+  destroy-all-vm = importPackage "destroy-all-vm";
+  encrypt-secrets = importPackage "encrypt-secrets";
+  karabiner-elements_14-13-0 = importPackage "karabiner-elements_14-13-0";
+  ncp = importPackage "ncp";
+  obsidian = importPackage "obsidian";
+  portfolio = importPackage "portfolio";
+  quitapp = importPackage "quitapp";
+  slides = importPackage "slides";
+  switch-config-branch = importPackage "switch-config-branch";
+  updatekeys-secrets = importPackage "updatekeys-secrets";
+  xdg-compliance-checker = importPackage "xdg-compliance-checker";
+
   inherit (subscribePackages) ok ng subscribe;
-  karabiner-elements_14-13-0 = import ../packages/karabiner-elements_14-13-0 {inherit pkgs;};
-  activitywatch-mcp-server = import ../packages/activitywatch-mcp-server {inherit pkgs;};
-  bluesky-mcp = import ../packages/bluesky-mcp {inherit pkgs;};
 }

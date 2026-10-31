@@ -1,0 +1,258 @@
+---
+title: Ruby の正規表現も 3-SAT が解けるので NP-hard
+category: CS
+description: マッチングが現実的な時間で終わるかどうかは、君の入力次第だ！
+pubDate: 2026/06/05
+tags:
+  - 正規表現
+  - "NP 困難"
+  - Ruby
+  - "3-SAT"
+  - 後方参照
+thumbnail: barcode-fail
+---
+
+[前回の記事](/posts/nonregular-backreferences/)を読んだ友達が、Perl の正規表現は 3-CNF-SAT が解けるから解析が NP-hard であることを紹介する記事を教えてくれた。
+今回は、[元の記事](https://perl.plover.com/NPC/NPC-3SAT.html)の行間を埋める形でどのように解くことができるのかを説明した後、同じ正規表現を Ruby でも構成できるかどうかを試す。
+
+https://x.com/abap34/status/1766004781393547633
+
+## 3-SAT
+
+SAT とは、充足可能性問題（**SAT**isfiability problem）のことで、ある命題論理式の変数に対して上手く `true` か `false` を割り当てることで、全体を `true` にできるかを問う問題である。例えば、以下の論理式について考える。
+
+$$
+(x \lor y) \land (\lnot y \lor z) \land z
+$$
+
+この命題論理式は、`x = true`、`y = false`、`z = true`のように割り当てると全体が`true`となる。このように、各変数に割り当てる値を 1 つ見つけるか、全ての場合において`true`にならないことが言えたとき、この問題を解くことができる。
+
+連言標準形（Conjunctive normal form, CNF）とは、命題論理式のうち、変数やその否定が選言 $l_1 \lor l_2 \lor \dots \lor l_n$ で構成される節について、さらに連言 $l_1 \land l_2 \land \dots \land l_n$ で結ばれた形式のものを指す。
+例えば、$(a \land b) \lor c$ は CNF ではないが、分配法則によって変換された等価な論理式 $(a \lor c) \land (b \lor c)$ は CNF である。
+
+CNF に対する SAT を CNF-SAT と呼び、中でも節内のリテラルが高々 3 つの CNF を扱う SAT を **3-SAT** という。
+
+## NP 困難
+
+SAT が NP かつ NP 困難（= NP 完全）であることはよく知られているが[^ 街中で突然誰かに出題しても正解される可能性が極めて高い]、NP 困難について一度振り返る。
+
+### P
+
+問題は、アルゴリズムの計算複雑性によって分類できる。これを**複雑性クラス**という。
+ある判定問題（入力に対して yes/no を返すような問題）について、入力サイズに対して多項式時間で解けるとき、その問題のクラスを **P** という。
+例えば、入力サイズを $n$ とすると、計算時間が $\Theta(n)$、$\Theta(n^2)$、$\Theta(n^3)$ のように抑えられる問題は多項式時間で解ける。一方で、全探索によって $\Theta(2^n)$ の時間がかかるような問題は、入力が少し大きくなるだけで解くのが難しくなる。
+
+### NP
+
+次に、非決定性チューリングマシンによって多項式時間で解ける問題のクラスを **NP** という。非決定性チューリングマシンとは、普通の（決定性）チューリングマシンとは異なり、ある状態とテープ上の記号による動作が 1 つに定まらないような機械である。決定性チューリングマシンと非決定性チューリングマシンが認識できる言語は等価である。直感的には、同じ入力に対してあり得る計算経路を分岐として考え、その中に 1 つでも受理に到達する経路があれば、全体として受理する機械だと思えばよい。
+
+具体的には、SAT を考えよう。通常の計算機（決定性チューリングマシン）で素朴に解くと、各変数に対する割り当て全てに対して試す必要があるので、入力長（変数の個数） $n$ に対して（最悪）時間計算量が $\Theta(2^n)$ かかる。一方で、ある割り当てが与えられれば、その割り当てのもとで論理式全体が `true` になるかどうかは、多項式時間で確認できる。したがって、SAT は **NP** に属する問題であることがわかる。
+
+### NP 困難
+
+ある判定問題 $A$ の入力を、別の判定問題 $B$ の入力に多項式時間で変換でき、さらに $A$ の答えが yes であることと、変換後の問題 $B$ の答えが yes であることが一致するとする。このとき、$A$ は $B$ に多項式時間帰着できるという。
+これは、もし $B$ が多項式時間で解けるなら、 $A$ も多項式時間で解けることを意味する。$A$ の入力を多項式時間で $B$ の入力に変換して、$B$ を解けば多項式時間で解けるからである。
+
+NP に属する任意の問題がその問題に多項式時間帰着できるような問題を、**NP 困難** であるという。仮に、NP 困難の問題が多項式時間で解けるなら、NP に属するすべての問題が多項式時間で解けることになり、$\text{P} = \text{NP}$ が証明されてしまう[^ お時間ある方は、ぜひ]。
+
+また、NP 困難であり、かつその問題自身も NP に属する問題を **NP 完全** という。SAT は NP 完全であることが知られていて、3-SAT も NP 完全である。したがって、3-SAT から別の問題へ多項式時間帰着できれば、その問題は少なくとも NP 困難であることがわかる。
+この記事で行うのは、まさにこの帰着である。任意の 3-SAT のインスタンスから、後方参照を含む正規表現と文字列を多項式時間で構成し、元の 3-SAT が充足可能であることと、その正規表現が文字列にマッチすることが一致するようになる。
+
+## Perl で 3-SAT を解く正規表現を構成する
+
+ここからは、元記事で紹介されている 3-SAT から Perl の正規表現マッチングへの帰着を見ていく。
+
+まず、3-SAT のインスタンスとして、変数 $v_1, v_2, \dots, v_n$ と、節 $C_1, C_2, \dots, C_m$ からなる論理式を考える。各節 $C_i$ は 3 つのリテラルの選言である。例えば、次のような節があるとする。
+
+$$
+(v_3 \lor \lnot v_7 \lor v_5)
+$$
+
+この節は、Perl の配列で `[3, -7, 5]` のようにエンコードできる。正の整数は、その変数がそのまま現れることを表し、負の整数はその変数の否定が現れることを指す。
+
+変数の個数を `$V`、節の配列を `@Clauses` とすると、最初に次のような文字列を作る。
+
+```perl
+$string = ('x' x $V) . ';' . ('x,' x @Clauses);
+```
+
+Perl において、`x` 演算子は文字列の繰り返しを意味する。したがって、変数が 3 個、節が 4 個なら、文字列は `xxx;x,x,x,x,` となる。
+前半の `xxx` は変数の真偽値を表すための領域である。後半の `x,x,x,x,` は、それぞれの節が満たされているかを確認するための領域である。
+
+次に、変数の個数だけ `(x?)` を並べる。`x?` は `x` にも空文字にもマッチする。したがって、それぞれのキャプチャは対応する変数への真偽値の割り当てを表すことができる。キャプチャが `x` ならその変数は `true` であり、キャプチャが空文字なら `false` であるとする。
+例えば、`(x?)(x?)(x?)` が $xxx$ のうち、$x\epsilon x$ をキャプチャしたなら、`v1 = true`、`v2 = false`、`v3 = true` と割り当てられることを示す。後方参照により、`\1` で 1 番目のキャプチャを、`\2` で 2 番目のキャプチャを、`\3` で 3 番目のキャプチャを表せる。
+
+正のリテラル $v_i$ は、後方参照 `\i` によって表せる。もし $v_i$ が `true` なら、対応するキャプチャは `x` なので、`\i` は `x` にマッチする。もし $v_i$ が `false` なら、対応するキャプチャは空文字なので、`\i` は空文字にマッチする。
+一方、負のリテラル $\lnot v_i$ は、`\i x` によって表せる。もし $v_i$ が `false` なら、`\i` は空文字なので、`\i x` 全体は `x` にマッチする。逆に $v_i$ が `true` なら、`\i` は `x` なので、`\i x` 全体は `xx` を要求してしまい、節に対応する `x,` とはマッチしない。
+つまり、リテラル $v_i$ は正規表現 `\i` に、リテラル $\lnot v_i$ は正規表現 `\i x` に対応する。この対応により、そのリテラルが `true` になる時だけ `x` にマッチするようになる。
+
+その後、1 つの節に含まれる 3 つのリテラルを `|` で繋ぐことで、たとえば節 $(v_1 \lor v_2 \lor \lnot v_3)$ は、正規表現 `(?:\1|\2|\3x),` に変換できる。この正規表現は、3 つのリテラルのうち少なくとも 1 つが `true` になる時だけ、`x,` にマッチする。逆に、3 つとも `false` ならどの選択肢も `x,` にマッチできない。
+したがって、すべての節についてこのような正規表現を並べれば、すべての節が満たされるときだけ、文字列全体にマッチする正規表現が得られる。
+
+元の記事では、ここまでの変換を変数の個数 `$V` と、節の配列 `@Clauses` から与える Perl 式を示している。
+
+```perl
+$string = ('x' x $V) . ';' . ('x,' x @Clauses);
+$regex = '^' . ('(x?)' x $V) . ".*;\n" . join('', map {
+  '(?:' . join('|', map {
+    $_ < 0 ? ('\\' . -$_ . 'x') : ('\\' . $_)
+  } @$_ ) . "),\n"
+} @Clauses );
+```
+
+例えば、次のような入力を与えると充足不能になるので UNSAT となる。
+
+```perl
+use strict;
+use warnings;
+use feature 'say';
+
+my $V = 3;
+my @Clauses = (
+  [ 1,  2,  3],
+  [ 1,  2, -3],
+  [ 1, -2,  3],
+  [ 1, -2, -3],
+  [-1,  2,  3],
+  [-1,  2, -3],
+  [-1, -2,  3],
+  [-1, -2, -3],
+);
+
+my $string = ('x' x $V) . ';' . ('x,' x @Clauses);
+my $regex = '^' . ('(x?)' x $V) . ".*;\n" . join('', map {
+  '(?:' . join('|', map {
+    $_ < 0 ? ('\\' . -$_ . 'x') : ('\\' . $_)
+  } @$_ ) . "),\n"
+} @Clauses );
+
+if (my @captures = ($string =~ /$regex/x)) {
+  say "SAT";
+  for my $i (0 .. $#captures) {
+    say 'v' . ($i + 1) . ' = ' . ($captures[$i] eq 'x' ? 'true' : 'false');
+  }
+} else {
+  say "UNSAT";
+}
+```
+
+ここで構成した文字列と正規表現のサイズは、変数の個数と節の個数に対して多項式サイズである。したがって、3-SAT のインスタンスから正規表現マッチングのインスタンスへの変換は多項式時間でできる。
+そして、元の 3-SAT が充足可能（充足不能）であることと、構成した正規表現が文字列にマッチする（マッチしない）ことは一致する。したがって、後方参照を含む Perl の正規表現マッチングは NP 困難である。
+
+## Ruby ではどうなのか
+
+3-SAT が解けるかどうかは正規表現エンジンが後方参照をサポートしていて、かつ動的に正規表現を生成できるかの 2 つで決まることが分かった。であれば Perl に限らず他の言語...、例えば Ruby[^ バイト先が Ruby を採用しているが、入社してまだ 1 度も書けていないので書きたくなった][^ruby-thoughts]でも同様に正規表現で 3-SAT を解かせることができるのではないか。
+
+[^ruby-thoughts]: 関係ないが、Ruby についての感想も少し話す。Ruby はずっと楽しい言語だと思っていて、Lisp に似ている。それは[メタプログラミング Ruby 第 2 版](https://www.oreilly.co.jp/books/9784873117430/)を読めばすぐに分かる。マジでなんでもありなのだ。個人的に最も気に入っていて、記憶に残っているのは`method_missing`である。存在していないメソッドの呼び出しは単に失敗するだけだと思っていたのに、Ruby ではメソッド探索に失敗した後、その呼び出しを`method_missing`で受け取れる。プログラムの振る舞いを言語の内側から書き換えているように感じてかなり驚いた。プログラミングが持つ自由さをよく表している機能で、とても好きだ。一方で、ソフトウェア開発においてプログラミング言語が与えるべきなのは、自由さそのものではなく、筋の良い**制約**であるべきだとも思う。
+
+Ruby の正規表現が後方参照をサポートしているかを確認する。Ruby の `Regexp` は、キャプチャしたグループを正規表現の内部で参照する機能として後方参照を提供しており、`\1` のような番号付き後方参照を使える [^ https://docs.ruby-lang.org/ja/latest/doc/spec=2fregexp.html#capture]。また、`\k<1>, \k<2>, ...` という記法も使うことができ、この記法では 10 を超える番号も扱える。
+
+したがって、以下のように実装できる。なお、[こちら](https://try.ruby-lang.org/playground/#code=def+build_string(variable_count%2C+clauses)%0A++('x'+*+variable_count)+%2B+'%3B'+%2B+('x%2C'+*+clauses.length)%0Aend%0A%0Adef+literal_to_regex(literal)%0A++variable_index+%3D+literal.abs%0A%0A++if+literal.negative%3F%0A++++%22%5C%5Ck%3C%23%7Bvariable_index%7D%3Ex%22%0A++else%0A++++%22%5C%5Ck%3C%23%7Bvariable_index%7D%3E%22%0A++end%0Aend%0A%0Adef+build_regex(variable_count%2C+clauses)%0A++variable_part+%3D+'(x%3F)'+*+variable_count%0A%0A++clause_part+%3D+clauses.map+do+%7Cclause%7C%0A++++alternatives+%3D+clause.map+%7B+%7Cliteral%7C+literal_to_regex(literal)+%7D.join('%7C')%0A++++%22(%3F%3A%23%7Balternatives%7D)%2C%22%0A++end.join%0A%0A++Regexp.new(%22%5C%5CA%23%7Bvariable_part%7D.*%3B%23%7Bclause_part%7D%5C%5Cz%22%2C+Regexp%3A%3AEXTENDED)%0Aend%0A%0Adef+solve_by_regex(variable_count%2C+clauses)%0A++string+%3D+build_string(variable_count%2C+clauses)%0A++regex+%3D+build_regex(variable_count%2C+clauses)%0A%0A++match+%3D+regex.match(string)%0A%0A++if+match%0A++++assignment+%3D+match.captures.each_with_index.to_h+do+%7Ccapture%2C+index%7C%0A++++++%5B%22v%23%7Bindex+%2B+1%7D%22%2C+capture+%3D%3D+'x'%5D%0A++++end%0A%0A++++%5B%3Asat%2C+assignment%2C+string%2C+regex%5D%0A++else%0A++++%5B%3Aunsat%2C+nil%2C+string%2C+regex%5D%0A++end%0Aend%0A%0Avariable_count+%3D+3%0Aclauses+%3D+%5B%0A++%5B1%2C+2%2C+-3%5D%2C%0A++%5B1%2C+-2%2C+3%5D%2C%0A++%5B-1%2C+-2%2C+3%5D%2C%0A++%5B-1%2C+-2%2C+-3%5D%0A%5D%0A%0Aresult%2C+assignment%2C+string%2C+regex+%3D+solve_by_regex(variable_count%2C+clauses)%0Aputs+result.upcase%0A%0Aif+assignment%0A++assignment.each+do+%7Cvariable%2C+value%7C%0A++++puts+%22%23%7Bvariable%7D+%3D+%23%7Bvalue%7D%22%0A++end%0Aend&engine=cruby-4.0.0) から命題論理式や変数の個数などを変更して実行できる。
+
+```ruby
+def build_string(variable_count, clauses)
+  ('x' * variable_count) + ';' + ('x,' * clauses.length)
+end
+
+def literal_to_regex(literal)
+  variable_index = literal.abs
+
+  if literal.negative?
+    "\\k<#{variable_index}>x"
+  else
+    "\\k<#{variable_index}>"
+  end
+end
+
+def build_regex(variable_count, clauses)
+  variable_part = '(x?)' * variable_count
+
+  clause_part = clauses.map do |clause|
+    alternatives = clause.map { |literal| literal_to_regex(literal) }.join('|')
+    "(?:#{alternatives}),"
+  end.join
+
+  Regexp.new("\\A#{variable_part}.*;#{clause_part}\\z", Regexp::EXTENDED)
+end
+
+def solve_by_regex(variable_count, clauses)
+  string = build_string(variable_count, clauses)
+  regex = build_regex(variable_count, clauses)
+
+  match = regex.match(string)
+
+  if match
+    assignment = match.captures.each_with_index.to_h do |capture, index|
+      ["v#{index + 1}", capture == 'x']
+    end
+
+    [:sat, assignment, string, regex]
+  else
+    [:unsat, nil, string, regex]
+  end
+end
+
+variable_count = 3
+clauses = [
+  [1, 2, -3],
+  [1, -2, 3],
+  [-1, -2, 3],
+  [-1, -2, -3]
+]
+
+result, assignment, string, regex = solve_by_regex(variable_count, clauses)
+puts result.upcase
+
+if assignment
+  assignment.each do |variable, value|
+    puts "#{variable} = #{value}"
+  end
+end
+```
+
+```
+SAT
+v1 = true
+v2 = false
+v3 = true
+```
+
+例えば、次のような UNSAT と評価される節を構築することで現実的な時間で解き終わらなくなる[^ SAT ソルバーなら一瞬で解けてしまうが]。
+
+```ruby
+def hard_unsat_clauses(variable_count)
+  clauses = [
+    [ 1,  2,  3],
+    [ 1,  2, -3],
+    [ 1, -2,  3],
+    [ 1, -2, -3],
+    [-1,  2,  3],
+    [-1,  2, -3],
+    [-1, -2,  3],
+    [-1, -2, -3],
+  ]
+
+  (4..variable_count).each do |i|
+    clauses << [i, 1, 2]
+  end
+
+  clauses
+end
+
+variable_count = 100
+clauses = hard_unsat_clauses(variable_count)
+```
+
+## 結論
+
+Perl の例と同じように、Ruby の正規表現でも後方参照を使えば、3-SAT のインスタンスを正規表現マッチングの問題として埋め込むことができる。したがって、少なくとも後方参照を含む Ruby の正規表現マッチングは NP 困難である。
+
+ユーザに任意の正規表現を入力させる場合や、ユーザ入力から後方参照を含む正規表現を動的に生成する場合[^ そんなことあるだろうか]、悪意のあるユーザによって自社の計算資源で NP-hard な問題を解かされる可能性がある。
+
+問題なのは各言語の正規表現そのものではなく、後方参照によって、正規言語よりも遥かに強い計算を表現できてしまう点である。
+
+## おすすめの曲 紹介コーナー
+
+<SpotifyTrack url="https://open.spotify.com/embed/track/5B5sSaCM7BjL729CNMWNw5?utm_source=generator" />
+
+ここ最近聞いた曲の中では一番よかったです
